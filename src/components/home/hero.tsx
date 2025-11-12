@@ -1,10 +1,8 @@
-"use client"
-
 import { ChevronRight } from "lucide-react"
 
 export default function Hero() {
   return (
-    <section className="relative h-screen bg-gradient-to-b from-black via-transparent to-black overflow-hidden">
+    <section className="relative h-screen bg-linear-to-b from-black via-transparent to-black overflow-hidden">
       {/* Background with overlay */}
       <div
         className="absolute inset-0 opacity-30"
@@ -17,7 +15,7 @@ export default function Hero() {
       />
 
       {/* Dark overlay gradient */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black via-black/50 to-transparent" />
+      <div className="absolute inset-0 bg-linear-to-r from-black via-black/50 to-transparent" />
 
       {/* Content */}
       <div className="relative z-10 h-full flex flex-col items-start justify-center px-6 md:px-12 lg:px-20 max-w-2xl">
@@ -46,7 +44,7 @@ export default function Hero() {
       </div>
 
       {/* Curved bottom */}
-      <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-20 bg-linear-to-t from-black to-transparent" />
     </section>
   )
 }

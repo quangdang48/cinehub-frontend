@@ -1,4 +1,3 @@
-"use client"
 import { ChevronDown } from "lucide-react"
 import { useState } from "react"
 
@@ -64,7 +63,7 @@ export default function FAQSection() {
           />
           <button className="px-8 py-3 bg-red-600 text-white font-bold rounded hover:bg-red-700 transition flex items-center justify-center gap-2">
             Get Started
-            <ChevronDown size={20} className="rotate-[-90deg]" />
+            <ChevronDown size={20} className="-rotate-90" />
           </button>
         </div>
       </div>

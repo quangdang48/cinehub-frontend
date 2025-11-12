@@ -1,127 +1,106 @@
-"use client"
-
-import type React from "react"
-
-import { useState } from "react"
+import { useState } from "react";
+import { useFormik } from "formik";
+import { Link } from "react-router-dom";
+import { Input, Button, AuthCard, Divider, Alert } from "../common";
+import { loginSchema } from "@/utils/validation-schemas";
+import type { LoginDto } from "@/types/LoginDto";
+import useAuth from "@/hooks/useAuth";
 
 export default function LoginForm() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [errors, setErrors] = useState({ email: "", password: "" })
+  const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError] = useState<string>("");
+  const { login } = useAuth();
 
-  const validateEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    return emailRegex.test(email)
-  }
+  const formik = useFormik<LoginDto>({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: loginSchema,
+    onSubmit: async (values) => {
+      setIsLoading(true);
+      setApiError("");
+      
+      const result = await login(values);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    const newErrors = { email: "", password: "" }
-
-    if (!email) {
-      newErrors.email = "Email is required"
-    } else if (!validateEmail(email)) {
-      newErrors.email = "Please enter a valid email"
-    }
-
-    if (!password) {
-      newErrors.password = "Password is required"
-    } else if (password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters"
-    }
-
-    setErrors(newErrors)
-
-    if (!newErrors.email && !newErrors.password) {
-      console.log("Form submitted:", { email, password })
-      // Handle login logic here
-    }
-  }
+      if (result?.status === "failed") {
+        setApiError(result.message);
+      }
+      setIsLoading(false);
+    },
+  });
 
   return (
-    <div className="w-full max-w-md">
-      {/* Card Container */}
-      <div className="bg-black/80 border border-gray-700 rounded-lg p-8 md:p-12">
-        <h1 className="text-3xl font-bold text-white mb-8">Sign In</h1>
+    <AuthCard title="Sign In" subtitle="Welcome back to CineHub">
+      <Alert message={apiError} variant="error" onClose={() => setApiError("")} />
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Email Field */}
-          <div>
-            <input
-              type="email"
-              placeholder="Email or phone number"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value)
-                if (errors.email) setErrors({ ...errors, email: "" })
-              }}
-              className={`w-full px-4 py-3 bg-gray-700 text-white placeholder-gray-400 rounded focus:outline-none focus:bg-gray-600 transition ${
-                errors.email ? "border-2 border-red-600" : ""
-              }`}
-            />
-            {errors.email && <p className="text-red-600 text-sm mt-2">{errors.email}</p>}
-          </div>
+      <form onSubmit={formik.handleSubmit} className="space-y-6">
+        <Input
+          type="email"
+          name="email"
+          placeholder="Email or phone number"
+          value={formik.values.email}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={formik.touched.email && formik.errors.email ? formik.errors.email : undefined}
+          autoComplete="email"
+        />
 
-          {/* Password Field */}
-          <div>
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value)
-                if (errors.password) setErrors({ ...errors, password: "" })
-              }}
-              className={`w-full px-4 py-3 bg-gray-700 text-white placeholder-gray-400 rounded focus:outline-none focus:bg-gray-600 transition ${
-                errors.password ? "border-2 border-red-600" : ""
-              }`}
-            />
-            {errors.password && <p className="text-red-600 text-sm mt-2">{errors.password}</p>}
-          </div>
+        <Input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={formik.values.password}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={formik.touched.password && formik.errors.password ? formik.errors.password : undefined}
+          autoComplete="current-password"
+        />
 
-          {/* Sign In Button */}
-          <button
-            type="submit"
-            className="w-full py-3 bg-red-600 text-white font-bold rounded hover:bg-red-700 transition"
+        <Button
+          type="submit"
+          variant="primary"
+          fullWidth
+          isLoading={isLoading}
+        >
+          Sign In
+        </Button>
+      </form>
+
+      <Divider />
+
+      <Button
+        variant="secondary"
+        fullWidth
+        onClick={() => console.log("Sign in with code")}
+      >
+        Sign in with Code
+      </Button>
+
+      <div className="mt-8 text-center">
+        <Link
+          to="/forgot-password"
+          className="text-gray-400 hover:text-white text-sm transition"
+        >
+          Forgot password?
+        </Link>
+      </div>
+
+      <div className="mt-8 pt-8 border-t border-gray-700 text-center">
+        <p className="text-gray-400 text-sm">
+          New to CineHub?{" "}
+          <Link
+            to="/register"
+            className="text-white hover:underline font-semibold"
           >
-            Sign In
-          </button>
-        </form>
-
-        {/* Divider */}
-        <div className="my-8 flex items-center">
-          <div className="flex-1 h-px bg-gray-700"></div>
-          <span className="px-4 text-gray-400 text-sm">OR</span>
-          <div className="flex-1 h-px bg-gray-700"></div>
-        </div>
-
-        {/* Sign In with Code */}
-        <button className="w-full py-3 bg-gray-700 text-white font-semibold rounded hover:bg-gray-600 transition">
-          Sign in with Code
-        </button>
-
-        {/* Forgot Password */}
-        <div className="mt-8 text-center">
-          <a href="#" className="text-gray-400 hover:text-white text-sm transition">
-            Forgot password?
-          </a>
-        </div>
-
-        {/* Sign Up Link */}
-        <div className="mt-8 pt-8 border-t border-gray-700 text-center">
-          <p className="text-gray-400 text-sm">
-            New to Netflix?{" "}
-            <a href="/" className="text-white hover:underline font-semibold">
-              Sign up now
-            </a>
-          </p>
-        </div>
-
-        {/* ReCAPTCHA Notice */}
-        <p className="text-gray-500 text-xs mt-6 text-center">
-          This page is protected by Google reCAPTCHA to ensure you're not a bot.
+            Sign up now
+          </Link>
         </p>
       </div>
-    </div>
-  )
+
+      <p className="text-gray-500 text-xs mt-6 text-center">
+        This page is protected by Google reCAPTCHA to ensure you're not a bot.
+      </p>
+    </AuthCard>
+  );
 }
