@@ -1,5 +1,3 @@
-"use client"
-
 import { Tv, Download, Play, Users } from "lucide-react"
 
 const features = [
@@ -41,7 +39,7 @@ export default function FeaturesSection() {
           return (
             <div
               key={index}
-              className="bg-gradient-to-br from-purple-900/20 to-black border border-gray-800 rounded-2xl p-8 hover:border-gray-600 transition"
+              className="bg-linear-to-br from-purple-900/20 to-black border border-gray-800 rounded-2xl p-8 hover:border-gray-600 transition"
             >
               <div className="flex items-center justify-between mb-6">
                 <div>
