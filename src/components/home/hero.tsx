@@ -5,10 +5,9 @@ export default function Hero() {
     <section className="relative h-screen bg-linear-to-b from-black via-transparent to-black overflow-hidden">
       {/* Background with overlay */}
       <div
-        className="absolute inset-0 opacity-30"
+        className="absolute inset-0 opacity-200"
         style={{
-          backgroundImage:
-            "url(/placeholder.svg?height=1080&width=1920&query=netflix movie collection grid background)",
+          backgroundImage: "url(https://images.unsplash.com/photo-1524985069026-dd778a71c7b4)",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
