@@ -20,6 +20,12 @@ const authRoute: Routes = [
         component: lazy(() => import('@/pages/forgot-password-page')),
         authority: [],
     },
+    {
+        key: 'authCallback',
+        path: '/auth/callback',
+        component: lazy(() => import('@/pages/auth-google-callback-page')),
+        authority: []
+    },
 ]
 
 export default authRoute
