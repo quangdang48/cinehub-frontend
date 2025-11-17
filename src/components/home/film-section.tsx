@@ -1,15 +1,21 @@
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { useRef } from "react"
 
-const trendingShows = [
-  { id: 1, title: "Genie Wish", image: "/genie-wish-movie-cover.jpg" },
-  { id: 2, title: "4 Rascals", image: "/4-rascals-family-comedy.jpg" },
-  { id: 3, title: "The Witcher", image: "/the-witcher-fantasy-series.jpg" },
-  { id: 4, title: "Survivor", image: "/survivor-reality-show.jpg" },
-  { id: 5, title: "Mystery Show", image: "/mystery-thriller-series.jpg" },
-]
+interface Show {
+  id: number
+  title: string
+  image: string
+}
 
-export default function TrendingSection() {
+interface TrendingSectionProps {
+  title?: string
+  shows: Show[]
+}
+
+export default function FilmSection({ 
+  title = "Trending now", 
+  shows 
+}: TrendingSectionProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
 
   const scroll = (direction: "left" | "right") => {
@@ -25,7 +31,7 @@ export default function TrendingSection() {
 
   return (
     <section className="px-6 md:px-12 lg:px-20 py-12 bg-black">
-      <h2 className="text-3xl font-bold text-white mb-8">Trending now</h2>
+      <h2 className="text-3xl font-bold text-white mb-8">{title}</h2>
 
       <div className="relative group">
         <button
@@ -40,7 +46,7 @@ export default function TrendingSection() {
           className="flex gap-4 overflow-x-auto scrollbar-hide pb-2"
           style={{ scrollBehavior: "smooth" }}
         >
-          {trendingShows.map((show, index) => (
+          {shows.map((show, index) => (
             <div key={show.id} className="flex-none min-w-max relative group/item cursor-pointer">
               <div className="relative w-48 h-80 rounded-lg overflow-hidden">
                 <img
