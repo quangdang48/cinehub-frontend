@@ -1,5 +1,4 @@
-import { FAQSection, Hero } from "@/components";
-import FilmSection from "@/components/home/film-section";
+import { FAQSection, Hero, FilmSection } from "@/components";
 
 const trendingShows = [
   { id: 1, title: "Genie Wish", image: "/genie-wish-movie-cover.jpg" },

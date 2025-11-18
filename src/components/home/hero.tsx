@@ -22,9 +22,9 @@ export default function Hero() {
           Unlimited films, series and more
         </h1>
 
-        <p className="text-lg md:text-xl text-gray-200 mb-4">Starts at USD 7.99. Cancel at any time.</p>
+        <p className="text-lg md:text-xl text-neutral-200 mb-4">Starts at USD 7.99. Cancel at any time.</p>
 
-        <p className="text-base md:text-lg text-gray-300 mb-8">
+        <p className="text-base md:text-lg text-neutral-300 mb-8">
           Ready to watch? Enter your email to create or restart your membership.
         </p>
 
@@ -33,7 +33,7 @@ export default function Hero() {
           <input
             type="email"
             placeholder="Email address"
-            className="flex-1 px-4 py-3 md:py-4 bg-gray-800/50 text-white placeholder-gray-400 border border-gray-700 rounded focus:outline-none focus:border-gray-400 text-base md:text-lg"
+            className="flex-1 px-4 py-3 md:py-4 bg-neutral-800/50 text-white placeholder-neutral-400 border border-neutral-700 rounded focus:outline-none focus:border-neutral-400 text-base md:text-lg"
           />
           <button className="px-8 md:px-10 py-3 md:py-4 bg-red-600 text-white font-bold rounded flex items-center justify-center gap-2 hover:bg-red-700 transition whitespace-nowrap text-base md:text-lg">
             Get Started

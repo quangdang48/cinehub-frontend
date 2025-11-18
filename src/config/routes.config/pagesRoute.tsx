@@ -8,6 +8,12 @@ const pagesRoute: Routes = [
         component: lazy(() => import('@/pages/home-page')),
         authority: [],
     },
+    {
+        key: 'movie-detail',
+        path: `/movie/:id`,
+        component: lazy(() => import('@/pages/movie-detail-page')),
+        authority: [],
+    },
     // {
     //     key: 'pages.accessDenied',
     //     path: '/access-denied',
