@@ -17,7 +17,7 @@ export default function Header() {
   const isMovieDetail = location.pathname.includes('/movie/');
 
   return (
-    <header className={`${isMovieDetail ? 'bg-black/80 backdrop-blur-sm' : 'absolute'} top-0 left-0 right-0 z-20 px-6 py-4 md:px-12 md:py-4 border-b border-gray-800/50`}>
+    <header className={`${isMovieDetail ? 'bg-black/80 backdrop-blur-sm' : 'absolute'} top-0 left-0 right-0 z-20 px-6 py-4 md:px-12 md:py-4 border-b border-neutral-800/50`}>
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between">
           {/* Left: Logo */}
@@ -29,28 +29,28 @@ export default function Header() {
             {/* Navigation Menu */}
             {isMovieDetail && (
               <nav className="hidden md:flex items-center gap-6 text-sm">
-                <Link to="/movies" className="text-gray-300 hover:text-white transition">
+                <Link to="/movies" className="text-neutral-300 hover:text-white transition">
                   Phim Lẻ
                 </Link>
-                <Link to="/series" className="text-gray-300 hover:text-white transition">
+                <Link to="/series" className="text-neutral-300 hover:text-white transition">
                   Phim Bộ
                 </Link>
-                <Link to="/genres" className="text-gray-300 hover:text-white transition flex items-center gap-1">
+                <Link to="/genres" className="text-neutral-300 hover:text-white transition flex items-center gap-1">
                   Thể loại
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </Link>
-                <Link to="/countries" className="text-gray-300 hover:text-white transition flex items-center gap-1">
+                <Link to="/countries" className="text-neutral-300 hover:text-white transition flex items-center gap-1">
                   Quốc gia
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </Link>
-                <Link to="/new" className="text-gray-300 hover:text-white transition">
+                <Link to="/new" className="text-neutral-300 hover:text-white transition">
                   Xem Chung
                 </Link>
-                <Link to="/trending" className="text-gray-300 hover:text-white transition flex items-center gap-1">
+                <Link to="/trending" className="text-neutral-300 hover:text-white transition flex items-center gap-1">
                   Thêm
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -68,7 +68,7 @@ export default function Header() {
           <div className="flex items-center gap-4">
             {/* Search Icon */}
             {isMovieDetail && (
-              <button className="p-2 text-gray-300 hover:text-white transition">
+              <button className="p-2 text-neutral-300 hover:text-white transition">
                 <Search size={20} />
               </button>
             )}
@@ -78,7 +78,7 @@ export default function Header() {
                 {/* Notification Bell */}
                 <Link 
                   to="/profile?tab=notifications"
-                  className="relative p-2 text-gray-300 hover:text-white transition"
+                  className="relative p-2 text-neutral-300 hover:text-white transition"
                 >
                   <Bell size={20} />
                   {/* Notification badge */}

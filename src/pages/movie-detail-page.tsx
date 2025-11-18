@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { FilmService } from '@/services/FilmService';
 import type { FilmResponseDto } from '@/types/FilmResponseDto';
 import { MovieHero, EpisodeSection, CommentSection } from '@/components/movie-detail';
+import { TabNavigation } from '@/components/common';
 import Spinner from '@/components/common/Spinner';
 
 export default function MovieDetailPage() {
@@ -10,6 +11,14 @@ export default function MovieDetailPage() {
   const [film, setFilm] = useState<FilmResponseDto | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState('episodes');
+
+  const tabs = [
+    { id: 'episodes', label: 'Tập phim' },
+    { id: 'gallery', label: 'Gallery' },
+    { id: 'cast', label: 'Diễn viên' },
+    { id: 'recommendations', label: 'Đề xuất' },
+  ];
 
   useEffect(() => {
     const fetchFilmDetail = async () => {
@@ -45,7 +54,7 @@ export default function MovieDetailPage() {
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center text-white">
           <h2 className="text-2xl font-bold mb-4">Đã có lỗi xảy ra</h2>
-          <p className="text-gray-400">{error || 'Không tìm thấy phim'}</p>
+          <p className="text-neutral-400">{error || 'Không tìm thấy phim'}</p>
         </div>
       </div>
     );
@@ -53,29 +62,44 @@ export default function MovieDetailPage() {
 
   return (
     <main className="min-h-screen bg-black">
+      {/* Hero Section */}
       <MovieHero film={film} />
       
-      {/* Tabs Section */}
-      <div className="bg-gray-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex gap-8 border-b border-gray-800">
-            <button className="py-4 px-2 text-white font-semibold border-b-2 border-yellow-500">
-              Tập phim
-            </button>
-            <button className="py-4 px-2 text-gray-400 hover:text-white transition">
-              Gallery
-            </button>
-            <button className="py-4 px-2 text-gray-400 hover:text-white transition">
-              Diễn viên
-            </button>
-            <button className="py-4 px-2 text-gray-400 hover:text-white transition">
-              Đề xuất
-            </button>
+      {/* Tabs Navigation */}
+      <TabNavigation 
+        tabs={tabs} 
+        activeTab={activeTab} 
+        onTabChange={setActiveTab}
+        sticky={false}
+      />
+
+      {/* Tab Content */}
+      <div className="min-h-[400px]">
+        {activeTab === 'episodes' && <EpisodeSection filmId={film.id} />}
+        {activeTab === 'gallery' && (
+          <div className="bg-neutral-900 text-white py-12">
+            <div className="max-w-7xl mx-auto px-6 lg:px-8 text-center">
+              <p className="text-neutral-400">Tính năng Gallery đang được phát triển...</p>
+            </div>
           </div>
-        </div>
+        )}
+        {activeTab === 'cast' && (
+          <div className="bg-neutral-900 text-white py-12">
+            <div className="max-w-7xl mx-auto px-6 lg:px-8 text-center">
+              <p className="text-neutral-400">Tính năng Diễn viên đang được phát triển...</p>
+            </div>
+          </div>
+        )}
+        {activeTab === 'recommendations' && (
+          <div className="bg-neutral-900 text-white py-12">
+            <div className="max-w-7xl mx-auto px-6 lg:px-8 text-center">
+              <p className="text-neutral-400">Tính năng Đề xuất đang được phát triển...</p>
+            </div>
+          </div>
+        )}
       </div>
 
-      <EpisodeSection filmId={film.id} />
+      {/* Comments Section */}
       <CommentSection filmId={film.id} />
     </main>
   );

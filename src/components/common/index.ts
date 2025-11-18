@@ -11,3 +11,7 @@ export { Divider } from "./divider";
 export { PasswordStrength } from "./password-strength";
 export { RadioGroup } from "./radio-group";
 export { SidebarItem } from "./sidebar-item";
+export { IconButton } from "./icon-button";
+export { Badge } from "./badge";
+export { RatingBadge } from "./rating-badge";
+export { TabNavigation } from "./tab-navigation";
