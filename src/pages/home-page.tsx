@@ -1,28 +1,106 @@
+"use client";
+
 import { FAQSection, Hero, FilmSection } from "@/components";
+import { FilmService } from "@/services/FilmService";
+import { mapFilmToShow } from "@/components/home/film-section";
 
-const trendingShows = [
-  { id: 1, title: "Genie Wish", image: "/genie-wish-movie-cover.jpg" },
-  { id: 2, title: "4 Rascals", image: "/4-rascals-family-comedy.jpg" },
-  { id: 3, title: "The Witcher", image: "/the-witcher-fantasy-series.jpg" },
-  { id: 4, title: "Survivor", image: "/survivor-reality-show.jpg" },
-  { id: 5, title: "Mystery Show", image: "/mystery-thriller-series.jpg" },
-]
-
-const popularShows = [
-  { id: 6, title: "Breaking Bad", image: "/breaking-bad.jpg" },
-  { id: 7, title: "Stranger Things", image: "/stranger-things.jpg" },
-  { id: 8, title: "The Crown", image: "/the-crown.jpg" },
-  { id: 9, title: "Chernobyl", image: "/chernobyl.jpg" },
-  { id: 10, title: "Sherlock", image: "/sherlock.jpg" },
-]
+import { useState, useEffect } from "react";
 
 export default function Home() {
+  // -----------------------
+  // Most viewed
+  // -----------------------
+  const [mostViewedShows, setMostViewedShows] = useState<any[]>([]);
+  const [pageMostViewed, setPageMostViewed] = useState(1);  
+  const [loadingMostViewed, setLoadingMostViewed] = useState(false);
+  const PAGE_SIZE = 10;
+
+  async function loadMostViewed(pageNumber: number) {
+    setLoadingMostViewed(true);
+    try {
+      const res = await FilmService.filmControllerGetMostViewedV1(
+        pageNumber,
+        PAGE_SIZE
+      );
+      const shows = mapFilmToShow(res.data ?? []);
+      if (pageNumber === 1) {
+        setMostViewedShows(shows);
+      } else {
+        setMostViewedShows(prev => [...prev, ...shows]);
+      }
+    } catch (error) {
+      console.error("Load most viewed error:", error);
+    } finally {
+      setLoadingMostViewed(false);
+    }
+  }
+
+  // -----------------------
+  // Latest releases
+  // -----------------------
+  const [latestShows, setLatestShows] = useState<any[]>([]);
+  const [pageLatest, setPageLatest] = useState(1);  
+  const [loadingLatest, setLoadingLatest] = useState(false);
+
+  async function loadLatestReleases(pageNumber: number) {
+    setLoadingLatest(true);
+    try {
+      const res = await FilmService.filmControllerGetByReleaseV1(
+        pageNumber,
+        PAGE_SIZE,
+        'DESC' // sắp xếp từ mới nhất
+      );
+      const shows = mapFilmToShow(res.data ?? []);
+      if (pageNumber === 1) {
+        setLatestShows(shows);
+      } else {
+        setLatestShows(prev => [...prev, ...shows]);
+      }
+    } catch (error) {
+      console.error("Load latest releases error:", error);
+    } finally {
+      setLoadingLatest(false);
+    }
+  }
+
+  useEffect(() => {
+    loadMostViewed(1);
+    loadLatestReleases(1);
+  }, []);
+
   return (
     <main className="min-h-screen bg-black">
       <Hero />
-      <FilmSection title="Trending now" shows={trendingShows} />
-      <FilmSection title="Popular picks" shows={popularShows} />
+
+      <FilmSection
+        title="Most viewed"
+        shows={mostViewedShows}
+        loading={loadingMostViewed}
+        onNext={() => {
+          if (loadingMostViewed) return;
+          setPageMostViewed(prev => {
+            const nextPage = prev + 1;
+            loadMostViewed(nextPage);
+            return nextPage;
+          });
+        }}
+      />
+
+      <FilmSection
+        title="Latest releases"
+        shows={latestShows}
+        loading={loadingLatest}
+        onNext={() => {
+          if (loadingLatest) return;
+          setPageLatest(prev => {
+            const nextPage = prev + 1;
+            loadLatestReleases(nextPage);
+            return nextPage;
+          });
+        }}
+      />
+
       <FAQSection />
     </main>
-  )
+  );
 }
