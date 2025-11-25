@@ -1,6 +1,8 @@
+import type { FilmResponseDto } from "@/types/FilmResponseDto";
+import type { PosterDto } from "@/types/PosterDto";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRef, useEffect, useState } from "react";
-import type { FilmResponseDto, PosterDto } from "@/services/types";
+import { useNavigate } from "react-router-dom";
 
 interface Show {
   id: string;
@@ -41,6 +43,7 @@ export default function FilmSection({
   onNext,
 }: FilmSectionProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   const scroll = (direction: "left" | "right") => {
     const container = scrollContainerRef.current;
@@ -55,6 +58,11 @@ export default function FilmSection({
   const handleNext = () => {
     scroll("right");
     if (onNext) onNext();
+  };
+
+  // Handle film click - navigate to detail page
+  const handleFilmClick = (filmId: string) => {
+    navigate(`/movie/${filmId}`);
   };
 
   // --- Scroll reveal state ---
@@ -115,6 +123,7 @@ export default function FilmSection({
               className={`flex-none min-w-max relative group/item cursor-pointer film-item transition-all duration-500 
                 ${visibleItems.has(show.id) ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
               data-id={show.id}
+              onClick={() => handleFilmClick(show.id)}
             >
               <div className="relative w-48 h-80 rounded-lg overflow-hidden">
                 <img

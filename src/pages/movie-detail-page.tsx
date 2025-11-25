@@ -20,6 +20,11 @@ export default function MovieDetailPage() {
     { id: 'recommendations', label: 'Đề xuất' },
   ];
 
+  // Scroll to top when page loads or id changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
+
   useEffect(() => {
     const fetchFilmDetail = async () => {
       if (!id) return;

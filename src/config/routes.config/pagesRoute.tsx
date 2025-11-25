@@ -14,6 +14,12 @@ const pagesRoute: Routes = [
         component: lazy(() => import('@/pages/movie-detail-page')),
         authority: [],
     },
+    {
+        key: 'billing',
+        path: `/billing`,
+        component: lazy(() => import('@/pages/billing-page')),
+        authority: [],
+    },
     // {
     //     key: 'pages.accessDenied',
     //     path: '/access-denied',

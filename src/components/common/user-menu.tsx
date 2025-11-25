@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { User, Heart, List, PlayCircle, Bell, LogOut } from "lucide-react";
+import { User, Heart, List, PlayCircle, Bell, CreditCard, LogOut } from "lucide-react";
 import type { UserDto } from "@/types/UserDto";
 
 interface UserMenuProps {
@@ -55,6 +55,11 @@ export default function UserMenu({ user, onLogout }: UserMenuProps) {
       label: "Thông báo",
       href: "/profile?tab=notifications",
     },
+    {
+      icon: CreditCard,
+      label: "Nâng cấp Premium",
+      href: "/billing",
+    },
   ];
 
   return (
@@ -71,7 +76,7 @@ export default function UserMenu({ user, onLogout }: UserMenuProps) {
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-64 bg-gray-900 border border-gray-700 rounded-lg shadow-xl overflow-hidden z-50">
+        <div className="absolute right-0 mt-2 w-64 bg-gray-900 border border-gray-700 rounded-lg shadow-2xl overflow-hidden z-[10000]">
           {/* User Info */}
           <div className="px-4 py-3 border-b border-gray-700">
             <div className="flex items-center gap-3">

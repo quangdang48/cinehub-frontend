@@ -99,7 +99,7 @@ export const MovieHero: React.FC<MovieHeroProps> = ({ film }) => {
 
           {/* Right Side: Action Buttons and Rating */}
           <div className="lg:col-span-1">
-            <div className="bg-neutral-900/50 backdrop-blur-sm rounded-lg p-6 space-y-6 lg:sticky lg:top-24">
+            <div className="bg-neutral-900/50 backdrop-blur-sm rounded-lg p-6 space-y-6 lg:sticky lg:top-24 z-10">
               {/* Watch Now Button */}
               <Button
                 variant="primary"

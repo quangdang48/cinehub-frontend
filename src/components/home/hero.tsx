@@ -5,7 +5,7 @@ export default function Hero() {
     <section className="relative h-screen bg-linear-to-b from-black via-transparent to-black overflow-hidden">
       {/* Background with overlay */}
       <div
-        className="absolute inset-0 opacity-200"
+        className="absolute inset-0 opacity-50"
         style={{
           backgroundImage: "url(https://images.unsplash.com/photo-1524985069026-dd778a71c7b4)",
           backgroundSize: "cover",
@@ -14,10 +14,10 @@ export default function Hero() {
       />
 
       {/* Dark overlay gradient */}
-      <div className="absolute inset-0 bg-linear-to-r from-black via-black/50 to-transparent" />
+      <div className="absolute inset-0 bg-linear-to-r from-black via-black/60 to-black/40" />
 
       {/* Content */}
-      <div className="relative z-10 h-full flex flex-col items-start justify-center px-6 md:px-12 lg:px-20 max-w-2xl">
+      <div className="relative z-10 h-full flex flex-col items-start justify-center px-4 md:px-12 lg:px-20 max-w-3xl">
         <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-white mb-6 leading-tight text-balance">
           Unlimited films, series and more
         </h1>
@@ -33,7 +33,7 @@ export default function Hero() {
           <input
             type="email"
             placeholder="Email address"
-            className="flex-1 px-4 py-3 md:py-4 bg-neutral-800/50 text-white placeholder-neutral-400 border border-neutral-700 rounded focus:outline-none focus:border-neutral-400 text-base md:text-lg"
+            className="flex-1 px-4 py-3 md:py-4 bg-gray-900 text-white placeholder-gray-500 border border-gray-700 rounded focus:outline-none focus:border-red-600 focus:ring-2 focus:ring-red-600/20 text-base md:text-lg transition"
           />
           <button className="px-8 md:px-10 py-3 md:py-4 bg-red-600 text-white font-bold rounded flex items-center justify-center gap-2 hover:bg-red-700 transition whitespace-nowrap text-base md:text-lg">
             Get Started

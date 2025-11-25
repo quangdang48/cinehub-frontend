@@ -17,7 +17,13 @@ export default function Header() {
   const isMovieDetail = location.pathname.includes('/movie/');
 
   return (
-    <header className={`${isMovieDetail ? 'bg-black/80 backdrop-blur-sm' : 'absolute'} top-0 left-0 right-0 z-20 px-6 py-4 md:px-12 md:py-4 border-b border-neutral-800/50`}>
+    <header
+      className={`fixed top-0 left-0 right-0 z-[9999] px-6 py-4 md:px-12 md:py-4 border-b border-neutral-800/50 transition-colors duration-300 ${
+        isMovieDetail
+          ? 'bg-black/80 backdrop-blur-sm'
+          : 'bg-transparent backdrop-blur-none'
+      }`}
+    >
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between">
           {/* Left: Logo */}
