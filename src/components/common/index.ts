@@ -15,3 +15,4 @@ export { IconButton } from "./icon-button";
 export { Badge } from "./badge";
 export { RatingBadge } from "./rating-badge";
 export { TabNavigation } from "./tab-navigation";
+export { MegaMenuDropdown } from "./mega-menu-dropdown";

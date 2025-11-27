@@ -15,11 +15,12 @@ export { default as ContinueWatchingTab } from "./profile/continue-watching-tab"
 export { default as NotificationsTab } from "./profile/notifications-tab";
 
 // Home components
-export { default as Hero } from "./home/hero";
-export { default as FilmSection } from "./home/film-section";
-export { default as FeaturesSection } from "./home/features-section";
-export { default as FAQSection } from "./home/faq-section";
 export { default as UserMenu } from "./common/user-menu";
 
 // Movie detail components
 export * from "./movie-detail";
+
+// Movie list components
+export * from "./movie";
+
+export * from "./home";

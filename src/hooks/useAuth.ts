@@ -6,20 +6,19 @@ import {
     useAppSelector,
     useAppDispatch,
 } from '@/store'
-import { useNavigate } from 'react-router-dom'
-import useQuery from './useQuery'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import appConfig from '@/config/app.config'
 import type { LoginDto } from '@/types/LoginDto'
 import { Gender } from '@/types/Gender'
 
 type Status = 'success' | 'failed'
 
-function useAuth() {
+export function useAuth() {
     const dispatch = useAppDispatch()
 
     const navigate = useNavigate()
 
-    const query = useQuery()
+    const [query] = useSearchParams()
 
     const { signedIn, token } = useAppSelector((state) => state.auth.session)
 
@@ -81,5 +80,3 @@ function useAuth() {
         signOut,
     }
 }
-
-export default useAuth

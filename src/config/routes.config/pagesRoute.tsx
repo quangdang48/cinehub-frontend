@@ -15,6 +15,36 @@ const pagesRoute: Routes = [
         authority: [],
     },
     {
+        key: 'movie-list',
+        path: `/phim-le`,
+        component: lazy(() => import('@/pages/movie-list-page')),
+        authority: [],
+    },
+    {
+        key: 'series-list',
+        path: `/phim-bo`,
+        component: lazy(() => import('@/pages/movie-list-page')),
+        authority: [],
+    },
+    {
+        key: 'browse',
+        path: `/filter`,
+        component: lazy(() => import('@/pages/movie-list-page')),
+        authority: [],
+    },
+    {
+        key: 'genre',
+        path: `/genre`,
+        component: lazy(() => import('@/pages/movie-list-page')),
+        authority: [],
+    },
+    {
+        key: 'country',
+        path: `/country`,
+        component: lazy(() => import('@/pages/movie-list-page')),
+        authority: [],
+    },
+    {
         key: 'billing',
         path: `/billing`,
         component: lazy(() => import('@/pages/billing-page')),

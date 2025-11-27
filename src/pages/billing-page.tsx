@@ -199,7 +199,7 @@ export default function BillingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black py-12 px-4">
+    <div className="min-h-screen bg-black py-20 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
@@ -310,7 +310,7 @@ export default function BillingPage() {
                   <div className="space-y-4">
                     {plan.features.map((feature, index) => (
                       <div key={index} className="flex items-start gap-3">
-                        <Check className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                        <Check className="w-5 h-5 text-green-400 shrink-0 mt-0.5" />
                         <span className="text-gray-300 text-sm">{feature}</span>
                       </div>
                     ))}

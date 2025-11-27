@@ -5,8 +5,8 @@ export type ApiResponse<T> = {
     data: T
 }
 
-export type PaginatedApiResponse<T> = ApiResponse<T> & {
-    data: T[]
+export type PaginatedApiResponse<T> = Omit<ApiResponse<T>, 'data'> & {
+    data: Array<T>
     totalItems: number
     totalPages: number
     itemsPerPage: number

@@ -4,7 +4,7 @@ import type { UserDto } from "@/types/UserDto";
 import { setUser, useAppDispatch, useAppSelector } from "@/store";
 import { UserService } from "@/services/UserService";
 import type { UpdateUserDto } from "@/types/UpdateUserDto";
-import useAuth from "@/hooks/useAuth";
+import { useAuth } from "@/hooks";
 import { FavoritesTab, ProfileForm, ListsTab, ContinueWatchingTab, NotificationsTab, ProfileSidebar } from "@/components";
 
 export default function ProfilePage() {
@@ -57,7 +57,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-black pt-20">
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
         {/* Mobile Menu Button */}

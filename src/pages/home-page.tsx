@@ -1,106 +1,119 @@
-"use client";
-
-import { FAQSection, Hero, FilmSection } from "@/components";
 import { FilmService } from "@/services/FilmService";
-import { mapFilmToShow } from "@/components/home/film-section";
 
-import { useState, useEffect } from "react";
+import { useState, useRef } from "react";
+import { HeroSlider, CarouselSection, RankingCard, SimpleCard, WideCard, MoviePreviewModal, type ModalPosition} from "@/components";
+import type { FilmResponseDto } from "@/types/FilmResponseDto";
+import { useCarouselData } from "@/hooks";
 
 export default function Home() {
-  // -----------------------
-  // Most viewed
-  // -----------------------
-  const [mostViewedShows, setMostViewedShows] = useState<any[]>([]);
-  const [pageMostViewed, setPageMostViewed] = useState(1);  
-  const [loadingMostViewed, setLoadingMostViewed] = useState(false);
-  const PAGE_SIZE = 10;
+  const mostViewMovies = useCarouselData<FilmResponseDto>(FilmService.filmControllerGetMostViewedV1);
+  const latestReleaseMovies = useCarouselData<FilmResponseDto>(FilmService.filmControllerGetByReleaseV1);
+  const newTrendingMovies = useCarouselData<FilmResponseDto>(FilmService.filmControllerGetByReleaseV1);
 
-  async function loadMostViewed(pageNumber: number) {
-    setLoadingMostViewed(true);
-    try {
-      const res = await FilmService.filmControllerGetMostViewedV1(
-        pageNumber,
-        PAGE_SIZE
-      );
-      const shows = mapFilmToShow(res.data ?? []);
-      if (pageNumber === 1) {
-        setMostViewedShows(shows);
-      } else {
-        setMostViewedShows(prev => [...prev, ...shows]);
-      }
-    } catch (error) {
-      console.error("Load most viewed error:", error);
-    } finally {
-      setLoadingMostViewed(false);
-    }
-  }
 
-  // -----------------------
-  // Latest releases
-  // -----------------------
-  const [latestShows, setLatestShows] = useState<any[]>([]);
-  const [pageLatest, setPageLatest] = useState(1);  
-  const [loadingLatest, setLoadingLatest] = useState(false);
+  const [hoveredRankingId, setHoveredRankingId] = useState<string | null>(null);
+  const [modalData, setModalData] = useState<FilmResponseDto | null>(null);
+  const [modalPosition, setModalPosition] = useState<ModalPosition | null>(null);
+  const timerRef = useRef<number | null>(null);
 
-  async function loadLatestReleases(pageNumber: number) {
-    setLoadingLatest(true);
-    try {
-      const res = await FilmService.filmControllerGetByReleaseV1(
-        pageNumber,
-        PAGE_SIZE,
-        'DESC' // sắp xếp từ mới nhất
-      );
-      const shows = mapFilmToShow(res.data ?? []);
-      if (pageNumber === 1) {
-        setLatestShows(shows);
-      } else {
-        setLatestShows(prev => [...prev, ...shows]);
-      }
-    } catch (error) {
-      console.error("Load latest releases error:", error);
-    } finally {
-      setLoadingLatest(false);
-    }
-  }
+  // 1. Hàm handle chung: Chỉ lo việc tính toán vị trí và hiện modal sau 800ms
+  const handleDelayedModalEnter = (movie: FilmResponseDto, targetElement: HTMLElement) => {
+    if (timerRef.current) clearTimeout(timerRef.current);
 
-  useEffect(() => {
-    loadMostViewed(1);
-    loadLatestReleases(1);
-  }, []);
+    const rect = targetElement.getBoundingClientRect();
+    timerRef.current = setTimeout(() => {
+      const width = 320;
+      const left = rect.left + (rect.width / 2) - (width / 2);
+      const safeLeft = Math.max(10, Math.min(window.innerWidth - width - 10, left));
+      
+      setModalPosition({
+        top: rect.top - 20,
+        left: safeLeft,
+        width: width,
+      });
+      setModalData(movie);
+    }, 800);
+  };
+  const onRankingEnter = (movie: FilmResponseDto, event: React.MouseEvent<HTMLDivElement>) => {
+    setHoveredRankingId(movie.id);
+    handleDelayedModalEnter(movie, event.currentTarget);
+  };
+
+  const onSimpleEnter = (movie: FilmResponseDto, event: React.MouseEvent<HTMLDivElement>) => {
+    handleDelayedModalEnter(movie, event.currentTarget); 
+  };
+
+  const handleCardLeave = () => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    setHoveredRankingId(null);
+  };
+
+  const handleModalLeave = () => {
+    setModalData(null);
+    setHoveredRankingId(null);
+  };
 
   return (
     <main className="min-h-screen bg-black">
-      <Hero />
+      <HeroSlider films={mostViewMovies.items} loading={mostViewMovies.loading} />
+      <div className="max-w-[1800px] mx-auto pt-10 px-10">
+        <CarouselSection
+          title="Most Viewed"
+          onLoadMore={mostViewMovies.loadMore}
+          loading={mostViewMovies.loading}
+          hasMore={mostViewMovies.hasMore}
+        >
+          {mostViewMovies.items.map((movie, idx) => (
+            <RankingCard
+              index={idx}
+              key={idx}
+              movie={movie}
+              hoveredId={hoveredRankingId}
+              onEnter={onRankingEnter}
+              onLeave={handleCardLeave}
+            />
+          ))}
+        </CarouselSection>
+        <CarouselSection
+          title="Latest Releases"
+          onLoadMore={latestReleaseMovies.loadMore}
+          loading={latestReleaseMovies.loading}
+          hasMore={latestReleaseMovies.hasMore}
+        >
+          {latestReleaseMovies.items.map((movie, idx) => (
+            <SimpleCard
+              key={idx}
+              movie={movie}
+              onEnter={onSimpleEnter}
+              onLeave={handleCardLeave}
+            />
+          ))}
+        </CarouselSection>
+        <CarouselSection
+          title="New Trending"
+          onLoadMore={newTrendingMovies.loadMore}
+          loading={newTrendingMovies.loading}
+          hasMore={newTrendingMovies.hasMore}
+        >
+          {newTrendingMovies.items.map((movie, idx) => (
+            <WideCard
+              key={idx}
+              movie={movie}
+              onEnter={onSimpleEnter}
+              onLeave={handleCardLeave}
+            />
+          ))}
+        </CarouselSection>
+      </div>
+      {modalData && modalPosition && (
+        <MoviePreviewModal 
+          movie={modalData}
+          position={modalPosition}
+          onLeave={handleModalLeave}
+        />
+      )}
 
-      <FilmSection
-        title="Most viewed"
-        shows={mostViewedShows}
-        loading={loadingMostViewed}
-        onNext={() => {
-          if (loadingMostViewed) return;
-          setPageMostViewed(prev => {
-            const nextPage = prev + 1;
-            loadMostViewed(nextPage);
-            return nextPage;
-          });
-        }}
-      />
-
-      <FilmSection
-        title="Latest releases"
-        shows={latestShows}
-        loading={loadingLatest}
-        onNext={() => {
-          if (loadingLatest) return;
-          setPageLatest(prev => {
-            const nextPage = prev + 1;
-            loadLatestReleases(nextPage);
-            return nextPage;
-          });
-        }}
-      />
-
-      <FAQSection />
+      {/* <FAQSection /> */}
     </main>
   );
 }

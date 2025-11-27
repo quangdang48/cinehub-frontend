@@ -1,12 +1,13 @@
 import { useMemo } from 'react'
 import { useAppSelector } from '@/store'
 
-function useAuthority(
+export function useAuthority(
     userAuthority: string[] = [],
     authority: string[] = [],
     emptyCheck = false,
 ) {
-    const userRoles = useAppSelector((state) => state.auth.user.name ? userAuthority : [])
+    //const userRoles = useAppSelector((state) => state.auth.user.name ? userAuthority : [])
+    const userRoles = userAuthority;
     const roleMatched = useMemo(() => {
         const authorityRoles = Array.isArray(authority) ? authority : []
 
@@ -23,5 +24,3 @@ function useAuthority(
 
     return roleMatched
 }
-
-export default useAuthority
