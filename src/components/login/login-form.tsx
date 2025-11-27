@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Input, Button, AuthCard, Divider, Alert } from "../common";
 import { loginSchema } from "@/utils/validation-schemas";
 import type { LoginDto } from "@/types/LoginDto";
-import useAuth from "@/hooks/useAuth";
+import { useAuth } from "@/hooks";
 
 export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);

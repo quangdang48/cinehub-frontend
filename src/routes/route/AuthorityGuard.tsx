@@ -1,6 +1,6 @@
 import type { PropsWithChildren } from 'react'
 import { Navigate } from 'react-router-dom'
-import useAuthority from '@/hooks/useAuthority'
+import { useAuthority } from '@/hooks'
 
 type AuthorityGuardProps = PropsWithChildren<{
     userAuthority?: string[]

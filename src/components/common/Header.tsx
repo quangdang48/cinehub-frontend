@@ -1,27 +1,49 @@
 import { Bell, Search } from "lucide-react"
-import { Link, useLocation } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { useAppSelector } from "@/store"
-import useAuth from "@/hooks/useAuth"
+import { useAuth } from "@/hooks"
 import UserMenu from "./user-menu";
+import { useEffect, useState, useCallback } from "react";
+import { MegaMenuDropdown } from "./mega-menu-dropdown";
+import { COUNTRY_LIST, GENRE_LIST } from "@/constant/movie.const";
+
+type OpenDropdown = "genre" | "country" | null;
 
 export default function Header() {
   const { signOut } = useAuth();
   const signedIn = useAppSelector((state) => state.auth.session.signedIn);
   const user = useAppSelector((state) => state.auth.user);
-  const location = useLocation();
 
   const handleLogout = () => {
     signOut();
   };
 
-  const isMovieDetail = location.pathname.includes('/movie/');
+  const [scrolled, setScrolled] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<OpenDropdown>(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const handleToggleDropdown = useCallback((dropdown: OpenDropdown) => {
+    setOpenDropdown((prev) => (prev === dropdown ? null : dropdown));
+  }, []);
+
+  const handleCloseDropdown = useCallback(() => {
+    setOpenDropdown(null);
+  }, []);
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-[9999] px-6 py-4 md:px-12 md:py-4 border-b border-neutral-800/50 transition-colors duration-300 ${
-        isMovieDetail
-          ? 'bg-black/80 backdrop-blur-sm'
-          : 'bg-transparent backdrop-blur-none'
+      className={`fixed top-0 left-0 right-0 z-9999 px-6 py-4 md:px-12 md:py-4 transition-all duration-300 ${
+        scrolled
+          ? 'bg-black/30 backdrop-blur-sm'
+          : 'bg-transparent'
       }`}
     >
       <div className="max-w-7xl mx-auto">
@@ -31,53 +53,49 @@ export default function Header() {
             <Link to="/" className="text-red-600 font-black text-2xl md:text-3xl hover:opacity-80 transition">
               CINEHUB
             </Link>
+            </div>
+            <div>
 
             {/* Navigation Menu */}
-            {isMovieDetail && (
+            
               <nav className="hidden md:flex items-center gap-6 text-sm">
-                <Link to="/movies" className="text-neutral-300 hover:text-white transition">
+                <Link to="/phim-le" className="text-neutral-300 hover:text-white transition">
                   Phim Lẻ
                 </Link>
-                <Link to="/series" className="text-neutral-300 hover:text-white transition">
+                <Link to="/phim-bo" className="text-neutral-300 hover:text-white transition">
                   Phim Bộ
                 </Link>
-                <Link to="/genres" className="text-neutral-300 hover:text-white transition flex items-center gap-1">
-                  Thể loại
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </Link>
-                <Link to="/countries" className="text-neutral-300 hover:text-white transition flex items-center gap-1">
-                  Quốc gia
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </Link>
-                <Link to="/new" className="text-neutral-300 hover:text-white transition">
-                  Xem Chung
-                </Link>
-                <Link to="/trending" className="text-neutral-300 hover:text-white transition flex items-center gap-1">
-                  Thêm
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </Link>
-                <Link to="/new" className="text-yellow-500 hover:text-yellow-400 transition flex items-center gap-1">
-                  <span className="bg-yellow-500 text-black text-xs px-2 py-0.5 rounded font-bold mr-1">NEW</span>
-                  Rồi Bóng
-                </Link>
+                
+                {/* Thể loại Dropdown */}
+                <MegaMenuDropdown
+                  label="Thể loại"
+                  items={GENRE_LIST}
+                  isOpen={openDropdown === "genre"}
+                  onToggle={() => handleToggleDropdown("genre")}
+                  onClose={handleCloseDropdown}
+                  basePath="/genre"
+                  columns={5}
+                />
+
+                {/* Quốc gia Dropdown */}
+                <MegaMenuDropdown
+                  label="Quốc gia"
+                  items={COUNTRY_LIST}
+                  isOpen={openDropdown === "country"}
+                  onToggle={() => handleToggleDropdown("country")}
+                  onClose={handleCloseDropdown}
+                  basePath="/country"
+                  columns={4}
+                />
               </nav>
-            )}
           </div>
 
           {/* Right: Actions */}
           <div className="flex items-center gap-4">
             {/* Search Icon */}
-            {isMovieDetail && (
               <button className="p-2 text-neutral-300 hover:text-white transition">
                 <Search size={20} />
               </button>
-            )}
 
             {signedIn ? (
               <>
