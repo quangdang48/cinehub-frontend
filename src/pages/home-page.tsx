@@ -1,6 +1,6 @@
 import { FilmService } from "@/services/FilmService";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { HeroSlider, CarouselSection, RankingCard, SimpleCard, WideCard, MoviePreviewModal, type ModalPosition} from "@/components";
 import type { FilmResponseDto } from "@/types/FilmResponseDto";
 import { useCarouselData } from "@/hooks";
@@ -15,6 +15,19 @@ export default function Home() {
   const [modalData, setModalData] = useState<FilmResponseDto | null>(null);
   const [modalPosition, setModalPosition] = useState<ModalPosition | null>(null);
   const timerRef = useRef<number | null>(null);
+
+  const handleWindowScroll = useCallback(() => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    setModalData(null);
+    setHoveredRankingId(null);
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleWindowScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleWindowScroll);
+    };
+  }, [handleWindowScroll]);
 
   // 1. Hàm handle chung: Chỉ lo việc tính toán vị trí và hiện modal sau 800ms
   const handleDelayedModalEnter = (movie: FilmResponseDto, targetElement: HTMLElement) => {
@@ -53,6 +66,12 @@ export default function Home() {
     setHoveredRankingId(null);
   };
 
+  const handleScrollStart = () => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    setModalData(null);
+    setHoveredRankingId(null);
+  };
+
   return (
     <main className="min-h-screen bg-black">
       <HeroSlider films={mostViewMovies.items} loading={mostViewMovies.loading} />
@@ -62,6 +81,7 @@ export default function Home() {
           onLoadMore={mostViewMovies.loadMore}
           loading={mostViewMovies.loading}
           hasMore={mostViewMovies.hasMore}
+          onScrollStart={handleScrollStart}
         >
           {mostViewMovies.items.map((movie, idx) => (
             <RankingCard
@@ -79,6 +99,7 @@ export default function Home() {
           onLoadMore={latestReleaseMovies.loadMore}
           loading={latestReleaseMovies.loading}
           hasMore={latestReleaseMovies.hasMore}
+          onScrollStart={handleScrollStart}
         >
           {latestReleaseMovies.items.map((movie, idx) => (
             <SimpleCard
@@ -94,6 +115,7 @@ export default function Home() {
           onLoadMore={newTrendingMovies.loadMore}
           loading={newTrendingMovies.loading}
           hasMore={newTrendingMovies.hasMore}
+          onScrollStart={handleScrollStart}
         >
           {newTrendingMovies.items.map((movie, idx) => (
             <WideCard

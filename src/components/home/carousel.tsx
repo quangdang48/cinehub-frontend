@@ -8,6 +8,7 @@ export interface CarouselSectionProps {
   loading?: boolean;
   hasMore?: boolean;
   className?: string;
+  onScrollStart?: () => void;
 };
 
 export const CarouselSection: React.FC<CarouselSectionProps> = ({
@@ -17,6 +18,7 @@ export const CarouselSection: React.FC<CarouselSectionProps> = ({
   loading = false,
   hasMore = true,
   className = "",
+  onScrollStart,
 }) => {
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
@@ -44,6 +46,7 @@ export const CarouselSection: React.FC<CarouselSectionProps> = ({
 
   const handleScroll = () => {
     checkScrollPosition();
+    onScrollStart?.();
     if (!scrollRef.current || !onLoadMore || !hasMore || loading) return;
 
     const el = scrollRef.current;
