@@ -1,35 +1,49 @@
 import type {
-  SubscriptionPlanDto,
-  SubscriptionResponseDto,
-  UpgradeSubscriptionDto,
+  PlanDto,
+  SubscriptionDto,
+  CheckoutResponse,
 } from '@/types/SubscriptionPlanDto';
 import ApiService from './ApiService';
 import type { ApiResponse } from '@/types/ApiResponse';
 
 export class SubscriptionService {
   /**
-   * Lấy danh sách các gói subscription
+   * Lấy danh sách các gói subscription đang active
    */
-  public static getPlans(): Promise<ApiResponse<SubscriptionPlanDto[]>> {
-    return ApiService.get('subscriptions/plans');
+  public static getActivePlans(): Promise<ApiResponse<PlanDto[]>> {
+    return ApiService.get('plans/active');
+  }
+
+  /**
+   * Lấy danh sách tất cả gói subscription
+   */
+  public static getAllPlans(
+    page = 1,
+    limit = 10
+  ): Promise<ApiResponse<PlanDto[]>> {
+    return ApiService.get(`plans?page=${page}&limit=${limit}`);
   }
 
   /**
    * Lấy thông tin subscription hiện tại của user
    */
   public static getCurrentSubscription(): Promise<
-    ApiResponse<SubscriptionResponseDto>
+    ApiResponse<SubscriptionDto>
   > {
-    return ApiService.get('subscriptions/current');
+    return ApiService.get('subscriptions/me', { authRequired: true });
   }
 
   /**
-   * Nâng cấp subscription
+   * Tạo checkout session để thanh toán
    */
-  public static upgradeSubscription(
-    requestBody: UpgradeSubscriptionDto
-  ): Promise<ApiResponse<SubscriptionResponseDto>> {
-    return ApiService.post('subscriptions/upgrade', requestBody);
+  public static createCheckout(
+    planId: string
+  ): Promise<ApiResponse<CheckoutResponse>> {
+    return ApiService.post(
+      'payment/checkout',
+      { planId },
+      { authRequired: true }
+    );
   }
 
   /**

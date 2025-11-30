@@ -1,83 +1,93 @@
 import { useState, useEffect } from 'react';
 import { Check } from 'lucide-react';
-import type { SubscriptionPlanDto, SubscriptionResponseDto } from '@/types/SubscriptionPlanDto';
-// import { SubscriptionService } from '@/services/SubscriptionService';
+import type { PlanDto, SubscriptionDto, BillingCycle, PlanType, SubscriptionStatus } from '@/types/SubscriptionPlanDto';
+import { SubscriptionService } from '@/services/SubscriptionService';
 import { Button } from '@/components/common';
 import Spinner from '@/components/common/Spinner';
 
-// Mock data for testing UI
-const MOCK_PLANS: SubscriptionPlanDto[] = [
-  {
-    id: 'free',
-    name: 'Miễn phí',
-    price: 0,
-    currency: 'VND',
-    billingPeriod: 'monthly',
-    description: 'Truy cập nội dung cơ bản với quảng cáo',
-    features: [
-      'Xem phim có quảng cáo',
-      'Chất lượng HD',
-      '1 thiết bị cùng lúc',
-      'Không xem offline',
-      'Hỗ trợ cơ bản',
-    ],
-    isPopular: false,
-  },
-  {
-    id: 'standard',
-    name: 'Standard',
-    price: 79000,
-    currency: 'VND',
-    billingPeriod: 'monthly',
-    description: 'Truy cập không giới hạn không có quảng cáo',
-    features: [
-      'Không quảng cáo',
-      'Chất lượng Full HD',
-      '2 thiết bị cùng lúc',
-      'Tải xuống để xem offline',
-      'Hỗ trợ 24/7',
-      'Phụ đề nhiều ngôn ngữ',
-    ],
-    isPopular: true,
-    badge: 'Phổ biến',
-  },
-  {
-    id: 'premium',
-    name: 'Premium',
-    price: 129000,
-    currency: 'VND',
-    billingPeriod: 'monthly',
-    description: 'Truy cập toàn bộ nội dung với chất lượng 4K',
-    features: [
-      'Không quảng cáo',
-      'Chất lượng 4K Ultra HD',
-      '4 thiết bị cùng lúc',
-      'Tải xuống để xem offline',
-      'Hỗ trợ 24/7 VIP',
-      'Phụ đề nhiều ngôn ngữ',
-      'Nội dung độc quyền',
-      'Xem sớm phim mới',
-    ],
-    isPopular: false,
-  },
-];
+// Helper function để hiển thị billing cycle
+const getBillingCycleLabel = (cycle: BillingCycle): string => {
+  switch (cycle) {
+    case 'MONTHLY':
+      return 'tháng';
+    case 'YEARLY':
+      return 'năm';
+    case 'LIFETIME':
+      return 'trọn đời';
+    default:
+      return 'tháng';
+  }
+};
 
-const MOCK_CURRENT_SUBSCRIPTION: SubscriptionResponseDto = {
-  id: 'sub_123',
-  userId: 'user_123',
-  planId: 'standard',
-  plan: MOCK_PLANS[1],
-  status: 'active',
-  startDate: '2025-10-25T00:00:00Z',
-  endDate: '2025-12-25T00:00:00Z',
-  autoRenew: true,
-  createdAt: '2025-10-25T10:30:00Z',
-  updatedAt: '2025-10-25T10:30:00Z',
+// Helper function để hiển thị features dựa trên plan type
+const getPlanFeatures = (planType: PlanType): string[] => {
+  switch (planType) {
+    case 'FREE':
+      return [
+        'Xem phim có quảng cáo',
+        'Chất lượng HD',
+        '1 thiết bị cùng lúc',
+        'Không xem offline',
+        'Hỗ trợ cơ bản',
+      ];
+    case 'BASIC':
+      return [
+        'Không quảng cáo',
+        'Chất lượng Full HD',
+        '2 thiết bị cùng lúc',
+        'Tải xuống để xem offline',
+        'Hỗ trợ 24/7',
+        'Phụ đề nhiều ngôn ngữ',
+      ];
+    case 'PREMIUM':
+      return [
+        'Không quảng cáo',
+        'Chất lượng 4K Ultra HD',
+        '4 thiết bị cùng lúc',
+        'Tải xuống để xem offline',
+        'Hỗ trợ 24/7 VIP',
+        'Phụ đề nhiều ngôn ngữ',
+        'Nội dung độc quyền',
+        'Xem sớm phim mới',
+      ];
+    case 'ENTERPRISE':
+      return [
+        'Tất cả tính năng Premium',
+        'Không giới hạn thiết bị',
+        'Quản lý tài khoản doanh nghiệp',
+        'Hỗ trợ chuyên biệt',
+        'API access',
+        'Custom branding',
+      ];
+    default:
+      return [];
+  }
+};
+
+// Helper function để check plan phổ biến
+const isPopularPlan = (planType: PlanType): boolean => {
+  return planType === 'PREMIUM';
+};
+
+// Helper function để hiển thị trạng thái subscription
+const getStatusLabel = (status: SubscriptionStatus): string => {
+  switch (status) {
+    case 'ACTIVE':
+      return 'Hoạt động';
+    case 'PENDING':
+      return 'Đang chờ';
+    case 'CANCELLED':
+      return 'Đã hủy';
+    case 'EXPIRED':
+      return 'Hết hạn';
+    default:
+      return status;
+  }
 };
 
 export default function BillingPage() {
-  const [plans, setPlans] = useState<SubscriptionPlanDto[]>([]);
-  const [currentSubscription, setCurrentSubscription] = useState<SubscriptionResponseDto | null>(null);
+  const [plans, setPlans] = useState<PlanDto[]>([]);
+  const [currentSubscription, setCurrentSubscription] = useState<SubscriptionDto | null>(null);
   const [loading, setLoading] = useState(true);
   const [upgrading, setUpgrading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -88,27 +98,21 @@ export default function BillingPage() {
         setLoading(true);
         setError(null);
 
-        // Mock: Giả lập delay fetch
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        // Fetch plans từ API
+        const plansResponse = await SubscriptionService.getActivePlans();
+        if (plansResponse.data) {
+          setPlans(plansResponse.data);
+        }
 
-        // Use mock data instead of API
-        setPlans(MOCK_PLANS);
-        setCurrentSubscription(MOCK_CURRENT_SUBSCRIPTION);
-
-        // ===== ORIGINAL API CALLS (commented) =====
-        // const plansResponse = await SubscriptionService.getPlans();
-        // if (plansResponse.data) {
-        //   setPlans(plansResponse.data);
-        // }
-
-        // try {
-        //   const subscriptionResponse = await SubscriptionService.getCurrentSubscription();
-        //   if (subscriptionResponse.data) {
-        //     setCurrentSubscription(subscriptionResponse.data);
-        //   }
-        // } catch (err) {
-        //   console.log('No active subscription');
-        // }
+        // Fetch current subscription
+        try {
+          const subscriptionResponse = await SubscriptionService.getCurrentSubscription();
+          if (subscriptionResponse.data) {
+            setCurrentSubscription(subscriptionResponse.data);
+          }
+        } catch (err) {
+          console.log('No active subscription');
+        }
       } catch (err: any) {
         console.error('Error fetching billing data:', err);
         setError('Không thể tải thông tin thanh toán. Vui lòng thử lại sau.');
@@ -125,40 +129,18 @@ export default function BillingPage() {
       setUpgrading(planId);
       setError(null);
 
-      // Mock: Giả lập delay upgrade
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      // Tạo checkout session và redirect đến Stripe
+      const response = await SubscriptionService.createCheckout(planId);
 
-      // Mock upgrade - just update the subscription
-      const upgradedPlan = plans.find((p) => p.id === planId);
-      if (upgradedPlan) {
-        const newSubscription: SubscriptionResponseDto = {
-          id: 'sub_' + Math.random().toString(36).substr(2, 9),
-          userId: 'user_123',
-          planId,
-          plan: upgradedPlan,
-          status: 'active',
-          startDate: new Date().toISOString(),
-          endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-          autoRenew: true,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        };
-        setCurrentSubscription(newSubscription);
-        alert(`Nâng cấp lên ${upgradedPlan.name} thành công!`);
+      if (response.data?.url) {
+        // Redirect đến Stripe Checkout
+        window.location.href = response.data.url;
+      } else {
+        throw new Error('Không thể tạo link thanh toán');
       }
-
-      // ===== ORIGINAL API CALL (commented) =====
-      // const response = await SubscriptionService.upgradeSubscription({
-      //   planId,
-      // });
-
-      // if (response.data) {
-      //   setCurrentSubscription(response.data);
-      //   alert('Nâng cấp thành công!');
-      // }
     } catch (err: any) {
       const errorMessage =
-        err?.response?.data?.message || 'Nâng cấp thất bại. Vui lòng thử lại.';
+        err?.response?.data?.message || err?.message || 'Nâng cấp thất bại. Vui lòng thử lại.';
       setError(errorMessage);
     } finally {
       setUpgrading(null);
@@ -173,16 +155,9 @@ export default function BillingPage() {
     try {
       setError(null);
 
-      // Mock: Giả lập delay cancel
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
+      await SubscriptionService.cancelSubscription();
       setCurrentSubscription(null);
       alert('Hủy subscription thành công!');
-
-      // ===== ORIGINAL API CALL (commented) =====
-      // await SubscriptionService.cancelSubscription();
-      // setCurrentSubscription(null);
-      // alert('Hủy subscription thành công!');
     } catch (err: any) {
       const errorMessage =
         err?.response?.data?.message || 'Hủy subscription thất bại. Vui lòng thử lại.';
@@ -219,17 +194,17 @@ export default function BillingPage() {
         )}
 
         {/* Current Subscription */}
-        {currentSubscription && (
+        {currentSubscription && currentSubscription.plan && (
           <div className="mb-12 p-6 bg-green-900/20 border border-green-500 rounded-lg">
             <h2 className="text-2xl font-bold text-white mb-4">
               Gói hiện tại: {currentSubscription.plan.name}
             </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-gray-300 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-gray-300 mb-6">
               <div>
                 <p className="text-sm text-gray-400">Giá</p>
                 <p className="text-xl font-semibold">
-                  {currentSubscription.plan.price.toLocaleString()} {currentSubscription.plan.currency}/
-                  {currentSubscription.plan.billingPeriod === 'monthly' ? 'tháng' : 'năm'}
+                  {currentSubscription.plan.price.toLocaleString()} VND/
+                  {getBillingCycleLabel(currentSubscription.plan.billingCycle)}
                 </p>
               </div>
               <div>
@@ -241,7 +216,7 @@ export default function BillingPage() {
               <div>
                 <p className="text-sm text-gray-400">Trạng thái</p>
                 <p className="text-xl font-semibold capitalize text-green-400">
-                  {currentSubscription.status === 'active' ? 'Hoạt động' : currentSubscription.status}
+                  {getStatusLabel(currentSubscription.status)}
                 </p>
               </div>
             </div>
@@ -258,18 +233,21 @@ export default function BillingPage() {
         {/* Pricing Plans */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           {plans.map((plan) => {
-            const isCurrentPlan = currentSubscription?.plan.id === plan.id;
+            const isCurrentPlan = currentSubscription?.planId === plan.id;
+            const features = getPlanFeatures(plan.planType);
+            const isPopular = isPopularPlan(plan.planType);
+
             return (
               <div
                 key={plan.id}
                 className={`relative rounded-2xl overflow-hidden transition transform hover:scale-105 ${
-                  plan.isPopular
+                  isPopular
                     ? 'border-2 border-red-500 bg-gray-900 ring-2 ring-red-500/20 ring-offset-2 ring-offset-black'
                     : 'border border-gray-700 bg-gray-900/50'
                 } ${isCurrentPlan ? 'ring-2 ring-green-500' : ''}`}
               >
                 {/* Popular Badge */}
-                {plan.isPopular && (
+                {isPopular && (
                   <div className="absolute top-0 right-0 bg-red-500 text-white px-4 py-1 text-sm font-bold rounded-bl-lg">
                     PHỔ BIẾN
                   </div>
@@ -278,7 +256,9 @@ export default function BillingPage() {
                 {/* Plan Content */}
                 <div className="p-8">
                   <h3 className="text-2xl font-bold text-white mb-2">{plan.name}</h3>
-                  <p className="text-gray-400 text-sm mb-6">{plan.description}</p>
+                  <p className="text-gray-400 text-sm mb-6">
+                    {plan.description || `Gói ${plan.planType}`}
+                  </p>
 
                   {/* Price */}
                   <div className="mb-6">
@@ -286,21 +266,29 @@ export default function BillingPage() {
                       {plan.price.toLocaleString()}
                     </span>
                     <span className="text-gray-400 ml-2">
-                      {plan.currency}/
-                      {plan.billingPeriod === 'monthly' ? 'tháng' : 'năm'}
+                      VND/{getBillingCycleLabel(plan.billingCycle)}
                     </span>
                   </div>
+
+                  {/* Duration */}
+                  <p className="text-sm text-gray-500 mb-4">
+                    Hiệu lực: {plan.durationDays} ngày
+                  </p>
 
                   {/* CTA Button */}
                   <Button
                     fullWidth
-                    variant={plan.isPopular ? 'primary' : 'secondary'}
+                    variant={isPopular ? 'primary' : 'secondary'}
                     onClick={() => handleUpgrade(plan.id)}
-                    disabled={isCurrentPlan || upgrading === plan.id}
+                    disabled={isCurrentPlan || upgrading === plan.id || !!currentSubscription}
                     isLoading={upgrading === plan.id}
-                    className={isCurrentPlan ? 'opacity-50 cursor-not-allowed' : ''}
+                    className={isCurrentPlan || currentSubscription ? 'opacity-50 cursor-not-allowed' : ''}
                   >
-                    {isCurrentPlan ? 'Gói Hiện Tại' : 'Nâng Cấp'}
+                    {isCurrentPlan
+                      ? 'Gói Hiện Tại'
+                      : currentSubscription
+                        ? 'Đã có gói'
+                        : 'Đăng Ký'}
                   </Button>
 
                   {/* Divider */}
@@ -308,7 +296,7 @@ export default function BillingPage() {
 
                   {/* Features */}
                   <div className="space-y-4">
-                    {plan.features.map((feature, index) => (
+                    {features.map((feature, index) => (
                       <div key={index} className="flex items-start gap-3">
                         <Check className="w-5 h-5 text-green-400 shrink-0 mt-0.5" />
                         <span className="text-gray-300 text-sm">{feature}</span>
@@ -320,6 +308,13 @@ export default function BillingPage() {
             );
           })}
         </div>
+
+        {/* Empty state */}
+        {plans.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-400 text-lg">Không có gói nào khả dụng.</p>
+          </div>
+        )}
 
         {/* FAQ Section */}
         <div className="bg-gray-900/50 rounded-2xl p-8 border border-gray-800">

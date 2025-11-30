@@ -38,9 +38,9 @@ export const RatingBadge: React.FC<RatingBadgeProps> = ({
         className={`inline-flex items-center gap-2 bg-blue-600 rounded-lg ${config.container}`}
       >
         <Star size={config.icon} className="text-white fill-white" />
-        <span className={`font-bold text-white ${config.text}`}>
+        {/* <span className={`font-bold text-white ${config.text}`}>
           {rating.toFixed(1)}
-        </span>
+        </span> */}
       </div>
       {showLabel && (
         <span className="text-sm text-neutral-400">Đánh giá</span>
