@@ -2,8 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { FilmResponseDto } from './FilmResponseDto';
-export type PaginatedFilmResponseApiResponseDto = {
+import type { FilmDto } from './FilmDto';
+export type PaginatedFilmApiResponseDto = {
     /**
      * Indicates if the request was successful
      */
@@ -19,7 +19,7 @@ export type PaginatedFilmResponseApiResponseDto = {
     /**
      * Response data list
      */
-    data: Array<FilmResponseDto>;
+    data: Array<FilmDto>;
     /**
      * Total number of items
      */

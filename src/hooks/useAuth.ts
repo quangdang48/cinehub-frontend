@@ -9,7 +9,6 @@ import {
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import appConfig from '@/config/app.config'
 import type { LoginDto } from '@/types/LoginDto'
-import { Gender } from '@/types/Gender'
 
 type Status = 'success' | 'failed'
 
@@ -26,7 +25,7 @@ export function useAuth() {
         id: '',
         name: '',
         email: '',
-        gender: Gender.MALE,
+        gender: 'male' as const,
         createdAt: '',
         updatedAt: '',
     }

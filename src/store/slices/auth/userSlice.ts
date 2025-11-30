@@ -1,4 +1,3 @@
-import { Gender } from '@/types/Gender'
 import type { UserDto } from '@/types/UserDto'
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 
@@ -8,7 +7,7 @@ const initialState: UserState = {
     id: '',
     name: '',
     email: '',
-    gender: Gender.MALE,
+    gender: 'male',
     createdAt: '',
     updatedAt: '',
 }

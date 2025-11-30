@@ -2,11 +2,11 @@ import type React from "react";
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Play, Heart, Info, ChevronLeft, ChevronRight } from "lucide-react";
-import type { FilmResponseDto } from "@/types/FilmResponseDto";
 import classNames from "classnames";
+import type { FilmDto } from "@/types/FilmDto";
 
 interface HeroSliderProps {
-  films: FilmResponseDto[];
+  films: FilmDto[];
   loading?: boolean;
   autoPlayInterval?: number;
 }
@@ -111,9 +111,9 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({
 
           {/* Meta info */}
           <div className="flex flex-wrap items-center gap-3 mb-4">
-            {currentFilm?.rating && (
+            {currentFilm?.imdbRating && (
               <span className="px-2 py-0.5 bg-yellow-500 text-black text-sm font-bold rounded">
-                IMDb {currentFilm.rating.toFixed(1)}
+                IMDb {currentFilm.imdbRating.toFixed(1)}
               </span>
             )}
             <span className="px-2 py-0.5 border border-neutral-500 text-neutral-300 text-sm rounded">

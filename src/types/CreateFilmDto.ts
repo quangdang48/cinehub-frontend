@@ -3,8 +3,53 @@
 /* tslint:disable */
 /* eslint-disable */
 export type CreateFilmDto = {
+    /**
+     * Tiêu đề phim
+     */
     title: string;
-    description?: string;
-    releaseDate?: string;
+    /**
+     * Tiêu đề gốc
+     */
+    originalTitle: string;
+    /**
+     * Tiêu đề tiếng Anh
+     */
+    englishTitle: string;
+    /**
+     * Mô tả phim
+     */
+    description?: string | null;
+    /**
+     * Giới hạn độ tuổi
+     */
+    ageLimit: 'ALL' | 'P' | 'K' | 'T13' | 'T16' | 'T18';
+    /**
+     * Quốc gia sản xuất
+     */
+    country: string;
+    /**
+     * Ngày phát hành
+     */
+    releaseDate: string;
+    /**
+     * Trạng thái phim
+     */
+    status: 'UPCOMING' | 'RELEASING' | 'ENDED';
+    /**
+     * Loại phim
+     */
+    type: 'MOVIE' | 'SERIES';
+    /**
+     * Đạo diễn
+     */
+    directors?: Array<string> | null;
+    /**
+     * Diễn viên
+     */
+    actors?: Array<string> | null;
+    /**
+     * Thể loại
+     */
+    genres?: Array<string> | null;
 };
 

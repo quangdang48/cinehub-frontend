@@ -8,8 +8,8 @@ import {
   type FilterOptions,
 } from "@/components";
 import { FilmService } from "@/services/FilmService";
-import type { FilmResponseDto } from "@/types/FilmResponseDto";
 import { COUNTRY_LIST, GENRE_LIST } from "@/constant/movie.const";
+import type { FilmDto } from "@/types/FilmDto";
 
 // Page titles based on route/type
 const PAGE_TITLES: Record<string, string> = {
@@ -35,7 +35,7 @@ export default function MovieListPage() {
   const location = useLocation();
 
   // States
-  const [films, setFilms] = useState<FilmResponseDto[]>([]);
+  const [films, setFilms] = useState<FilmDto[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
@@ -103,16 +103,16 @@ export default function MovieListPage() {
         // Call API based on sort type
         let response;
         if (filters.sortBy === "views") {
-          response = await FilmService.filmControllerGetMostViewedV1(
+          response = await FilmService.filmControllerGetAll(
             pageNumber,
             PAGE_SIZE,
-            sortParam
+            `{"views":"${sortParam}"}`
           );
         } else {
-          response = await FilmService.filmControllerGetByReleaseV1(
+          response = await FilmService.filmControllerGetAll(
             pageNumber,
             PAGE_SIZE,
-            sortParam
+            `{"createdAt":"${sortParam}"}`
           );
         }
 

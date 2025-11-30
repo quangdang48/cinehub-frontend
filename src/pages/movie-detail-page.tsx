@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { FilmService } from '@/services/FilmService';
-import type { FilmResponseDto } from '@/types/FilmResponseDto';
 import { MovieHero, EpisodeSection, CommentSection } from '@/components/movie-detail';
 import { TabNavigation } from '@/components/common';
+import type { FilmDto } from '@/types/FilmDto';
 
 export default function MovieDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const [film, setFilm] = useState<FilmResponseDto | null>(null);
+  const [film, setFilm] = useState<FilmDto | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('episodes');
 
