@@ -2,17 +2,17 @@ import { FilmService } from "@/services/FilmService";
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { HeroSlider, CarouselSection, RankingCard, SimpleCard, WideCard, MoviePreviewModal, type ModalPosition} from "@/components";
-import type { FilmResponseDto } from "@/types/FilmResponseDto";
 import { useCarouselData } from "@/hooks";
+import type { FilmDto } from "@/types/FilmDto";
 
 export default function Home() {
-  const mostViewMovies = useCarouselData<FilmResponseDto>(FilmService.filmControllerGetMostViewedV1);
-  const latestReleaseMovies = useCarouselData<FilmResponseDto>(FilmService.filmControllerGetByReleaseV1);
-  const newTrendingMovies = useCarouselData<FilmResponseDto>(FilmService.filmControllerGetByReleaseV1);
+  const mostViewMovies = useCarouselData<FilmDto>(FilmService.filmControllerGetAll);
+  const latestReleaseMovies = useCarouselData<FilmDto>(FilmService.filmControllerGetAll);
+  const newTrendingMovies = useCarouselData<FilmDto>(FilmService.filmControllerGetAll);
 
 
   const [hoveredRankingId, setHoveredRankingId] = useState<string | null>(null);
-  const [modalData, setModalData] = useState<FilmResponseDto | null>(null);
+  const [modalData, setModalData] = useState<FilmDto | null>(null);
   const [modalPosition, setModalPosition] = useState<ModalPosition | null>(null);
   const timerRef = useRef<number | null>(null);
 
@@ -30,7 +30,7 @@ export default function Home() {
   }, [handleWindowScroll]);
 
   // 1. Hàm handle chung: Chỉ lo việc tính toán vị trí và hiện modal sau 800ms
-  const handleDelayedModalEnter = (movie: FilmResponseDto, targetElement: HTMLElement) => {
+  const handleDelayedModalEnter = (movie: FilmDto, targetElement: HTMLElement) => {
     if (timerRef.current) clearTimeout(timerRef.current);
 
     const rect = targetElement.getBoundingClientRect();
@@ -47,12 +47,12 @@ export default function Home() {
       setModalData(movie);
     }, 800);
   };
-  const onRankingEnter = (movie: FilmResponseDto, event: React.MouseEvent<HTMLDivElement>) => {
+  const onRankingEnter = (movie: FilmDto, event: React.MouseEvent<HTMLDivElement>) => {
     setHoveredRankingId(movie.id);
     handleDelayedModalEnter(movie, event.currentTarget);
   };
 
-  const onSimpleEnter = (movie: FilmResponseDto, event: React.MouseEvent<HTMLDivElement>) => {
+  const onSimpleEnter = (movie: FilmDto, event: React.MouseEvent<HTMLDivElement>) => {
     handleDelayedModalEnter(movie, event.currentTarget); 
   };
 
@@ -74,7 +74,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-black">
-      <HeroSlider films={mostViewMovies.items} loading={mostViewMovies.loading} />
+      <HeroSlider films={mostViewMovies.items.slice(0, 5)} loading={mostViewMovies.loading} />
       <div className="max-w-[1800px] mx-auto pt-10 px-10">
         <CarouselSection
           title="Most Viewed"

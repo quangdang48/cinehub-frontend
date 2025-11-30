@@ -1,22 +1,21 @@
 import React from 'react';
 import { Play, Heart, Plus, Share2, MessageCircle } from 'lucide-react';
-import type { FilmResponseDto } from '@/types/FilmResponseDto';
 import { Button, IconButton, Badge, RatingBadge } from '@/components/common';
-import { PosterDto } from '@/types/PosterDto';
+import type { FilmDto } from '@/types/FilmDto';
 
 interface MovieHeroProps {
-  film: FilmResponseDto;
+  film: FilmDto;
 }
 
 export const MovieHero: React.FC<MovieHeroProps> = ({ film }) => {
   const backdropPoster = film.posters.find(
-    (p) => p.type === PosterDto.type.BACKDROP
+    (p) => p.type === 'backdrop'
   );
   const thumbnailPoster = film.posters.find(
-    (p) => p.type === PosterDto.type.THUMBNAIL
+    (p) => p.type === 'thumbnail'
   );
   const defaultPoster = film.posters.find(
-    (p) => p.type === PosterDto.type.DEFAULT
+    (p) => p.type === 'default'
   );
 
   const displayPoster = backdropPoster || defaultPoster || thumbnailPoster;
@@ -153,7 +152,7 @@ export const MovieHero: React.FC<MovieHeroProps> = ({ film }) => {
 
               {/* Rating Section */}
               <div className="border-t border-neutral-800 pt-6 flex justify-center">
-                <RatingBadge rating={film.rating} size="md" showLabel />
+                <RatingBadge rating={film.imdbRating} size="md" showLabel />
               </div>
             </div>
           </div>
