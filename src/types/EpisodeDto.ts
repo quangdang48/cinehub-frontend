@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type PosterDto = {
+export type EpisodeDto = {
     /**
      * Unique identifier
      */
@@ -19,7 +19,13 @@ export type PosterDto = {
      * Soft deletion timestamp
      */
     deletedAt?: Record<string, any>;
-    url: string;
-    type: 'default' | 'thumbnail' | 'backdrop';
+    /**
+     * Tập thứ
+     */
+    number: number;
+    /**
+     * Ngày phát hành tập
+     */
+    releaseDate?: string | null;
 };
 

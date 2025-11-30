@@ -4,12 +4,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { Input, Button, AuthCard, Alert, PasswordStrength, RadioGroup } from "../common";
 import { registerSchema, verifyEmailSchema } from "@/utils/validation-schemas";
 import { AuthService } from "@/services/AuthService";
-import { Gender } from "@/types/Gender";
 
 interface RegisterFormValues {
   name: string;
   email: string;
-  gender: Gender;
+  gender: 'male' | 'female';
   password: string;
   confirmPassword: string;
 }
@@ -32,7 +31,7 @@ export default function RegisterForm() {
     initialValues: {
       name: "",
       email: "",
-      gender: Gender.MALE,
+      gender: "male",
       password: "",
       confirmPassword: "",
     },
@@ -83,7 +82,7 @@ export default function RegisterForm() {
           email: values.email,
           otp: values.otp,
           name: "123",
-          gender: Gender.MALE,
+          gender: "male",
           password: "T@olao123",
         });
         

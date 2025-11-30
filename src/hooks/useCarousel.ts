@@ -1,5 +1,5 @@
 import type { PaginatedApiResponse } from "@/types/ApiResponse";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 export function useCarouselData<T>(
   fetchFunction: (page?: number, pageSize?: number, sort?: string) => Promise<PaginatedApiResponse<T>>,
@@ -10,31 +10,40 @@ export function useCarouselData<T>(
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
 
-  async function load(pageNum?: number, sort?: string) {
-    try {
-      setLoading(true);
-      const res = await fetchFunction(pageNum, pageSize, sort);
-
-      setItems(prev => [...prev, ...res.data as T[]]);
-
-      if ((res.data as T[]).length < res.itemsPerPage) {
-        setHasMore(false);
-      }
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  const loadMore = () => {
-    if (loading || !hasMore) return;
-    const next = page + 1;
-    setPage(next);
-    load(next);
-  };
+  const load = useCallback(
+      async (pageNumber: number, sort?: string, resetList: boolean = false) => {
+        if (loading) return;
+  
+        setLoading(true);
+        try {
+          const res = await fetchFunction(pageNumber, pageSize, sort);
+          const newItems = res.data;
+  
+          if (resetList) {
+            setItems(newItems);
+          } else {
+            setItems((prev) => [...prev, ...newItems]);
+          }
+          setHasMore(newItems.length === pageSize);
+          setPage(pageNumber);
+        } catch (error) {
+          console.error("Error loading films:", error);
+        } finally {
+          setLoading(false);
+        }
+      },
+      [loading]
+    );
 
   useEffect(() => {
-    load(1);
+    load(1, undefined, true);
   }, []);
+
+  const loadMore = () => {
+    if (hasMore && !loading) {
+      load(page + 1);
+    }
+  };
 
   return {
     items,

@@ -1,9 +1,6 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-
-import type { Gender } from "./Gender";
-
 /* eslint-disable */
 export type UserDto = {
     /**
@@ -24,5 +21,6 @@ export type UserDto = {
     deletedAt?: Record<string, any>;
     name: string;
     email: string;
-    gender: Gender;
+    gender: 'male' | 'female';
 };
+

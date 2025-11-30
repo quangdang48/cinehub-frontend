@@ -20,14 +20,14 @@ ApiService.interceptors.request.use(
             return config
         }
 
-        const rawPersistData = localStorage.getItem('root')
+        const rawPersistData = localStorage.getItem('cinehub-root')
         const persistData = deepParseJson(rawPersistData)
 
-        let accessToken = (persistData as any)?.auth?.token
+        let accessToken = (persistData as any)?.auth?.session?.token
 
         if (!accessToken) {
             const { auth } = store.getState()
-            accessToken = auth.token
+            accessToken = auth.session.token
         }
         if (config.authRequired && accessToken) {
             config.headers['Authorization'] =

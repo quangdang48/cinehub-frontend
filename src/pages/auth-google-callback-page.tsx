@@ -32,8 +32,6 @@ export default function AuthGoogleCallbackPage() {
           return;
         }
 
-        // Save token to localStorage
-        localStorage.setItem("access_token", token);
         // Dispatch token to Redux
         dispatch(signInSuccess(token));
 

@@ -2,8 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { FilmResponseDto } from './FilmResponseDto';
-export type FilmResponseApiResponseDto = {
+import type { FilmDto } from './FilmDto';
+export type FilmApiResponseDto = {
     /**
      * Indicates if the request was successful
      */
@@ -19,6 +19,6 @@ export type FilmResponseApiResponseDto = {
     /**
      * Response data
      */
-    data: FilmResponseDto;
+    data: FilmDto;
 };
 

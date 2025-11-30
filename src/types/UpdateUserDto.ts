@@ -1,7 +1,10 @@
-import type { Gender } from "./Gender";
-
+/* generated using openapi-typescript-codegen -- do not edit */
+/* istanbul ignore file */
+/* tslint:disable */
+/* eslint-disable */
 export type UpdateUserDto = {
     name: string;
     email: string;
-    gender: Gender;
+    gender: 'male' | 'female';
 };
+
