@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "sync:openapi": "openapi --input http://localhost:3000/api/v1/api-docs-json --output src/api --client axios --useOptions --useUnionTypes"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.10.1",

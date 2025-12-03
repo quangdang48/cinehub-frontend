@@ -7,6 +7,9 @@ export type RegisterDto = {
     email: string;
     gender: 'male' | 'female';
     password: string;
+    /**
+     * Mã OTP để xác thực tài khoản
+     */
     otp?: string;
 };
 

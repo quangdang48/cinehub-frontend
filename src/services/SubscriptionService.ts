@@ -30,7 +30,7 @@ export class SubscriptionService {
   public static getCurrentSubscription(): Promise<
     ApiResponse<SubscriptionDto>
   > {
-    return ApiService.get('subscriptions/me', { authRequired: true });
+    return ApiService.get('subscriptions/me');
   }
 
   /**
@@ -41,8 +41,7 @@ export class SubscriptionService {
   ): Promise<ApiResponse<CheckoutResponse>> {
     return ApiService.post(
       'payment/checkout',
-      { planId },
-      { authRequired: true }
+      { planId }
     );
   }
 

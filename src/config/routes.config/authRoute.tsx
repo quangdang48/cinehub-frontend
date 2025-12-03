@@ -22,7 +22,7 @@ const authRoute: Routes = [
     },
     {
         key: 'authCallback',
-        path: '/auth/callback',
+        path: '/auth/google/callback',
         component: lazy(() => import('@/pages/auth-google-callback-page')),
         authority: []
     },
