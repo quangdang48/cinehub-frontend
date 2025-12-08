@@ -9,7 +9,7 @@ import { useAuth } from "@/hooks";
 export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState<string>("");
-  const { login } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
 
   const formik = useFormik<LoginDto>({
     initialValues: {
@@ -72,14 +72,7 @@ export default function LoginForm() {
       <Button
         variant="secondary"
         fullWidth
-        className="mt-4 flex items-center justify-center gap-2"
-      >
-        Đăng nhập với mã đăng nhập
-      </Button>
-      <Button
-        variant="secondary"
-        fullWidth
-        onClick={() => window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`}
+        onClick={loginWithGoogle}
         className="mt-4 flex items-center justify-center gap-2"
       >
         <svg className="w-5 h-5" viewBox="0 0 24 24">

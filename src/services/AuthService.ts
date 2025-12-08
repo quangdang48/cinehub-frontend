@@ -5,6 +5,7 @@ import type { RegisterDto } from "@/types/RegisterDto";
 import type { ResetPasswordDto } from "@/types/ResetPasswordDto";
 import type { UserApiResponseDto } from "@/types/UserApiResponseDto";
 import type { LoginDto } from "@/types/LoginDto";
+import type { GoogleLoginDto } from "@/types/GoogleLoginDto";
 
 export class AuthService {
     /**
@@ -61,5 +62,16 @@ export class AuthService {
         requestBody: LoginDto,
     ): Promise<LoginResponseApiResponseDto> {
         return ApiService.post('auth/login', requestBody);
+    }
+
+    /**
+     * Google OAuth2 Callback
+     * @returns LoginResponseApiResponseDto Login with Google successfully
+     * @throws ApiError
+     */
+    public static authControllerGoogleCallbackV1(
+        requestBody: GoogleLoginDto,
+    ): Promise<LoginResponseApiResponseDto> {
+        return ApiService.post('auth/google/callback', requestBody);
     }
 }
