@@ -27,18 +27,12 @@ const DefaultLoading = (props: BaseLoadingProps) => {
     } = props
 
     return loading ? (
-        <Component
-            className={classNames(
-                !customLoader && 'flex items-center justify-center h-full',
-                className
-            )}
-        >
-            {customLoader ? (
-                <>{customLoader}</>
-            ) : (
-                <Spinner className={spinnerClass} size={40} />
-            )}
-        </Component>
+      <div className="min-h-screen bg-[#020617] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+           <div className="w-16 h-16 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
+           <p className="text-yellow-500 font-bold tracking-wider animate-pulse">LOADING...</p>
+        </div>
+      </div>
     ) : (
         <>{children}</>
     )

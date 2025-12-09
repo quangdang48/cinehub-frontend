@@ -1,113 +1,49 @@
-import React, { useState } from 'react';
-import { Play, List, ChevronDown, Lightbulb } from 'lucide-react';
-
-interface Episode {
-  id: number;
-  title: string;
-  number: number;
-}
+import React from 'react';
+import { Bell } from 'lucide-react';
+import type { FilmDto } from '@/types/FilmDto';
+import type { SeasonDto } from '@/types/SeasonDto';
+import type { EpisodeDto } from '@/types/EpisodeDto';
 
 interface EpisodeSectionProps {
-  filmId: string;
+  film: FilmDto;
+  seasons?: SeasonDto[];
+  episodes?: EpisodeDto[];
 }
 
-export const EpisodeSection: React.FC<EpisodeSectionProps> = ({ filmId: _filmId }) => {
-  const [selectedSeason] = useState(1);
-  const [viewMode, setViewMode] = useState<'subtitle' | 'dubbed'>('subtitle');
-  const [isExpanded, setIsExpanded] = useState(true);
-
-  // Mock data - replace with actual API call
-  const totalEpisodes = 24;
-  const episodes: Episode[] = Array.from({ length: totalEpisodes }, (_, i) => ({
-    id: i + 1,
-    title: `Tập ${i + 1}`,
-    number: i + 1,
-  }));
-
-  const displayedEpisodes = isExpanded ? episodes : episodes.slice(0, 8);
+export const EpisodeSection: React.FC<EpisodeSectionProps> = ({ film, seasons, episodes }) => {
 
   return (
-    <div className="bg-neutral-900 text-white py-8">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
-          {/* Season Selector */}
-          <button className="flex items-center gap-2 hover:text-neutral-300 transition">
-            <List size={24} />
-            <h2 className="text-2xl font-bold">Phần {selectedSeason}</h2>
-            <ChevronDown size={20} className="text-neutral-400" />
+    <div className="animate-fade-in">
+      <div className="relative bg-linear-to-r from-blue-900/40 to-purple-900/40 border border-blue-500/20 rounded-2xl p-4 mb-8 flex items-center gap-4 overflow-hidden">
+         <div className="absolute inset-0 bg-linear-to-r from-blue-500/10 to-transparent animate-pulse"></div>
+         <div className="bg-blue-600/20 p-2 rounded-full border border-blue-400/30 relative z-10">
+            <Bell size={20} className="text-blue-400" />
+         </div>
+         {/* <p className="text-blue-100 text-sm font-medium relative z-10">
+           Tập mới <span className="font-bold text-white bg-blue-500/20 px-2 py-0.5 rounded">{episodes.totalEpisodes}</span> sẽ phát sóng lúc <span className="font-bold text-yellow-400">14:00 - {movie.releaseDate}</span>.
+         </p> */}
+      </div>
+
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-xl font-bold text-white flex items-center gap-2">
+           <div className="w-1 h-6 bg-yellow-500 rounded-full"></div>
+           Danh sách tập
+        </h3>
+        <div className="flex gap-2">
+           <button className="text-xs font-bold text-black bg-yellow-500 px-3 py-1.5 rounded-lg shadow-lg shadow-yellow-500/20">Server VIP</button>
+           <button className="text-xs font-bold text-gray-400 bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg hover:bg-white/10 hover:text-white transition-colors">Server #2</button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
+        {episodes?.map((ep, idx) => (
+          <button 
+            key={ep.id}
+            className={`group relative h-12 rounded-xl flex items-center justify-center gap-2 border transition-all duration-300 overflow-hidden bg-white/5 border-white/10 text-gray-300 hover:bg-white/10 hover:border-yellow-500/50 hover:text-yellow-400`}
+          >
+            <span className="font-bold text-sm z-10 relative">Tập {ep.number}</span>
           </button>
-
-          {/* Controls */}
-          <div className="flex items-center gap-4">
-            {/* View Mode Toggle */}
-            <div className="flex gap-2 bg-neutral-800 rounded-lg p-1">
-              <button
-                onClick={() => setViewMode('subtitle')}
-                className={`px-4 py-2 rounded text-sm font-medium transition ${
-                  viewMode === 'subtitle'
-                    ? 'bg-neutral-700 text-white'
-                    : 'text-neutral-400 hover:text-white'
-                }`}
-              >
-                Phụ đề
-              </button>
-              <button
-                onClick={() => setViewMode('dubbed')}
-                className={`px-4 py-2 rounded text-sm font-medium transition ${
-                  viewMode === 'dubbed'
-                    ? 'bg-neutral-700 text-white'
-                    : 'text-neutral-400 hover:text-white'
-                }`}
-              >
-                Thuyết minh
-              </button>
-            </div>
-
-            {/* Theme Toggle */}
-            <button
-              className="p-2 hover:bg-neutral-800 rounded-lg transition"
-              title="Chế độ sáng/tối"
-            >
-              <Lightbulb size={20} />
-            </button>
-          </div>
-        </div>
-
-        {/* Episodes Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-6">
-          {displayedEpisodes.map((episode) => (
-            <button
-              key={episode.id}
-              className="bg-neutral-800 hover:bg-neutral-700 rounded-lg p-4 text-left transition group relative overflow-hidden"
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-lg font-semibold">Tập {episode.number}</span>
-                <Play
-                  size={24}
-                  className="text-yellow-500 opacity-0 group-hover:opacity-100 transition"
-                  fill="currentColor"
-                />
-              </div>
-            </button>
-          ))}
-        </div>
-
-        {/* Toggle Button */}
-        {totalEpisodes > 8 && (
-          <div className="flex justify-center">
-            <button
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="px-6 py-2 bg-neutral-800 hover:bg-neutral-700 text-white rounded-lg font-medium transition flex items-center gap-2"
-            >
-              {isExpanded ? 'Rút gọn' : `Xem thêm ${totalEpisodes - 8} tập`}
-              <ChevronDown
-                size={16}
-                className={`transition-transform ${isExpanded ? 'rotate-180' : ''}`}
-              />
-            </button>
-          </div>
-        )}
+        ))}
       </div>
     </div>
   );

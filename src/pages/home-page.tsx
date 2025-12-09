@@ -6,6 +6,7 @@ import { useCarouselData } from "@/hooks";
 import type { FilmDto } from "@/types/FilmDto";
 
 export default function Home() {
+  const heroFilms = useCarouselData<FilmDto>(FilmService.filmControllerGetAll, 5);
   const mostViewMovies = useCarouselData<FilmDto>(FilmService.filmControllerGetAll);
   const latestReleaseMovies = useCarouselData<FilmDto>(FilmService.filmControllerGetAll);
   const newTrendingMovies = useCarouselData<FilmDto>(FilmService.filmControllerGetAll);
@@ -74,7 +75,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-black">
-      <HeroSlider films={mostViewMovies.items.slice(0, 5)} loading={mostViewMovies.loading} />
+      <HeroSlider films={heroFilms.items} loading={heroFilms.loading} />
       <div className="max-w-[1800px] mx-auto pt-10 px-10">
         <CarouselSection
           title="Most Viewed"
