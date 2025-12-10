@@ -1,11 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { FilmService } from '@/services/FilmService';
-import { MovieHero, EpisodeSection, CommentSection, ActorSection, TrailerSection, TrendingSection } from '@/components/movie-detail';
+import { MovieHero, EpisodeSection, CommentSection, ReviewSection, ActorSection, TrailerSection, TrendingSection } from '@/components/movie-detail';
 import type { FilmDto } from '@/types/FilmDto';
-import type { CommentDto } from '@/types/CommentDto';
-import { Film, Info, LayoutGrid, MessageCircle, MoreHorizontal, Users } from 'lucide-react';
-import { CommentsService } from '@/services/CommentsService';
+import { Film, Info, LayoutGrid, MessageCircle, MoreHorizontal, Star, Users } from 'lucide-react';
 import type { EpisodeDto } from '@/types/EpisodeDto';
 import { EpisodesService } from '@/services/EpisodesService';
 
@@ -13,9 +11,7 @@ export default function MovieDetailPage() {
   const { id } = useParams<{ id: string }>();
   const [film, setFilm] = useState<FilmDto | null>(null);
   const [episodes, setEpisodes] = useState<EpisodeDto[]>([]);
-  const [comments, setCommets] = useState<CommentDto[]>([]);
   const [topFilms, setTopFilms] = useState<FilmDto[]>([]);
-  const [totalComment, setTotalComment] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState<string>('');
@@ -24,13 +20,13 @@ export default function MovieDetailPage() {
     const fetchFilmDetail = async () => {
       if (!id) return;
 
+      setLoading(true);
+      setError(null);
+
       try {
         const filmPromise = FilmService.filmControllerGetOneV1(id);
-        const commentPromise = CommentsService.commentControllerGetAllV1({
-          filmId: id,
-        });
         const trendingPromise = FilmService.filmControllerGetAll(1, 5);
-        const [filmResponse, commentResponse, trendingResponse] = await Promise.all([filmPromise, commentPromise, trendingPromise]);
+        const [filmResponse, trendingResponse] = await Promise.all([filmPromise, trendingPromise]);
         setFilm(filmResponse.data);
         setTopFilms(trendingResponse.data);
         if (filmResponse.data.type === 'SERIES') {
@@ -43,23 +39,23 @@ export default function MovieDetailPage() {
         } else {
           setActiveTab('info');
         }
-        setCommets(commentResponse.data);
-        setTotalComment(commentResponse.totalItems);
         setLoading(false);
       } catch (err) {
         console.error('Error fetching film detail:', err);
         setError('Không thể tải thông tin phim. Vui lòng thử lại sau.');
+        setLoading(false);
       }
     };
     window.scrollTo(0, 0);
     fetchFilmDetail();
-  }, []);
+  }, [id]);
 
   const tabs = useMemo(() => {
     if (!film) return [];
     const baseTabs = [
       { id: 'cast', label: 'Diễn viên', icon: Users },
       { id: 'trailer', label: 'Trailer', icon: Film },
+      { id: 'reviews', label: 'Đánh giá', icon: Star },
       { id: 'comments', label: 'Bình luận', icon: MessageCircle },
       { id: 'related', label: 'Đề xuất', icon: LayoutGrid }
     ];
@@ -82,8 +78,10 @@ export default function MovieDetailPage() {
         return <ActorSection actors={film.actors} />;
       case 'trailer':
         return <TrailerSection film={film} />;
+      case 'reviews':
+        return <ReviewSection key={`reviews-${film.id}`} filmId={film.id} averageRating={film.userRating || film.imdbRating || 0} />;
       case 'comments':
-        return <CommentSection comments={comments} total={totalComment} />;
+        return <CommentSection key={`comments-${film.id}`} filmId={film.id} />;
       case 'info':
         return (
             <div className="text-gray-300 animate-fade-in bg-white/5 p-6 rounded-2xl border border-white/10">
