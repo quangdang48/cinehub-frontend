@@ -101,8 +101,6 @@ export class CommentsService {
         return ApiService.delete(`comments/${id}`)
     }
 
-    // ==================== Reaction APIs ====================
-
     /**
      * Like hoặc Dislike một bình luận
      * @returns CommentReactionApiResponseDto Trả về trạng thái reaction sau khi thao tác
@@ -115,34 +113,6 @@ export class CommentsService {
     }): Promise<CommentReactionApiResponseDto> {
         return ApiService.post('comments/reaction', requestBody);
     }
-
-    /**
-     * Lấy trạng thái reaction của một bình luận
-     * @returns CommentReactionApiResponseDto Trả về số lượng like/dislike và reaction của user hiện tại
-     * @throws ApiError
-     */
-    public static getCommentReactionStatusV1({
-        id,
-    }: {
-        id: string,
-    }): Promise<CommentReactionApiResponseDto> {
-        return ApiService.get(`comments/${id}/reaction`);
-    }
-
-    /**
-     * Xóa reaction của user đối với một bình luận
-     * @returns any Xóa reaction thành công
-     * @throws ApiError
-     */
-    public static removeCommentReactionV1({
-        id,
-    }: {
-        id: string,
-    }): Promise<any> {
-        return ApiService.delete(`comments/${id}/reaction`);
-    }
-
-    // ==================== Report APIs ====================
 
     /**
      * Báo cáo một bình luận vi phạm
