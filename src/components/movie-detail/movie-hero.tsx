@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Play, Heart, Plus, Share2, MessageCircle } from 'lucide-react';
 import { Button, IconButton, Badge, RatingBadge } from '@/components/common';
+import { useWishlist } from '@/hooks';
+import { useNavigate } from 'react-router-dom';
 import type { FilmDto } from '@/types/FilmDto';
 
 interface MovieHeroProps {
@@ -8,6 +10,25 @@ interface MovieHeroProps {
 }
 
 export const MovieHero: React.FC<MovieHeroProps> = ({ film }) => {
+  const navigate = useNavigate();
+  const { isInWishlist, toggleWishlist, loading, isAuthenticated } = useWishlist(film.id);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const handleWishlistClick = async () => {
+    if (!isAuthenticated) {
+      setToastMessage('Vui lòng đăng nhập để thêm vào yêu thích');
+      setTimeout(() => setToastMessage(null), 3000);
+      navigate('/login');
+      return;
+    }
+
+    const result = await toggleWishlist();
+    if (result) {
+      setToastMessage(result.message);
+      setTimeout(() => setToastMessage(null), 3000);
+    }
+  };
+
   const backdropPoster = film.posters.find(
     (p) => p.type === 'backdrop'
   );
@@ -112,15 +133,23 @@ export const MovieHero: React.FC<MovieHeroProps> = ({ film }) => {
 
               {/* Action Buttons Row */}
               <div className="grid grid-cols-4 gap-2">
-                <IconButton
-                  icon={<Heart />}
-                  label="Yêu thích"
-                  showLabel
-                  size="md"
-                  variant="default"
-                  className="flex-col group"
-                  title="Yêu thích"
-                />
+                <button
+                  onClick={handleWishlistClick}
+                  disabled={loading}
+                  className={`inline-flex items-center justify-center transition-colors rounded-lg p-3 gap-2 flex-col group ${
+                    isInWishlist 
+                      ? 'text-red-500 hover:text-red-400' 
+                      : 'text-neutral-300 hover:text-white hover:bg-neutral-800'
+                  } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  title={isInWishlist ? 'Xóa khỏi yêu thích' : 'Thêm vào yêu thích'}
+                >
+                  <span className="w-5 h-5">
+                    <Heart fill={isInWishlist ? 'currentColor' : 'none'} />
+                  </span>
+                  <span className="text-xs text-neutral-400 group-hover:text-white">
+                    {isInWishlist ? 'Đã thích' : 'Yêu thích'}
+                  </span>
+                </button>
                 <IconButton
                   icon={<Plus />}
                   label="Thêm vào"
@@ -158,6 +187,15 @@ export const MovieHero: React.FC<MovieHeroProps> = ({ film }) => {
           </div>
         </div>
       </div>
+
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="fixed bottom-6 right-6 z-50 animate-fade-in">
+          <div className="bg-neutral-800 text-white px-6 py-3 rounded-lg shadow-lg border border-neutral-700">
+            {toastMessage}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

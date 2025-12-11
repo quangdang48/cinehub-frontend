@@ -20,24 +20,23 @@ ApiService.interceptors.request.use(
       return config;
     }
 
-    // Thử lấy token từ nhiều nguồn
-    let accessToken =
-      localStorage.getItem('access_token') || localStorage.getItem('authToken');
+    // Lấy token từ Redux persist storage
+    let accessToken: string | null = null;
 
+    // Cách 1: Lấy từ Redux store trực tiếp
+    const { auth } = store.getState();
+    accessToken = auth?.session?.token || null;
+
+    // Cách 2: Nếu không có, thử lấy từ localStorage
     if (!accessToken) {
       const rawPersistData = localStorage.getItem('cinehub-root');
-      const persistData = deepParseJson(rawPersistData);
-      accessToken =
-        (persistData as any)?.auth?.session?.token ||
-        (persistData as any)?.auth?.token;
+      if (rawPersistData) {
+        const persistData = deepParseJson(rawPersistData);
+        accessToken = (persistData as any)?.auth?.session?.token || null;
+      }
     }
 
-    if (!accessToken) {
-      const { auth } = store.getState();
-      accessToken = auth.token;
-    }
-
-    if (config.authRequired && accessToken) {
+    if (accessToken) {
       config.headers['Authorization'] = `Bearer ${accessToken}`;
     }
 
