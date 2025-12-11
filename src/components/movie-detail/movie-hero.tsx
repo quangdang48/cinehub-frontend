@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Play, Heart, Plus, Share2, VolumeX, Volume2, Star } from 'lucide-react';
 import type { FilmDto } from '@/types/FilmDto';
 
@@ -7,6 +8,7 @@ interface MovieHeroProps {
 }
 
 export const MovieHero: React.FC<MovieHeroProps> = ({ film }) => {
+  const navigate = useNavigate();
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
@@ -120,7 +122,9 @@ export const MovieHero: React.FC<MovieHeroProps> = ({ film }) => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-5 items-start sm:items-center">
-             <button className="group relative flex items-center justify-center gap-3 bg-linear-to-r from-yellow-400 to-orange-500 text-black font-bold text-lg px-8 py-4 rounded-2xl overflow-hidden transition-all hover:shadow-[0_0_40px_rgba(234,179,8,0.4)] hover:scale-105 active:scale-95">
+             <button 
+                onClick={() => navigate(`/watch/${film.id}`)}
+                className="group relative flex items-center justify-center gap-3 bg-linear-to-r from-yellow-400 to-orange-500 text-black font-bold text-lg px-8 py-4 rounded-2xl overflow-hidden transition-all hover:shadow-[0_0_40px_rgba(234,179,8,0.4)] hover:scale-105 active:scale-95">
                 <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
                 <Play fill="black" size={20} className="relative z-10" /> 
                 <span className="relative z-10">Xem Ngay</span>
