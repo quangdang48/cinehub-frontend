@@ -4,6 +4,8 @@ import type { ReviewDto } from '@/types/ReviewDto';
 import type { CommentDto } from '@/types/CommentDto';
 import type { CreateReviewDto } from '@/types/CreateReviewDto';
 import type { CreateCommentDto } from '@/types/CreateCommentDto';
+import { ReactionType } from '@/types/ReviewReactionDto';
+import { ReportReason } from '@/types/ReviewReportDto';
 import { ReviewItem, ReviewInput } from '@/components/common';
 import { ReviewsService } from '@/services/ReviewsService';
 import { CommentsService } from '@/services/CommentsService';
@@ -121,18 +123,60 @@ export const ReviewSection: React.FC<ReviewSectionProps> = ({
       setError('Vui lòng đăng nhập để thích đánh giá');
       return;
     }
-    // TODO: Implement like API when available
-    console.log('Like review:', id);
-  }, [signedIn]);
+    try {
+      const response = await ReviewsService.reviewReactionV1({
+        requestBody: { type: ReactionType.LIKE, reviewId: id },
+      });
+      
+      // Update review in state with new like/dislike counts
+      setReviews(prev => prev.map(r =>
+        r.id === id 
+          ? { ...r, totalLikes: response.data.totalLikes, totalDislikes: response.data.totalDislikes }
+          : r
+      ));
+      
+      // Also update userReview if it's the same
+      if (userReview?.id === id) {
+        setUserReview(prev => prev 
+          ? { ...prev, totalLikes: response.data.totalLikes, totalDislikes: response.data.totalDislikes }
+          : null
+        );
+      }
+    } catch (err) {
+      console.error('Error liking review:', err);
+      setError('Không thể thích đánh giá.');
+    }
+  }, [signedIn, userReview]);
 
   const handleDislike = useCallback(async (id: string) => {
     if (!signedIn) {
       setError('Vui lòng đăng nhập để không thích đánh giá');
       return;
     }
-    // TODO: Implement dislike API when available
-    console.log('Dislike review:', id);
-  }, [signedIn]);
+    try {
+      const response = await ReviewsService.reviewReactionV1({
+        requestBody: { type: ReactionType.DISLIKE, reviewId: id },
+      });
+      
+      // Update review in state with new like/dislike counts
+      setReviews(prev => prev.map(r =>
+        r.id === id 
+          ? { ...r, totalLikes: response.data.totalLikes, totalDislikes: response.data.totalDislikes }
+          : r
+      ));
+      
+      // Also update userReview if it's the same
+      if (userReview?.id === id) {
+        setUserReview(prev => prev 
+          ? { ...prev, totalLikes: response.data.totalLikes, totalDislikes: response.data.totalDislikes }
+          : null
+        );
+      }
+    } catch (err) {
+      console.error('Error disliking review:', err);
+      setError('Không thể không thích đánh giá.');
+    }
+  }, [signedIn, userReview]);
 
   const handleEdit = useCallback(async (id: string, content: string, rating: number) => {
     try {
@@ -171,10 +215,29 @@ export const ReviewSection: React.FC<ReviewSectionProps> = ({
     }
   }, [userReview]);
 
-  const handleReport = useCallback((id: string) => {
-    console.log('Report review:', id);
-    alert('Cảm ơn bạn đã báo cáo. Chúng tôi sẽ xem xét đánh giá này.');
-  }, []);
+  const handleReport = useCallback(async (id: string, reason?: ReportReason, description?: string) => {
+    if (!signedIn) {
+      setError('Vui lòng đăng nhập để báo cáo đánh giá');
+      return;
+    }
+    try {
+      await ReviewsService.reportReviewV1({
+        requestBody: {
+          reviewId: id,
+          reason: reason || ReportReason.OTHER,
+          description,
+        },
+      });
+      alert('Cảm ơn bạn đã báo cáo. Chúng tôi sẽ xem xét đánh giá này.');
+    } catch (err: any) {
+      console.error('Error reporting review:', err);
+      if (err?.response?.status === 400) {
+        setError('Bạn đã báo cáo đánh giá này rồi.');
+      } else {
+        setError('Không thể báo cáo đánh giá.');
+      }
+    }
+  }, [signedIn]);
 
   // Load comments for a review
   const handleLoadComments = useCallback(async (reviewId: string): Promise<CommentDto[]> => {
@@ -360,7 +423,10 @@ export const ReviewSection: React.FC<ReviewSectionProps> = ({
             currentUserAvatar={currentUserAvatar}
             currentUserName={currentUser.name}
             onEdit={handleEdit}
-            onDelete={handleDelete}
+                onLike={handleLike}
+                onDislike={handleDislike}
+                onDelete={handleDelete}
+                onReport={handleReport}
             onLoadComments={handleLoadComments}
             onSubmitComment={handleSubmitComment}
             onReplyToComment={handleReplyToComment}

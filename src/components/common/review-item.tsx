@@ -264,14 +264,14 @@ export const ReviewItem: React.FC<ReviewItemProps> = ({
                 className={`flex items-center gap-1.5 transition-colors ${liked ? 'text-blue-400' : 'hover:text-blue-400'}`}
               >
                 <ThumbsUp size={14} className={liked ? 'fill-current' : ''} />
-                Hữu ích ({review.totalLikes + (liked ? 1 : 0)})
+                Hữu ích ({review.totalLikes})
               </button>
               <button
                 onClick={handleDislike}
                 className={`flex items-center gap-1.5 transition-colors ${disliked ? 'text-red-400' : 'hover:text-red-400'}`}
               >
                 <ThumbsDown size={14} className={disliked ? 'fill-current' : ''} />
-                {review.totalDislikes + (disliked ? 1 : 0)}
+                {review.totalDislikes}
               </button>
               {review.totalComments > 0 && (
                 <button

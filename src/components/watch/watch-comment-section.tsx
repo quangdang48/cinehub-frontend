@@ -4,6 +4,8 @@ import type { CommentDto } from '@/types/CommentDto';
 import type { ReviewDto } from '@/types/ReviewDto';
 import type { CreateCommentDto } from '@/types/CreateCommentDto';
 import type { CreateReviewDto } from '@/types/CreateReviewDto';
+import { ReactionType } from '@/types/CommentReactionDto';
+import { ReportReason } from '@/types/CommentReportDto';
 import { CommentItem, CommentInput, ReviewItem, ReviewInput } from '@/components/common';
 import { CommentsService } from '@/services/CommentsService';
 import { ReviewsService } from '@/services/ReviewsService';
@@ -204,7 +206,20 @@ export const WatchCommentSection: React.FC<WatchCommentSectionProps> = ({
       setError('Vui lòng đăng nhập để thích bình luận');
       return;
     }
-    console.log('Like comment:', id);
+    try {
+      const response = await CommentsService.commentReactionV1({
+        requestBody: { type: ReactionType.LIKE, commentId: id },
+      });
+      
+      setComments(prev => prev.map(c =>
+        c.id === id 
+          ? { ...c, totalLikes: response.data.totalLikes, totalDislikes: response.data.totalDislikes }
+          : c
+      ));
+    } catch (err) {
+      console.error('Error liking comment:', err);
+      setError('Không thể thích bình luận.');
+    }
   }, [signedIn]);
 
   const handleDislikeComment = useCallback(async (id: string) => {
@@ -212,7 +227,20 @@ export const WatchCommentSection: React.FC<WatchCommentSectionProps> = ({
       setError('Vui lòng đăng nhập để không thích bình luận');
       return;
     }
-    console.log('Dislike comment:', id);
+    try {
+      const response = await CommentsService.commentReactionV1({
+        requestBody: { type: ReactionType.DISLIKE, commentId: id },
+      });
+      
+      setComments(prev => prev.map(c =>
+        c.id === id 
+          ? { ...c, totalLikes: response.data.totalLikes, totalDislikes: response.data.totalDislikes }
+          : c
+      ));
+    } catch (err) {
+      console.error('Error disliking comment:', err);
+      setError('Không thể không thích bình luận.');
+    }
   }, [signedIn]);
 
   const handleEditComment = useCallback(async (id: string, content: string) => {
@@ -244,10 +272,29 @@ export const WatchCommentSection: React.FC<WatchCommentSectionProps> = ({
     }
   }, []);
 
-  const handleReportComment = useCallback((id: string) => {
-    console.log('Report comment:', id);
-    alert('Cảm ơn bạn đã báo cáo. Chúng tôi sẽ xem xét bình luận này.');
-  }, []);
+  const handleReportComment = useCallback(async (id: string, reason?: ReportReason, description?: string) => {
+    if (!signedIn) {
+      setError('Vui lòng đăng nhập để báo cáo bình luận');
+      return;
+    }
+    try {
+      await CommentsService.reportCommentV1({
+        requestBody: {
+          commentId: id,
+          reason: reason || ReportReason.OTHER,
+          description,
+        },
+      });
+      alert('Cảm ơn bạn đã báo cáo. Chúng tôi sẽ xem xét bình luận này.');
+    } catch (err: any) {
+      console.error('Error reporting comment:', err);
+      if (err?.response?.status === 400) {
+        setError('Bạn đã báo cáo bình luận này rồi.');
+      } else {
+        setError('Không thể báo cáo bình luận.');
+      }
+    }
+  }, [signedIn]);
 
   // ========== REVIEW HANDLERS ==========
 
@@ -304,16 +351,60 @@ export const WatchCommentSection: React.FC<WatchCommentSectionProps> = ({
       setError('Vui lòng đăng nhập để thích đánh giá');
       return;
     }
-    console.log('Like review:', id);
-  }, [signedIn]);
+    try {
+      const response = await ReviewsService.reviewReactionV1({
+        requestBody: { type: ReactionType.LIKE, reviewId: id },
+      });
+      
+      // Update review in state with new like/dislike counts
+      setReviews(prev => prev.map(r =>
+        r.id === id 
+          ? { ...r, totalLikes: response.data.totalLikes, totalDislikes: response.data.totalDislikes }
+          : r
+      ));
+      
+      // Also update userReview if it's the same
+      if (userReview?.id === id) {
+        setUserReview(prev => prev 
+          ? { ...prev, totalLikes: response.data.totalLikes, totalDislikes: response.data.totalDislikes }
+          : null
+        );
+      }
+    } catch (err) {
+      console.error('Error liking review:', err);
+      setError('Không thể thích đánh giá.');
+    }
+  }, [signedIn, userReview]);
 
   const handleDislikeReview = useCallback(async (id: string) => {
     if (!signedIn) {
       setError('Vui lòng đăng nhập để không thích đánh giá');
       return;
     }
-    console.log('Dislike review:', id);
-  }, [signedIn]);
+    try {
+      const response = await ReviewsService.reviewReactionV1({
+        requestBody: { type: ReactionType.DISLIKE, reviewId: id },
+      });
+      
+      // Update review in state with new like/dislike counts
+      setReviews(prev => prev.map(r =>
+        r.id === id 
+          ? { ...r, totalLikes: response.data.totalLikes, totalDislikes: response.data.totalDislikes }
+          : r
+      ));
+      
+      // Also update userReview if it's the same
+      if (userReview?.id === id) {
+        setUserReview(prev => prev 
+          ? { ...prev, totalLikes: response.data.totalLikes, totalDislikes: response.data.totalDislikes }
+          : null
+        );
+      }
+    } catch (err) {
+      console.error('Error disliking review:', err);
+      setError('Không thể không thích đánh giá.');
+    }
+  }, [signedIn, userReview]);
 
   const handleEditReview = useCallback(async (id: string, content: string, rating: number) => {
     try {
@@ -352,10 +443,29 @@ export const WatchCommentSection: React.FC<WatchCommentSectionProps> = ({
     }
   }, [userReview]);
 
-  const handleReportReview = useCallback((id: string) => {
-    console.log('Report review:', id);
-    alert('Cảm ơn bạn đã báo cáo. Chúng tôi sẽ xem xét đánh giá này.');
-  }, []);
+  const handleReportReview = useCallback(async (id: string, reason?: ReportReason, description?: string) => {
+    if (!signedIn) {
+      setError('Vui lòng đăng nhập để báo cáo đánh giá');
+      return;
+    }
+    try {
+      await ReviewsService.reportReviewV1({
+        requestBody: {
+          reviewId: id,
+          reason: reason || ReportReason.OTHER,
+          description,
+        },
+      });
+      alert('Cảm ơn bạn đã báo cáo. Chúng tôi sẽ xem xét đánh giá này.');
+    } catch (err: any) {
+      console.error('Error reporting review:', err);
+      if (err?.response?.status === 400) {
+        setError('Bạn đã báo cáo đánh giá này rồi.');
+      } else {
+        setError('Không thể báo cáo đánh giá.');
+      }
+    }
+  }, [signedIn]);
 
   // Load comments for a review
   const handleLoadReviewComments = useCallback(async (reviewId: string): Promise<CommentDto[]> => {
@@ -565,8 +675,11 @@ export const WatchCommentSection: React.FC<WatchCommentSectionProps> = ({
               currentUserId={currentUser?.id}
               currentUserAvatar={currentUserAvatar}
               currentUserName={currentUser?.name}
-              onEdit={handleEditReview}
-              onDelete={handleDeleteReview}
+                  onLike={handleLikeReview}
+                  onDislike={handleDislikeReview}
+                  onEdit={handleEditReview}
+                  onDelete={handleDeleteReview}
+                  onReport={handleReportReview}
               onLoadComments={handleLoadReviewComments}
               onSubmitComment={handleSubmitReviewComment}
               onReplyToComment={handleReplyToReviewComment}

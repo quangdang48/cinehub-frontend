@@ -2,6 +2,8 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { MessageSquare, ChevronDown, AlertCircle } from 'lucide-react';
 import type { CommentDto } from '@/types/CommentDto';
 import type { CreateCommentDto } from '@/types/CreateCommentDto';
+import { ReactionType } from '@/types/CommentReactionDto';
+import { ReportReason } from '@/types/CommentReportDto';
 import { CommentItem, CommentInput } from '@/components/common';
 import { CommentsService } from '@/services/CommentsService';
 import { useAppSelector } from '@/store';
@@ -140,8 +142,21 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
       setError('Vui lòng đăng nhập để thích bình luận');
       return;
     }
-    // TODO: Implement like API when available
-    console.log('Like comment:', id);
+    try {
+      const response = await CommentsService.commentReactionV1({
+        requestBody: { type: ReactionType.LIKE, commentId: id },
+      });
+      
+      // Update comment in state with new like/dislike counts
+      setComments(prev => prev.map(c =>
+        c.id === id 
+          ? { ...c, totalLikes: response.data.totalLikes, totalDislikes: response.data.totalDislikes }
+          : c
+      ));
+    } catch (err) {
+      console.error('Error liking comment:', err);
+      setError('Không thể thích bình luận.');
+    }
   }, [signedIn]);
 
   const handleDislike = useCallback(async (id: string) => {
@@ -149,8 +164,21 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
       setError('Vui lòng đăng nhập để không thích bình luận');
       return;
     }
-    // TODO: Implement dislike API when available
-    console.log('Dislike comment:', id);
+    try {
+      const response = await CommentsService.commentReactionV1({
+        requestBody: { type: ReactionType.DISLIKE, commentId: id },
+      });
+      
+      // Update comment in state with new like/dislike counts
+      setComments(prev => prev.map(c =>
+        c.id === id 
+          ? { ...c, totalLikes: response.data.totalLikes, totalDislikes: response.data.totalDislikes }
+          : c
+      ));
+    } catch (err) {
+      console.error('Error disliking comment:', err);
+      setError('Không thể không thích bình luận.');
+    }
   }, [signedIn]);
 
   const handleEdit = useCallback(async (id: string, content: string) => {
@@ -182,11 +210,29 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
     }
   }, []);
 
-  const handleReport = useCallback((id: string) => {
-    // TODO: Implement report functionality
-    console.log('Report comment:', id);
-    alert('Cảm ơn bạn đã báo cáo. Chúng tôi sẽ xem xét bình luận này.');
-  }, []);
+  const handleReport = useCallback(async (id: string, reason?: ReportReason, description?: string) => {
+    if (!signedIn) {
+      setError('Vui lòng đăng nhập để báo cáo bình luận');
+      return;
+    }
+    try {
+      await CommentsService.reportCommentV1({
+        requestBody: {
+          commentId: id,
+          reason: reason || ReportReason.OTHER,
+          description,
+        },
+      });
+      alert('Cảm ơn bạn đã báo cáo. Chúng tôi sẽ xem xét bình luận này.');
+    } catch (err: any) {
+      console.error('Error reporting comment:', err);
+      if (err?.response?.status === 400) {
+        setError('Bạn đã báo cáo bình luận này rồi.');
+      } else {
+        setError('Không thể báo cáo bình luận.');
+      }
+    }
+  }, [signedIn]);
 
   // Load replies for a comment
   const handleLoadReplies = useCallback(async (parentId: string): Promise<CommentDto[]> => {

@@ -160,7 +160,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({
             <textarea
               value={editContent}
               onChange={(e) => setEditContent(e.target.value)}
-              className="w-full bg-white/5 text-gray-200 text-sm p-3 rounded-xl border border-white/10 focus:border-yellow-500 focus:outline-none resize-none min-h-[80px]"
+              className="w-full bg-white/5 text-gray-200 text-sm p-3 rounded-xl border border-white/10 focus:border-yellow-500 focus:outline-none resize-none min-h-20"
               autoFocus
             />
             <div className="flex gap-2">
@@ -191,14 +191,14 @@ export const CommentItem: React.FC<CommentItemProps> = ({
               className={`flex items-center gap-1.5 transition-colors ${liked ? 'text-blue-400' : 'hover:text-blue-400'}`}
             >
               <ThumbsUp size={14} className={liked ? 'fill-current' : ''} />
-              {comment.totalLikes + (liked ? 1 : 0)}
+              {comment.totalLikes}
             </button>
             <button 
               onClick={handleDislike}
               className={`flex items-center gap-1.5 transition-colors ${disliked ? 'text-red-400' : 'hover:text-red-400'}`}
             >
               <ThumbsDown size={14} className={disliked ? 'fill-current' : ''} />
-              {comment.totalDislikes + (disliked ? 1 : 0)}
+              {comment.totalDislikes}
             </button>
             {onReply && canReply && (
               <button 
