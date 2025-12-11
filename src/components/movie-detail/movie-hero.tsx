@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Play, Heart, Plus, Share2, VolumeX, Volume2, Star } from 'lucide-react';
+import { Play, Heart, Plus, Share2, VolumeX, Volume2, Star, Loader2 } from 'lucide-react';
 import type { FilmDto } from '@/types/FilmDto';
+import { useWishlist } from '@/hooks/useWishlist';
 
 interface MovieHeroProps {
   film: FilmDto;
@@ -13,6 +14,35 @@ export const MovieHero: React.FC<MovieHeroProps> = ({ film }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const { isInWishlist, loading: wishlistLoading, toggleWishlist, isAuthenticated } = useWishlist(film.id);
+
+  // Auto hide toast after 3 seconds
+  useEffect(() => {
+    if (toastMessage) {
+      const timer = setTimeout(() => setToastMessage(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [toastMessage]);
+
+  const handleWishlistClick = async () => {
+    if (!isAuthenticated) {
+      setToastMessage('Vui lòng đăng nhập để thêm vào yêu thích');
+      return;
+    }
+    const result = await toggleWishlist();
+    setToastMessage(result.message);
+  };
+
+  const handleShareClick = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setToastMessage('Đã sao chép liên kết vào clipboard');
+    } catch {
+      setToastMessage('Không thể sao chép liên kết');
+    }
+  };
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -131,15 +161,39 @@ export const MovieHero: React.FC<MovieHeroProps> = ({ film }) => {
              </button>
 
              <div className="flex items-center gap-3">
-                {[
-                   { icon: Heart, label: "Thích" },
-                   { icon: Plus, label: "DS Xem" },
-                   { icon: Share2, label: "Chia sẻ" }
-                ].map((item, idx) => (
-                  <button key={idx} className="flex flex-col items-center justify-center w-14 h-14 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-yellow-500/50 hover:text-yellow-400 transition-all group/btn">
-                     <item.icon size={20} className="mb-1 group-hover/btn:scale-110 transition-transform"/>
-                  </button>
-                ))}
+                {/* Wishlist Button */}
+                <button 
+                  onClick={handleWishlistClick}
+                  disabled={wishlistLoading}
+                  className={`flex flex-col items-center justify-center w-14 h-14 rounded-2xl border transition-all group/btn ${
+                    isInWishlist 
+                      ? 'bg-red-500/20 border-red-500/50 text-red-400 hover:bg-red-500/30' 
+                      : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-yellow-500/50 hover:text-yellow-400'
+                  }`}
+                >
+                  {wishlistLoading ? (
+                    <Loader2 size={20} className="animate-spin" />
+                  ) : isInWishlist ? (
+                    <Heart size={20} fill="currentColor" className="mb-1 group-hover/btn:scale-110 transition-transform" />
+                  ) : (
+                    <Heart size={20} className="mb-1 group-hover/btn:scale-110 transition-transform" />
+                  )}
+                </button>
+
+                {/* Watch Later Button */}
+                <button 
+                  className="flex flex-col items-center justify-center w-14 h-14 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-yellow-500/50 hover:text-yellow-400 transition-all group/btn"
+                >
+                  <Plus size={20} className="mb-1 group-hover/btn:scale-110 transition-transform"/>
+                </button>
+
+                {/* Share Button */}
+                <button 
+                  onClick={handleShareClick}
+                  className="flex flex-col items-center justify-center w-14 h-14 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-yellow-500/50 hover:text-yellow-400 transition-all group/btn"
+                >
+                  <Share2 size={20} className="mb-1 group-hover/btn:scale-110 transition-transform"/>
+                </button>
              </div>
           </div>
         </div>
