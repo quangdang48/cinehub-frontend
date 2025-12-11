@@ -15,6 +15,12 @@ const pagesRoute: Routes = [
         authority: [],
     },
     {
+        key: 'watch-movie',
+        path: `/watch/:id`,
+        component: lazy(() => import('@/pages/watch-movie-page')),
+        authority: [],
+    },
+    {
         key: 'movie-list',
         path: `/phim-le`,
         component: lazy(() => import('@/pages/movie-list-page')),

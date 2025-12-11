@@ -23,4 +23,7 @@ export * from "./movie-detail";
 // Movie list components
 export * from "./movie";
 
+// Watch movie components
+export * from "./watch";
+
 export * from "./home";
