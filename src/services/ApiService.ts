@@ -35,7 +35,6 @@ ApiService.interceptors.request.use(
     }
 
     if (accessToken) {
-    if (accessToken) {
       config.headers['Authorization'] = `Bearer ${accessToken}`;
     }
 
