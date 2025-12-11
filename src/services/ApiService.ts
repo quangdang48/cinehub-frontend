@@ -2,16 +2,14 @@ import axios, { AxiosError } from 'axios';
 import appConfig from '@/config/app.config';
 import deepParseJson from '@/utils/deepParseJson';
 import store, { signOutSuccess } from '@/store';
-declare module 'axios' {
-  export interface AxiosRequestConfig {
-    authRequired?: boolean;
-  }
-}
 const unauthorizedCode = [401];
 
 const ApiService = axios.create({
   timeout: 60000,
   baseURL: appConfig.apiPrefix,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
 ApiService.interceptors.request.use(
@@ -36,6 +34,7 @@ ApiService.interceptors.request.use(
       }
     }
 
+    if (accessToken) {
     if (accessToken) {
       config.headers['Authorization'] = `Bearer ${accessToken}`;
     }

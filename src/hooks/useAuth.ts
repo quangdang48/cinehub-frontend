@@ -9,6 +9,7 @@ import {
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import appConfig from '@/config/app.config'
 import type { LoginDto } from '@/types/LoginDto'
+import { generatePKCECodes } from '@/utils/pckeCodeGenerate'
 
 type Status = 'success' | 'failed'
 
@@ -63,6 +64,70 @@ export function useAuth() {
         }
     }
 
+    const loginWithGoogle = async (): Promise<void> => {
+        try {
+            const { code_verifier, code_challenge } = await generatePKCECodes();
+            const redirectUrl = query.get('redirectUrl')
+            localStorage.setItem('pkce_code_verifier', code_verifier);
+            localStorage.setItem('google_oauth_redirect_url', redirectUrl || '');
+
+            const params = new URLSearchParams({
+                client_id: appConfig.googleClientId,
+                redirect_uri: appConfig.googleRedirectUri,
+                response_type: "code",
+                scope: "email profile openid",
+                code_challenge,
+                code_challenge_method: "S256",
+                promt: "consent",
+            });
+            window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+        } catch (error: any) {
+            console.error("Failed to initiate Google login:", error);
+        }
+    }
+
+    const handleCallbackGoogleLogin = async (authorizationCode: string): Promise<{
+        status: string
+        message: string
+    } | undefined> => {
+        try {
+            
+            const codeVerifier = localStorage.getItem('pkce_code_verifier') || '';
+            const redirectUrl = localStorage.getItem('google_oauth_redirect_url') || '';
+            if (!codeVerifier) {
+                return {
+                    status: 'failed',
+                    message: 'PKCE code verifier not found.',
+                }
+            }
+            const resp = await AuthService.authControllerGoogleCallbackV1({
+                code: authorizationCode,
+                codeVerifier
+            });
+            if (resp.data) {
+                const token = resp.data.accessToken;
+                dispatch(signInSuccess(token));
+                dispatch(setUser(resp.data.user || defaultUser));
+                navigate(
+                    redirectUrl
+                        ? redirectUrl
+                        : appConfig.authenticatedEntryPath,
+                )
+                localStorage.removeItem('pkce_code_verifier');
+                localStorage.removeItem('google_oauth_redirect_url');
+                return {
+                    status: 'success',
+                    message: '',
+                }
+            }
+        } catch (error: any) {
+            return {
+                status: 'failed',
+                message: error?.response?.data?.message || error.toString(),
+            }
+        }
+    }
+
     const handleSignOut = () => {
         dispatch(signOutSuccess())
         dispatch(setUser(defaultUser))
@@ -77,5 +142,7 @@ export function useAuth() {
         authenticated: token && signedIn,
         login,
         signOut,
+        loginWithGoogle,
+        handleCallbackGoogleLogin,
     }
 }
