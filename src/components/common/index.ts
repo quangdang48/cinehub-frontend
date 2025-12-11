@@ -16,3 +16,7 @@ export { Badge } from "./badge";
 export { RatingBadge } from "./rating-badge";
 export { TabNavigation } from "./tab-navigation";
 export { MegaMenuDropdown } from "./mega-menu-dropdown";
+export { CommentItem } from "./comment-item";
+export { CommentInput } from "./comment-input";
+export { ReviewItem } from "./review-item";
+export { ReviewInput } from "./review-input";

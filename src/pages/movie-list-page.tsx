@@ -106,13 +106,19 @@ export default function MovieListPage() {
           response = await FilmService.filmControllerGetAll(
             pageNumber,
             PAGE_SIZE,
-            `{"views":"${sortParam}"}`
+            `{"views":"${sortParam}"}`,
+            undefined,
+            filters.country,
+            filters.year ? parseInt(filters.year) : undefined,
           );
         } else {
           response = await FilmService.filmControllerGetAll(
             pageNumber,
             PAGE_SIZE,
-            `{"createdAt":"${sortParam}"}`
+            `{"createdAt":"${sortParam}"}`,
+            undefined,
+            filters.country,
+            filters.year ? parseInt(filters.year) : undefined,
           );
         }
 
