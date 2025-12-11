@@ -2,6 +2,8 @@ import axios, { AxiosError } from 'axios';
 import appConfig from '@/config/app.config';
 import deepParseJson from '@/utils/deepParseJson';
 import store, { signOutSuccess } from '@/store';
+import { toast } from 'sonner';
+
 const unauthorizedCode = [401];
 
 const ApiService = axios.create({
@@ -51,6 +53,10 @@ ApiService.interceptors.response.use(
     const { response } = error;
     if (response && unauthorizedCode.includes(response.status)) {
       store.dispatch(signOutSuccess());
+      toast.error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 1500);
     }
     return Promise.reject(error);
   }

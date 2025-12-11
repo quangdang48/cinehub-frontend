@@ -86,8 +86,6 @@ export class ReviewsService {
         return ApiService.delete(`reviews/${id}`);
     }
 
-    // ==================== Reaction APIs ====================
-
     /**
      * Like hoặc Dislike một đánh giá
      * @returns ReviewReactionApiResponseDto Trả về trạng thái reaction sau khi thao tác
@@ -100,34 +98,6 @@ export class ReviewsService {
     }): Promise<ReviewReactionApiResponseDto> {
         return ApiService.post('reviews/reaction', requestBody);
     }
-
-    /**
-     * Lấy trạng thái reaction của một đánh giá
-     * @returns ReviewReactionApiResponseDto Trả về số lượng like/dislike và reaction của user hiện tại
-     * @throws ApiError
-     */
-    public static getReviewReactionStatusV1({
-        id,
-    }: {
-        id: string,
-    }): Promise<ReviewReactionApiResponseDto> {
-        return ApiService.get(`reviews/${id}/reaction`);
-    }
-
-    /**
-     * Xóa reaction của user đối với một đánh giá
-     * @returns any Xóa reaction thành công
-     * @throws ApiError
-     */
-    public static removeReviewReactionV1({
-        id,
-    }: {
-        id: string,
-    }): Promise<any> {
-        return ApiService.delete(`reviews/${id}/reaction`);
-    }
-
-    // ==================== Report APIs ====================
 
     /**
      * Báo cáo một đánh giá vi phạm

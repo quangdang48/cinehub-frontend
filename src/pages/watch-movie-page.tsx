@@ -10,10 +10,10 @@ import {
   VideoActionBar,
   VideoInfo,
   EpisodeList,
-  WatchCommentSection,
   ActorGrid,
   RecommendedMovies,
 } from '@/components/watch';
+import { CommentSection } from '@/components';
 
 export default function WatchMoviePage() {
   const { id } = useParams<{ id: string }>();
@@ -141,17 +141,10 @@ export default function WatchMoviePage() {
 
   return (
     <div className={`min-h-screen bg-[#0a0a0f] ${theaterMode ? 'theater-mode' : ''}`}>
-      {/* Ambient Background */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-yellow-500/5 rounded-full blur-[150px]" />
-        <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-orange-500/5 rounded-full blur-[150px]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-purple-500/3 rounded-full blur-[200px]" />
-      </div>
-
       {/* Main Content */}
-      <div className="relative z-10 pt-20">
+      <div className={`relative pt-20 ${theaterMode ? 'z-auto' : 'z-10'}`}>
         {/* Header */}
-        <div className="top-0 z-50 bg-[#0a0a0f]/80 backdrop-blur-xl border-b border-white/5">
+        <div className="top-0 bg-[#0a0a0f]/80 backdrop-blur-xl border-b border-white/5">
           <div className="container mx-auto px-4 lg:px-8">
             <div className="flex items-center gap-4 h-16">
               <button
@@ -166,8 +159,8 @@ export default function WatchMoviePage() {
         </div>
 
         {/* Video Section */}
-        <div className={`${theaterMode ? 'max-w-none px-0' : 'container mx-auto px-4 lg:px-8'}`}>
-          <div className={`${theaterMode ? '' : 'pt-6'}`}>
+        <div className={`container mx-auto px-4 lg:px-8 ${theaterMode ? 'z-9999999999 relative' : ''}`}>
+          <div className={'pt-6'}>
             <VideoPlayer
               src={getVideoSource()}
               poster={getVideoPoster()}
@@ -220,7 +213,7 @@ export default function WatchMoviePage() {
               )}
 
               {/* Comments & Reviews Section */}
-              <WatchCommentSection
+              <CommentSection
                 filmId={film.id}
                 averageRating={film.userRating || film.imdbRating}
               />
@@ -252,7 +245,7 @@ export default function WatchMoviePage() {
 
       {/* Theater Mode Overlay */}
       {theaterMode && (
-        <div className="fixed inset-0 bg-black/90 z-40 pointer-events-none" />
+        <div className="fixed inset-0 bg-black/90 z-10000 pointer-events-none" />
       )}
 
       {/* Custom Styles */}
