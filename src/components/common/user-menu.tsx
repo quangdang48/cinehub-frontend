@@ -76,7 +76,7 @@ export default function UserMenu({ user, onLogout }: UserMenuProps) {
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-64 bg-gray-900 border border-gray-700 rounded-lg shadow-2xl overflow-hidden z-[10000]">
+        <div className="absolute right-0 mt-2 w-64 bg-gray-900 border border-gray-700 rounded-lg shadow-2xl overflow-hidden z-10000">
           {/* User Info */}
           <div className="px-4 py-3 border-b border-gray-700">
             <div className="flex items-center gap-3">
