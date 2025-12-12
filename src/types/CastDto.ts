@@ -2,31 +2,30 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { ActorDto } from './ActorDto';
+import type { ActorDto } from "./ActorDto";
 export type CastDto = {
-    /**
-     * Unique identifier
-     */
-    id: string;
-    /**
-     * Creation timestamp
-     */
-    createdAt: string;
-    /**
-     * Last update timestamp
-     */
-    updatedAt: string;
-    /**
-     * Soft deletion timestamp
-     */
-    deletedAt?: Record<string, any>;
-    /**
-     * Tên nhân vật
-     */
-    character: string;
-    /**
-     * Diễn viên
-     */
-    actor: ActorDto;
+  /**
+   * Unique identifier
+   */
+  id: string;
+  /**
+   * Creation timestamp
+   */
+  createdAt: string;
+  /**
+   * Last update timestamp
+   */
+  updatedAt: string;
+  /**
+   * Soft deletion timestamp
+   */
+  deletedAt?: Record<string, any>;
+  /**
+   * Tên nhân vật
+   */
+  character: string;
+  /**
+   * Diễn viên
+   */
+  actor: ActorDto;
 };
-

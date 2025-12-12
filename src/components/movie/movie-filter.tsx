@@ -1,7 +1,16 @@
 import type React from "react";
 import { ChevronDown, ChevronUp, Filter } from "lucide-react";
 import classNames from "classnames";
-import { COUNTRY_LIST, FILM_TYPES, GENRE_LIST, RATINGS, SORT_OPTIONS, VERSIONS, YEARS, type MovieOptions } from "@/constant/movie.const";
+import {
+  COUNTRY_LIST,
+  FILM_TYPES,
+  GENRE_LIST,
+  RATINGS,
+  SORT_OPTIONS,
+  VERSIONS,
+  YEARS,
+  type MovieOptions,
+} from "@/constant/movie.const";
 
 export interface FilterOptions {
   country?: string;
@@ -49,7 +58,7 @@ const FilterRow: React.FC<FilterRowProps> = ({
               "px-3 py-1.5 text-sm rounded-md transition-colors",
               value === option.slug || (option.value === "" && !value)
                 ? "bg-yellow-500 text-black font-medium"
-                : "text-neutral-300 hover:bg-neutral-700"
+                : "text-neutral-300 hover:bg-neutral-700",
             )}
           >
             {option.label}
@@ -78,7 +87,7 @@ export const MovieFilter: React.FC<MovieFilterProps> = ({
     <div
       className={classNames(
         "bg-neutral-900 rounded-lg p-6 border border-neutral-800",
-        className
+        className,
       )}
     >
       {/* Quốc gia */}
@@ -162,7 +171,10 @@ interface FilterToggleProps {
   onToggle: () => void;
 }
 
-export const FilterToggle: React.FC<FilterToggleProps> = ({ isOpen, onToggle }) => {
+export const FilterToggle: React.FC<FilterToggleProps> = ({
+  isOpen,
+  onToggle,
+}) => {
   return (
     <button
       onClick={onToggle}

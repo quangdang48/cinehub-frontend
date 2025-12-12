@@ -1,8 +1,18 @@
-import React, { useState } from 'react';
-import { ThumbsUp, ThumbsDown, MessageSquare, Flag, MoreHorizontal, Edit, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
-import type { CommentDto } from '@/types/CommentDto';
-import { timeAgo } from '@/utils/time';
-import { CommentInput } from './comment-input';
+import React, { useState } from "react";
+import {
+  ThumbsUp,
+  ThumbsDown,
+  MessageSquare,
+  Flag,
+  MoreHorizontal,
+  Edit,
+  Trash2,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
+import type { CommentDto } from "@/types/CommentDto";
+import { timeAgo } from "@/utils/time";
+import { CommentInput } from "./comment-input";
 
 interface CommentItemProps {
   comment: CommentDto;
@@ -87,7 +97,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({
         const loadedReplies = await onLoadReplies(comment.id);
         setReplies(loadedReplies);
       } catch (err) {
-        console.error('Error loading replies:', err);
+        console.error("Error loading replies:", err);
       } finally {
         setLoadingReplies(false);
       }
@@ -97,7 +107,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({
 
   const handleToggleReplyInput = () => {
     if (!currentUserId) {
-      alert('Vui lòng đăng nhập để trả lời bình luận');
+      alert("Vui lòng đăng nhập để trả lời bình luận");
       return;
     }
     setIsReplying(!isReplying);
@@ -105,20 +115,20 @@ export const CommentItem: React.FC<CommentItemProps> = ({
 
   const handleSubmitReply = async (content: string) => {
     if (!onReply) return;
-    
+
     setIsSubmittingReply(true);
     try {
       const newReply = await onReply(comment.id, content);
       if (newReply) {
         // Add new reply to the beginning of replies list
-        setReplies(prev => [newReply, ...prev]);
+        setReplies((prev) => [newReply, ...prev]);
         // Update total replies count locally
         comment.totalReplies = (comment.totalReplies || 0) + 1;
         setShowReplies(true);
         setIsReplying(false);
       }
     } catch (err) {
-      console.error('Error submitting reply:', err);
+      console.error("Error submitting reply:", err);
     } finally {
       setIsSubmittingReply(false);
     }
@@ -126,7 +136,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({
 
   // Calculate indentation based on depth (max visual indent to prevent too narrow)
   const getIndentClass = () => {
-    if (depth === 0) return '';
+    if (depth === 0) return "";
     // Limit visual indent to prevent comments becoming too narrow
     const visualDepth = Math.min(depth, 2);
     return `ml-${visualDepth * 2}`; // e.g., ml-2, ml-4
@@ -134,11 +144,14 @@ export const CommentItem: React.FC<CommentItemProps> = ({
 
   return (
     <div className={`flex gap-3 group ${getIndentClass()}`}>
-      <div className={`${depth > 0 ? 'w-8 h-8' : 'w-10 h-10'} rounded-full overflow-hidden border-2 border-transparent group-hover:border-yellow-500 transition-colors shrink-0 shadow-lg`}>
-        <img 
-          src={comment.author.gender === 'male' 
-            ? `https://randomuser.me/api/portraits/men/${Math.abs(comment.author.id.charCodeAt(0) % 99)}.jpg`
-            : `https://randomuser.me/api/portraits/women/${Math.abs(comment.author.id.charCodeAt(0) % 99)}.jpg`
+      <div
+        className={`${depth > 0 ? "w-8 h-8" : "w-10 h-10"} rounded-full overflow-hidden border-2 border-transparent group-hover:border-yellow-500 transition-colors shrink-0 shadow-lg`}
+      >
+        <img
+          src={
+            comment.author.gender === "male"
+              ? `https://randomuser.me/api/portraits/men/${Math.abs(comment.author.id.charCodeAt(0) % 99)}.jpg`
+              : `https://randomuser.me/api/portraits/women/${Math.abs(comment.author.id.charCodeAt(0) % 99)}.jpg`
           }
           alt={comment.author.name}
           className="w-full h-full object-cover"
@@ -149,7 +162,9 @@ export const CommentItem: React.FC<CommentItemProps> = ({
           <span className="text-white font-bold text-base group-hover:text-yellow-400 transition-colors">
             {comment.author.name}
           </span>
-          <span className="text-gray-500 text-xs">{timeAgo(comment.createdAt)}</span>
+          <span className="text-gray-500 text-xs">
+            {timeAgo(comment.createdAt)}
+          </span>
           {comment.updatedAt !== comment.createdAt && (
             <span className="text-gray-600 text-xs">(đã chỉnh sửa)</span>
           )}
@@ -186,38 +201,41 @@ export const CommentItem: React.FC<CommentItemProps> = ({
 
         {showActions && !isEditing && (
           <div className="flex items-center gap-6 text-xs text-gray-500 font-medium">
-            <button 
+            <button
               onClick={handleLike}
-              className={`flex items-center gap-1.5 transition-colors ${liked ? 'text-blue-400' : 'hover:text-blue-400'}`}
+              className={`flex items-center gap-1.5 transition-colors ${liked ? "text-blue-400" : "hover:text-blue-400"}`}
             >
-              <ThumbsUp size={14} className={liked ? 'fill-current' : ''} />
+              <ThumbsUp size={14} className={liked ? "fill-current" : ""} />
               {comment.totalLikes}
             </button>
-            <button 
+            <button
               onClick={handleDislike}
-              className={`flex items-center gap-1.5 transition-colors ${disliked ? 'text-red-400' : 'hover:text-red-400'}`}
+              className={`flex items-center gap-1.5 transition-colors ${disliked ? "text-red-400" : "hover:text-red-400"}`}
             >
-              <ThumbsDown size={14} className={disliked ? 'fill-current' : ''} />
+              <ThumbsDown
+                size={14}
+                className={disliked ? "fill-current" : ""}
+              />
               {comment.totalDislikes}
             </button>
             {onReply && canReply && (
-              <button 
+              <button
                 onClick={handleToggleReplyInput}
-                className={`flex items-center gap-1.5 transition-colors ${isReplying ? 'text-yellow-400' : 'hover:text-yellow-400'}`}
+                className={`flex items-center gap-1.5 transition-colors ${isReplying ? "text-yellow-400" : "hover:text-yellow-400"}`}
               >
                 <MessageSquare size={14} />
                 Trả lời
               </button>
             )}
-            
+
             <div className="relative ml-auto">
-              <button 
+              <button
                 onClick={() => setShowMenu(!showMenu)}
                 className="p-1 hover:text-white transition-colors"
               >
                 <MoreHorizontal size={16} />
               </button>
-              
+
               {showMenu && (
                 <div className="absolute right-0 top-full mt-1 bg-[#1e293b] rounded-lg shadow-xl border border-white/10 py-1 min-w-[140px] z-50">
                   {isOwner && (
@@ -271,8 +289,14 @@ export const CommentItem: React.FC<CommentItemProps> = ({
               </>
             ) : (
               <>
-                {showReplies ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                {showReplies ? 'Ẩn phản hồi' : `Xem ${comment.totalReplies} phản hồi`}
+                {showReplies ? (
+                  <ChevronUp size={14} />
+                ) : (
+                  <ChevronDown size={14} />
+                )}
+                {showReplies
+                  ? "Ẩn phản hồi"
+                  : `Xem ${comment.totalReplies} phản hồi`}
               </>
             )}
           </button>
@@ -301,8 +325,10 @@ export const CommentItem: React.FC<CommentItemProps> = ({
 
         {/* Replies List - Recursive nested comments */}
         {showReplies && replies.length > 0 && (
-          <div className={`mt-4 space-y-4 ${depth < maxDepth - 1 ? 'pl-4 border-l-2 border-white/10' : ''}`}>
-            {replies.map(reply => (
+          <div
+            className={`mt-4 space-y-4 ${depth < maxDepth - 1 ? "pl-4 border-l-2 border-white/10" : ""}`}
+          >
+            {replies.map((reply) => (
               <CommentItem
                 key={reply.id}
                 comment={reply}

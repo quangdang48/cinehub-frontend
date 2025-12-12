@@ -8,7 +8,6 @@ export default function AuthGoogleCallbackPage() {
 
   const { handleCallbackGoogleLogin } = useAuth();
 
-
   const [error, setError] = useState<string>("");
 
   useEffect(() => {

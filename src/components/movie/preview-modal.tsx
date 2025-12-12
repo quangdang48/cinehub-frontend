@@ -14,14 +14,18 @@ export interface MoviePreviewModalProps {
   onLeave: () => void;
 }
 
-export const MoviePreviewModal: React.FC<MoviePreviewModalProps> = ({ movie, position, onLeave }) => {
+export const MoviePreviewModal: React.FC<MoviePreviewModalProps> = ({
+  movie,
+  position,
+  onLeave,
+}) => {
   const navigate = useNavigate();
   const handleClick = () => {
     navigate(`/movie/${movie.id}`);
   };
 
   return (
-    <div 
+    <div
       className="fixed z-50 rounded-lg overflow-hidden bg-[#18181b] shadow-2xl shadow-black/90 ring-1 ring-white/10 animate-in fade-in zoom-in-95 duration-200"
       style={{
         top: position.top,
@@ -32,14 +36,19 @@ export const MoviePreviewModal: React.FC<MoviePreviewModalProps> = ({ movie, pos
       onClick={handleClick}
     >
       <div className="relative aspect-video w-full">
-        <img 
-          src={movie.posters.find(p => p.type === "thumbnail")?.url || "/placeholder.svg"} 
-          alt={movie.title} 
+        <img
+          src={
+            movie.posters.find((p) => p.type === "thumbnail")?.url ||
+            "/placeholder.svg"
+          }
+          alt={movie.title}
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-linear-to-t from-[#18181b] via-transparent to-transparent"></div>
         <div className="absolute bottom-3 left-4 right-4">
-          <h3 className="text-white font-bold text-lg drop-shadow-md truncate">{movie.title}</h3>
+          <h3 className="text-white font-bold text-lg drop-shadow-md truncate">
+            {movie.title}
+          </h3>
         </div>
       </div>
 

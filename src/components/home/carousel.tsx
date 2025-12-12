@@ -9,7 +9,7 @@ export interface CarouselSectionProps {
   hasMore?: boolean;
   className?: string;
   onScrollStart?: () => void;
-};
+}
 
 export const CarouselSection: React.FC<CarouselSectionProps> = ({
   title,
@@ -22,23 +22,23 @@ export const CarouselSection: React.FC<CarouselSectionProps> = ({
 }) => {
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
-   const checkScrollPosition = () => {
+  const checkScrollPosition = () => {
     if (scrollRef.current) {
-        const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
-        const currentScroll = Math.ceil(scrollLeft);
-        setShowLeftArrow(currentScroll > 5);
-        setShowRightArrow(currentScroll < (scrollWidth - clientWidth) - 5);
+      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+      const currentScroll = Math.ceil(scrollLeft);
+      setShowLeftArrow(currentScroll > 5);
+      setShowRightArrow(currentScroll < scrollWidth - clientWidth - 5);
     }
   };
 
   useEffect(() => {
     checkScrollPosition();
     const timer = setTimeout(checkScrollPosition, 200);
-    window.addEventListener('resize', checkScrollPosition);
-    
+    window.addEventListener("resize", checkScrollPosition);
+
     return () => {
-        window.removeEventListener('resize', checkScrollPosition);
-        clearTimeout(timer);
+      window.removeEventListener("resize", checkScrollPosition);
+      clearTimeout(timer);
     };
   }, [children]);
 
@@ -51,8 +51,7 @@ export const CarouselSection: React.FC<CarouselSectionProps> = ({
 
     const el = scrollRef.current;
 
-    const isAtEnd = 
-      el.scrollLeft + el.clientWidth >= el.scrollWidth * 0.9;
+    const isAtEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth * 0.9;
 
     if (isAtEnd) {
       onLoadMore();

@@ -25,7 +25,7 @@ export const Alert: React.FC<AlertProps> = ({
     <div
       className={classNames(
         "mb-6 p-4 border rounded text-sm flex items-start justify-between",
-        variants[variant]
+        variants[variant],
       )}
     >
       <p className="flex-1">{message}</p>

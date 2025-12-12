@@ -1,12 +1,15 @@
-import { useCallback } from 'react';
-import type { VideoState } from './useVideoState';
+import { useCallback } from "react";
+import type { VideoState } from "./useVideoState";
 
 interface UseVideoControlsProps {
   videoRef: React.RefObject<HTMLVideoElement | null>;
   state: VideoState;
 }
 
-export const useVideoControls = ({ videoRef, state }: UseVideoControlsProps) => {
+export const useVideoControls = ({
+  videoRef,
+  state,
+}: UseVideoControlsProps) => {
   const togglePlay = useCallback(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -14,8 +17,8 @@ export const useVideoControls = ({ videoRef, state }: UseVideoControlsProps) => 
     if (state.isPlaying) {
       video.pause();
     } else {
-      video.play().catch(error => {
-        console.error('Error playing video:', error);
+      video.play().catch((error) => {
+        console.error("Error playing video:", error);
       });
     }
   }, [videoRef, state.isPlaying]);
@@ -27,49 +30,64 @@ export const useVideoControls = ({ videoRef, state }: UseVideoControlsProps) => 
     video.muted = !state.isMuted;
   }, [videoRef, state.isMuted]);
 
-  const setVolume = useCallback((volume: number) => {
-    const video = videoRef.current;
-    if (!video) return;
+  const setVolume = useCallback(
+    (volume: number) => {
+      const video = videoRef.current;
+      if (!video) return;
 
-    const clampedVolume = Math.max(0, Math.min(1, volume));
-    video.volume = clampedVolume;
-    
-    if (clampedVolume === 0) {
-      video.muted = true;
-    } else if (state.isMuted) {
-      video.muted = false;
-    }
-  }, [videoRef, state.isMuted]);
+      const clampedVolume = Math.max(0, Math.min(1, volume));
+      video.volume = clampedVolume;
 
-  const seek = useCallback((time: number) => {
-    const video = videoRef.current;
-    if (!video) return;
+      if (clampedVolume === 0) {
+        video.muted = true;
+      } else if (state.isMuted) {
+        video.muted = false;
+      }
+    },
+    [videoRef, state.isMuted],
+  );
 
-    video.currentTime = Math.max(0, Math.min(state.duration, time));
-  }, [videoRef, state.duration]);
+  const seek = useCallback(
+    (time: number) => {
+      const video = videoRef.current;
+      if (!video) return;
 
-  const seekToPercent = useCallback((percent: number) => {
-    const video = videoRef.current;
-    if (!video) return;
+      video.currentTime = Math.max(0, Math.min(state.duration, time));
+    },
+    [videoRef, state.duration],
+  );
 
-    const time = (percent / 100) * state.duration;
-    video.currentTime = time;
-  }, [videoRef, state.duration]);
+  const seekToPercent = useCallback(
+    (percent: number) => {
+      const video = videoRef.current;
+      if (!video) return;
 
-  const skip = useCallback((seconds: number) => {
-    const video = videoRef.current;
-    if (!video) return;
+      const time = (percent / 100) * state.duration;
+      video.currentTime = time;
+    },
+    [videoRef, state.duration],
+  );
 
-    const newTime = video.currentTime + seconds;
-    video.currentTime = Math.max(0, Math.min(state.duration, newTime));
-  }, [videoRef, state.duration]);
+  const skip = useCallback(
+    (seconds: number) => {
+      const video = videoRef.current;
+      if (!video) return;
 
-  const setPlaybackRate = useCallback((rate: number) => {
-    const video = videoRef.current;
-    if (!video) return;
+      const newTime = video.currentTime + seconds;
+      video.currentTime = Math.max(0, Math.min(state.duration, newTime));
+    },
+    [videoRef, state.duration],
+  );
 
-    video.playbackRate = rate;
-  }, [videoRef]);
+  const setPlaybackRate = useCallback(
+    (rate: number) => {
+      const video = videoRef.current;
+      if (!video) return;
+
+      video.playbackRate = rate;
+    },
+    [videoRef],
+  );
 
   const togglePictureInPicture = useCallback(async () => {
     const video = videoRef.current;
@@ -82,7 +100,7 @@ export const useVideoControls = ({ videoRef, state }: UseVideoControlsProps) => 
         await video.requestPictureInPicture();
       }
     } catch (error) {
-      console.error('Picture-in-Picture error:', error);
+      console.error("Picture-in-Picture error:", error);
     }
   }, [videoRef]);
 

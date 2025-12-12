@@ -5,7 +5,14 @@ import { setUser, useAppDispatch, useAppSelector } from "@/store";
 import { UserService } from "@/services/UserService";
 import type { UpdateUserDto } from "@/types/UpdateUserDto";
 import { useAuth } from "@/hooks";
-import { FavoritesTab, ProfileForm, ListsTab, ContinueWatchingTab, NotificationsTab, ProfileSidebar } from "@/components";
+import {
+  FavoritesTab,
+  ProfileForm,
+  ListsTab,
+  ContinueWatchingTab,
+  NotificationsTab,
+  ProfileSidebar,
+} from "@/components";
 
 export default function ProfilePage() {
   const dispatch = useAppDispatch();
@@ -29,7 +36,10 @@ export default function ProfilePage() {
   };
 
   const handleUpdateProfile = async (values: UpdateUserDto) => {
-    const response = await UserService.userControllerUpdateUserV1(user.id, values);
+    const response = await UserService.userControllerUpdateUserV1(
+      user.id,
+      values,
+    );
     response && dispatch(setUser(response.data));
   };
 
@@ -87,7 +97,9 @@ export default function ProfilePage() {
           {/* Sidebar */}
           <div
             className={`lg:col-span-4 xl:col-span-3 ${
-              sidebarOpen ? "block fixed lg:static top-0 left-0 right-0 z-50 p-4 lg:p-0 bg-black lg:bg-transparent" : "hidden lg:block"
+              sidebarOpen
+                ? "block fixed lg:static top-0 left-0 right-0 z-50 p-4 lg:p-0 bg-black lg:bg-transparent"
+                : "hidden lg:block"
             }`}
           >
             <ProfileSidebar

@@ -1,26 +1,26 @@
-import type { UserDto } from '@/types/UserDto'
-import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
+import type { UserDto } from "@/types/UserDto";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-export type UserState = UserDto
+export type UserState = UserDto;
 
 const initialState: UserState = {
-    id: '',
-    name: '',
-    email: '',
-    gender: 'male',
-    createdAt: '',
-    updatedAt: '',
-}
+  id: "",
+  name: "",
+  email: "",
+  gender: "male",
+  createdAt: "",
+  updatedAt: "",
+};
 
 const userSlice = createSlice({
-    name: `auth/user`,
-    initialState,
-    reducers: {
-        setUser(state, action: PayloadAction<UserState>) {
-            return { ...state, ...action.payload }
-        },
+  name: `auth/user`,
+  initialState,
+  reducers: {
+    setUser(state, action: PayloadAction<UserState>) {
+      return { ...state, ...action.payload };
     },
-})
+  },
+});
 
-export const { setUser } = userSlice.actions
-export default userSlice.reducer
+export const { setUser } = userSlice.actions;
+export default userSlice.reducer;

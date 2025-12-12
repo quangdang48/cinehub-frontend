@@ -1,6 +1,14 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { User, Heart, List, PlayCircle, Bell, CreditCard, LogOut } from "lucide-react";
+import {
+  User,
+  Heart,
+  List,
+  PlayCircle,
+  Bell,
+  CreditCard,
+  LogOut,
+} from "lucide-react";
 import type { UserDto } from "@/types/UserDto";
 
 interface UserMenuProps {

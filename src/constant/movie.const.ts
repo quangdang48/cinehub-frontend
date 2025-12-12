@@ -14,7 +14,11 @@ export const GENRE_LIST: MovieOptions[] = [
   { value: "chinh-kich", label: "Chính Kịch", slug: "chinh-kich" },
   { value: "chinh-luan", label: "Chính Luận", slug: "chinh-luan" },
   { value: "chinh-tri", label: "Chính Trị", slug: "chinh-tri" },
-  { value: "chuong-trinh-truyen-hinh", label: "Chương Trình Truy...", slug: "chuong-trinh-truyen-hinh" },
+  {
+    value: "chuong-trinh-truyen-hinh",
+    label: "Chương Trình Truy...",
+    slug: "chuong-trinh-truyen-hinh",
+  },
   { value: "concert-film", label: "Concert Film", slug: "concert-film" },
   { value: "cung-dau", label: "Cung Đấu", slug: "cung-dau" },
   { value: "cuoi-tuan", label: "Cuối Tuần", slug: "cuoi-tuan" },
@@ -54,7 +58,11 @@ export const GENRE_LIST: MovieOptions[] = [
   { value: "thieu-nhi", label: "Thiếu Nhi", slug: "thieu-nhi" },
   { value: "than-thoai", label: "Thần Thoại", slug: "than-thoai" },
   { value: "the-thao", label: "Thể Thao", slug: "the-thao" },
-  { value: "truyen-hinh-thuc-te", label: "Truyền Hình Thực...", slug: "truyen-hinh-thuc-te" },
+  {
+    value: "truyen-hinh-thuc-te",
+    label: "Truyền Hình Thực...",
+    slug: "truyen-hinh-thuc-te",
+  },
   { value: "tuoi-tre", label: "Tuổi Trẻ", slug: "tuoi-tre" },
   { value: "tai-lieu", label: "Tài Liệu", slug: "tai-lieu" },
   { value: "tam-ly", label: "Tâm Lý", slug: "tam-ly" },
@@ -116,7 +124,7 @@ export const VERSIONS: MovieOptions[] = [
   { value: "", label: "Tất cả", slug: "all" },
   { value: "sub", label: "Phụ đề", slug: "sub" },
   { value: "dub", label: "Lồng tiếng", slug: "dub" },
-  { value: "dub-north", label: "Thuyết minh giọng Bắc", slug: "dub-north"   },
+  { value: "dub-north", label: "Thuyết minh giọng Bắc", slug: "dub-north" },
   { value: "dub-south", label: "Thuyết minh giọng Nam", slug: "dub-south" },
 ];
 

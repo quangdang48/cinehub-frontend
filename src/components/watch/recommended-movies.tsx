@@ -1,7 +1,7 @@
-import React from 'react';
-import { Star, Play, Calendar } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import type { FilmDto } from '@/types/FilmDto';
+import React from "react";
+import { Star, Play, Calendar } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import type { FilmDto } from "@/types/FilmDto";
 
 interface RecommendedMoviesProps {
   films: FilmDto[];
@@ -12,12 +12,12 @@ interface RecommendedMoviesProps {
 export const RecommendedMovies: React.FC<RecommendedMoviesProps> = ({
   films,
   currentFilmId,
-  title = 'Đề xuất cho bạn',
+  title = "Đề xuất cho bạn",
 }) => {
   const navigate = useNavigate();
-  
+
   // Filter out current film
-  const displayFilms = films.filter(f => f.id !== currentFilmId);
+  const displayFilms = films.filter((f) => f.id !== currentFilmId);
 
   if (displayFilms.length === 0) return null;
 
@@ -29,9 +29,9 @@ export const RecommendedMovies: React.FC<RecommendedMoviesProps> = ({
       {/* Films List */}
       <div className="space-y-3">
         {displayFilms.map((film, _) => {
-          const defaultPoster = film.posters.find(p => p.type === 'default');
+          const defaultPoster = film.posters.find((p) => p.type === "default");
           const year = new Date(film.releaseDate).getFullYear();
-          
+
           return (
             <div
               key={film.id}
@@ -49,19 +49,19 @@ export const RecommendedMovies: React.FC<RecommendedMoviesProps> = ({
 
               {/* Thumbnail */}
               <div className="relative w-16 h-24 rounded-xl overflow-hidden shrink-0 shadow-lg">
-                <img 
-                  src={defaultPoster?.url} 
+                <img
+                  src={defaultPoster?.url}
                   alt={film.title}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
-                
+
                 {/* Play overlay */}
                 <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                   <div className="w-8 h-8 rounded-full bg-yellow-500 flex items-center justify-center">
                     <Play className="w-4 h-4 text-black ml-0.5" fill="black" />
                   </div>
                 </div>
-                
+
                 {/* Age limit badge */}
                 <div className="absolute top-1 left-1 bg-black/70 backdrop-blur-sm text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
                   {film.ageLimit}
@@ -81,7 +81,9 @@ export const RecommendedMovies: React.FC<RecommendedMoviesProps> = ({
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                   <div className="flex items-center gap-1 text-yellow-500">
                     <Star className="w-3 h-3" fill="currentColor" />
-                    <span className="text-xs font-bold">{film.imdbRating?.toFixed(1) || 'N/A'}</span>
+                    <span className="text-xs font-bold">
+                      {film.imdbRating?.toFixed(1) || "N/A"}
+                    </span>
                   </div>
                   <div className="flex items-center gap-1 text-gray-500">
                     <Calendar className="w-3 h-3" />

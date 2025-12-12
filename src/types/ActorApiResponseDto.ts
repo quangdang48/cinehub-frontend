@@ -2,23 +2,22 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { ActorDto } from './ActorDto';
+import type { ActorDto } from "./ActorDto";
 export type ActorApiResponseDto = {
-    /**
-     * Indicates if the request was successful
-     */
-    success: boolean;
-    /**
-     * Timestamp of the response
-     */
-    timestamp: string;
-    /**
-     * Path of the request
-     */
-    path: string;
-    /**
-     * Response data
-     */
-    data: ActorDto;
+  /**
+   * Indicates if the request was successful
+   */
+  success: boolean;
+  /**
+   * Timestamp of the response
+   */
+  timestamp: string;
+  /**
+   * Path of the request
+   */
+  path: string;
+  /**
+   * Response data
+   */
+  data: ActorDto;
 };
-

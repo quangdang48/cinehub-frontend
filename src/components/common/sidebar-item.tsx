@@ -22,7 +22,7 @@ export const SidebarItem: React.FC<SidebarItemProps> = ({
         {
           "bg-yellow-600 text-white": isActive,
           "text-gray-300 hover:bg-gray-800": !isActive,
-        }
+        },
       )}
     >
       <span className="text-xl">{icon}</span>

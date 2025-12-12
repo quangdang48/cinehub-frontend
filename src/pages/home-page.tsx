@@ -1,20 +1,38 @@
 import { FilmService } from "@/services/FilmService";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { HeroSlider, CarouselSection, RankingCard, SimpleCard, WideCard, MoviePreviewModal, type ModalPosition} from "@/components";
+import {
+  HeroSlider,
+  CarouselSection,
+  RankingCard,
+  SimpleCard,
+  WideCard,
+  MoviePreviewModal,
+  type ModalPosition,
+} from "@/components";
 import { useCarouselData } from "@/hooks";
 import type { FilmDto } from "@/types/FilmDto";
 
 export default function Home() {
-  const heroFilms = useCarouselData<FilmDto>(FilmService.filmControllerGetAll, 5);
-  const mostViewMovies = useCarouselData<FilmDto>(FilmService.filmControllerGetAll);
-  const latestReleaseMovies = useCarouselData<FilmDto>(FilmService.filmControllerGetAll);
-  const newTrendingMovies = useCarouselData<FilmDto>(FilmService.filmControllerGetAll);
-
+  const heroFilms = useCarouselData<FilmDto>(
+    FilmService.filmControllerGetAll,
+    5,
+  );
+  const mostViewMovies = useCarouselData<FilmDto>(
+    FilmService.filmControllerGetAll,
+  );
+  const latestReleaseMovies = useCarouselData<FilmDto>(
+    FilmService.filmControllerGetAll,
+  );
+  const newTrendingMovies = useCarouselData<FilmDto>(
+    FilmService.filmControllerGetAll,
+  );
 
   const [hoveredRankingId, setHoveredRankingId] = useState<string | null>(null);
   const [modalData, setModalData] = useState<FilmDto | null>(null);
-  const [modalPosition, setModalPosition] = useState<ModalPosition | null>(null);
+  const [modalPosition, setModalPosition] = useState<ModalPosition | null>(
+    null,
+  );
   const timerRef = useRef<number | null>(null);
 
   const handleWindowScroll = useCallback(() => {
@@ -24,22 +42,28 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    window.addEventListener('scroll', handleWindowScroll, { passive: true });
+    window.addEventListener("scroll", handleWindowScroll, { passive: true });
     return () => {
-      window.removeEventListener('scroll', handleWindowScroll);
+      window.removeEventListener("scroll", handleWindowScroll);
     };
   }, [handleWindowScroll]);
 
   // 1. Hàm handle chung: Chỉ lo việc tính toán vị trí và hiện modal sau 800ms
-  const handleDelayedModalEnter = (movie: FilmDto, targetElement: HTMLElement) => {
+  const handleDelayedModalEnter = (
+    movie: FilmDto,
+    targetElement: HTMLElement,
+  ) => {
     if (timerRef.current) clearTimeout(timerRef.current);
 
     const rect = targetElement.getBoundingClientRect();
     timerRef.current = setTimeout(() => {
       const width = 320;
-      const left = rect.left + (rect.width / 2) - (width / 2);
-      const safeLeft = Math.max(10, Math.min(window.innerWidth - width - 10, left));
-      
+      const left = rect.left + rect.width / 2 - width / 2;
+      const safeLeft = Math.max(
+        10,
+        Math.min(window.innerWidth - width - 10, left),
+      );
+
       setModalPosition({
         top: rect.top - 20,
         left: safeLeft,
@@ -48,13 +72,19 @@ export default function Home() {
       setModalData(movie);
     }, 800);
   };
-  const onRankingEnter = (movie: FilmDto, event: React.MouseEvent<HTMLDivElement>) => {
+  const onRankingEnter = (
+    movie: FilmDto,
+    event: React.MouseEvent<HTMLDivElement>,
+  ) => {
     setHoveredRankingId(movie.id);
     handleDelayedModalEnter(movie, event.currentTarget);
   };
 
-  const onSimpleEnter = (movie: FilmDto, event: React.MouseEvent<HTMLDivElement>) => {
-    handleDelayedModalEnter(movie, event.currentTarget); 
+  const onSimpleEnter = (
+    movie: FilmDto,
+    event: React.MouseEvent<HTMLDivElement>,
+  ) => {
+    handleDelayedModalEnter(movie, event.currentTarget);
   };
 
   const handleCardLeave = () => {
@@ -129,7 +159,7 @@ export default function Home() {
         </CarouselSection>
       </div>
       {modalData && modalPosition && (
-        <MoviePreviewModal 
+        <MoviePreviewModal
           movie={modalData}
           position={modalPosition}
           onLeave={handleModalLeave}

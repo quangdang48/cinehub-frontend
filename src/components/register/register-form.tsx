@@ -1,14 +1,21 @@
 import { useState } from "react";
 import { useFormik } from "formik";
 import { Link, useNavigate } from "react-router-dom";
-import { Input, Button, AuthCard, Alert, PasswordStrength, RadioGroup } from "../common";
+import {
+  Input,
+  Button,
+  AuthCard,
+  Alert,
+  PasswordStrength,
+  RadioGroup,
+} from "../common";
 import { registerSchema, verifyEmailSchema } from "@/utils/validation-schemas";
 import { AuthService } from "@/services/AuthService";
 
 interface RegisterFormValues {
   name: string;
   email: string;
-  gender: 'male' | 'female';
+  gender: "male" | "female";
   password: string;
   confirmPassword: string;
 }
@@ -44,19 +51,21 @@ export default function RegisterForm() {
       try {
         const { confirmPassword, ...registerData } = values;
         await AuthService.register(registerData);
-        
+
         setRegisteredEmail(values.email);
-        
+
         // Chuyển sang bước xác nhận email
         setTimeout(() => {
           setStep("verify");
-          setSuccessMessage("Đăng ký thành công! Vui lòng kiểm tra email để xác nhận tài khoản.");
+          setSuccessMessage(
+            "Đăng ký thành công! Vui lòng kiểm tra email để xác nhận tài khoản.",
+          );
         }, 2000);
       } catch (error: any) {
         setApiError(
           error?.response?.data?.message ||
-          error?.message ||
-          "Đã xảy ra lỗi khi đăng ký"
+            error?.message ||
+            "Đã xảy ra lỗi khi đăng ký",
         );
       } finally {
         setIsLoading(false);
@@ -85,17 +94,19 @@ export default function RegisterForm() {
           gender: "male",
           password: "T@olao123",
         });
-        
-        setSuccessMessage("Xác thực thành công! Đang chuyển đến trang đăng nhập...");
-        
+
+        setSuccessMessage(
+          "Xác thực thành công! Đang chuyển đến trang đăng nhập...",
+        );
+
         setTimeout(() => {
           navigate("/login");
         }, 2000);
       } catch (error: any) {
         setApiError(
           error?.response?.data?.message ||
-          error?.message ||
-          "Mã OTP không hợp lệ hoặc đã hết hạn"
+            error?.message ||
+            "Mã OTP không hợp lệ hoặc đã hết hạn",
         );
       } finally {
         setIsLoading(false);
@@ -115,8 +126,8 @@ export default function RegisterForm() {
     } catch (error: any) {
       setApiError(
         error?.response?.data?.message ||
-        error?.message ||
-        "Không thể gửi lại mã OTP"
+          error?.message ||
+          "Không thể gửi lại mã OTP",
       );
     } finally {
       setIsLoading(false);
@@ -126,12 +137,17 @@ export default function RegisterForm() {
   // Render form đăng ký
   if (step === "register") {
     return (
-      <AuthCard 
-        title="Đăng ký" 
-        subtitle="Tạo tài khoản CineHub của bạn"
-      >
-        <Alert message={apiError} variant="error" onClose={() => setApiError("")} />
-        <Alert message={successMessage} variant="success" onClose={() => setSuccessMessage("")} />
+      <AuthCard title="Đăng ký" subtitle="Tạo tài khoản CineHub của bạn">
+        <Alert
+          message={apiError}
+          variant="error"
+          onClose={() => setApiError("")}
+        />
+        <Alert
+          message={successMessage}
+          variant="success"
+          onClose={() => setSuccessMessage("")}
+        />
 
         <form onSubmit={registerFormik.handleSubmit} className="space-y-6">
           <Input
@@ -141,7 +157,11 @@ export default function RegisterForm() {
             value={registerFormik.values.name}
             onChange={registerFormik.handleChange}
             onBlur={registerFormik.handleBlur}
-            error={registerFormik.touched.name && registerFormik.errors.name ? registerFormik.errors.name : undefined}
+            error={
+              registerFormik.touched.name && registerFormik.errors.name
+                ? registerFormik.errors.name
+                : undefined
+            }
             autoComplete="name"
           />
 
@@ -152,7 +172,11 @@ export default function RegisterForm() {
             value={registerFormik.values.email}
             onChange={registerFormik.handleChange}
             onBlur={registerFormik.handleBlur}
-            error={registerFormik.touched.email && registerFormik.errors.email ? registerFormik.errors.email : undefined}
+            error={
+              registerFormik.touched.email && registerFormik.errors.email
+                ? registerFormik.errors.email
+                : undefined
+            }
             autoComplete="email"
           />
 
@@ -163,7 +187,11 @@ export default function RegisterForm() {
             value={registerFormik.values.password}
             onChange={registerFormik.handleChange}
             onBlur={registerFormik.handleBlur}
-            error={registerFormik.touched.password && registerFormik.errors.password ? registerFormik.errors.password : undefined}
+            error={
+              registerFormik.touched.password && registerFormik.errors.password
+                ? registerFormik.errors.password
+                : undefined
+            }
             autoComplete="new-password"
           />
           <PasswordStrength password={registerFormik.values.password} />
@@ -175,7 +203,12 @@ export default function RegisterForm() {
             value={registerFormik.values.confirmPassword}
             onChange={registerFormik.handleChange}
             onBlur={registerFormik.handleBlur}
-            error={registerFormik.touched.confirmPassword && registerFormik.errors.confirmPassword ? registerFormik.errors.confirmPassword : undefined}
+            error={
+              registerFormik.touched.confirmPassword &&
+              registerFormik.errors.confirmPassword
+                ? registerFormik.errors.confirmPassword
+                : undefined
+            }
             autoComplete="new-password"
           />
 
@@ -218,7 +251,8 @@ export default function RegisterForm() {
         </div>
 
         <p className="text-gray-500 text-xs mt-6 text-center">
-          Bằng việc đăng ký, bạn đồng ý với Điều khoản dịch vụ và Chính sách bảo mật của chúng tôi.
+          Bằng việc đăng ký, bạn đồng ý với Điều khoản dịch vụ và Chính sách bảo
+          mật của chúng tôi.
         </p>
       </AuthCard>
     );
@@ -226,12 +260,20 @@ export default function RegisterForm() {
 
   // Render form xác nhận email
   return (
-    <AuthCard 
-      title="Xác nhận email" 
+    <AuthCard
+      title="Xác nhận email"
       subtitle={`Nhập mã OTP đã được gửi đến ${registeredEmail}`}
     >
-      <Alert message={apiError} variant="error" onClose={() => setApiError("")} />
-      <Alert message={successMessage} variant="success" onClose={() => setSuccessMessage("")} />
+      <Alert
+        message={apiError}
+        variant="error"
+        onClose={() => setApiError("")}
+      />
+      <Alert
+        message={successMessage}
+        variant="success"
+        onClose={() => setSuccessMessage("")}
+      />
 
       <form onSubmit={verifyFormik.handleSubmit} className="space-y-6">
         <Input
@@ -241,7 +283,11 @@ export default function RegisterForm() {
           value={verifyFormik.values.email}
           onChange={verifyFormik.handleChange}
           onBlur={verifyFormik.handleBlur}
-          error={verifyFormik.touched.email && verifyFormik.errors.email ? verifyFormik.errors.email : undefined}
+          error={
+            verifyFormik.touched.email && verifyFormik.errors.email
+              ? verifyFormik.errors.email
+              : undefined
+          }
           autoComplete="email"
           disabled
         />
@@ -253,17 +299,16 @@ export default function RegisterForm() {
           value={verifyFormik.values.otp}
           onChange={verifyFormik.handleChange}
           onBlur={verifyFormik.handleBlur}
-          error={verifyFormik.touched.otp && verifyFormik.errors.otp ? verifyFormik.errors.otp : undefined}
+          error={
+            verifyFormik.touched.otp && verifyFormik.errors.otp
+              ? verifyFormik.errors.otp
+              : undefined
+          }
           maxLength={6}
           helperText="Nhập mã gồm 6 chữ số đã được gửi đến email của bạn"
         />
 
-        <Button
-          type="submit"
-          variant="primary"
-          fullWidth
-          isLoading={isLoading}
-        >
+        <Button type="submit" variant="primary" fullWidth isLoading={isLoading}>
           Xác nhận
         </Button>
 

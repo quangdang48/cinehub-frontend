@@ -3,8 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export type ResetPasswordDto = {
-    email: string;
-    otp: string;
-    newPassword: string;
+  email: string;
+  otp: string;
+  newPassword: string;
 };
-

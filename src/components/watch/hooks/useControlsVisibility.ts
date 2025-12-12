@@ -1,13 +1,13 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback } from "react";
 
 interface UseControlsVisibilityProps {
   isPlaying: boolean;
   hideDelay?: number;
 }
 
-export const useControlsVisibility = ({ 
-  isPlaying, 
-  hideDelay = 3000 
+export const useControlsVisibility = ({
+  isPlaying,
+  hideDelay = 3000,
 }: UseControlsVisibilityProps) => {
   const [showControls, setShowControls] = useState(true);
   const timeoutRef = useRef<number | null>(null);

@@ -1,8 +1,8 @@
-import authRoute from './authRoute'
-import appsRoute from './appsRoute'
-import pagesRoute from './pagesRoute'
-import type { Routes } from '@/types/routes'
+import authRoute from "./authRoute";
+import appsRoute from "./appsRoute";
+import pagesRoute from "./pagesRoute";
+import type { Routes } from "@/types/routes";
 
-export const publicRoutes: Routes = [...authRoute, ...pagesRoute]
+export const publicRoutes: Routes = [...authRoute, ...pagesRoute];
 
-export const protectedRoutes: Routes = [...appsRoute]
+export const protectedRoutes: Routes = [...appsRoute];

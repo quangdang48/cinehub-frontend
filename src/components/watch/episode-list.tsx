@@ -1,7 +1,7 @@
-import React from 'react';
-import { Play, Check } from 'lucide-react';
-import type { EpisodeDto } from '@/types/EpisodeDto';
-import type { FilmDto } from '@/types/FilmDto';
+import React from "react";
+import { Play, Check } from "lucide-react";
+import type { EpisodeDto } from "@/types/EpisodeDto";
+import type { FilmDto } from "@/types/FilmDto";
 
 interface EpisodeListProps {
   film: FilmDto;
@@ -18,8 +18,10 @@ export const EpisodeList: React.FC<EpisodeListProps> = ({
   watchedEpisodes = [],
   onSelectEpisode,
 }) => {
-  const defaultPoster = film.posters.find(p => p.type === 'thumbnail') || film.posters.find(p => p.type === 'default');
-  const currentEpisode = episodes.find(ep => ep.id === currentEpisodeId);
+  const defaultPoster =
+    film.posters.find((p) => p.type === "thumbnail") ||
+    film.posters.find((p) => p.type === "default");
+  const currentEpisode = episodes.find((ep) => ep.id === currentEpisodeId);
 
   return (
     <div className="space-y-6">
@@ -36,11 +38,11 @@ export const EpisodeList: React.FC<EpisodeListProps> = ({
           <div className="relative flex gap-4 p-4 bg-linear-to-r from-white/10 to-white/5 rounded-2xl border border-yellow-500/30 overflow-hidden">
             {/* Animated glow */}
             <div className="absolute inset-0 bg-linear-to-r from-yellow-500/5 to-transparent animate-pulse" />
-            
+
             {/* Thumbnail */}
             <div className="relative w-40 h-24 rounded-xl overflow-hidden shrink-0">
-              <img 
-                src={defaultPoster?.url} 
+              <img
+                src={defaultPoster?.url}
                 alt={film.title}
                 className="w-full h-full object-cover"
               />
@@ -61,7 +63,9 @@ export const EpisodeList: React.FC<EpisodeListProps> = ({
 
             {/* Info */}
             <div className="flex-1 min-w-0 relative z-10">
-              <h4 className="text-white font-bold text-lg truncate">{film.title}</h4>
+              <h4 className="text-white font-bold text-lg truncate">
+                {film.title}
+              </h4>
               <p className="text-yellow-500/80 text-sm font-medium truncate mb-3">
                 {film.englishTitle || film.originalTitle}
               </p>
@@ -79,7 +83,7 @@ export const EpisodeList: React.FC<EpisodeListProps> = ({
         {episodes.map((episode) => {
           const isCurrent = episode.id === currentEpisodeId;
           const isWatched = watchedEpisodes.includes(episode.id);
-          
+
           return (
             <button
               key={episode.id}
@@ -87,11 +91,12 @@ export const EpisodeList: React.FC<EpisodeListProps> = ({
               className={`
                 relative group h-12 rounded-xl flex items-center justify-center gap-1
                 font-bold text-sm transition-all duration-300 overflow-hidden
-                ${isCurrent 
-                  ? 'bg-linear-to-br from-yellow-400 to-orange-500 text-black shadow-lg shadow-yellow-500/30' 
-                  : isWatched
-                    ? 'bg-green-500/10 border border-green-500/30 text-green-400 hover:bg-green-500/20'
-                    : 'bg-white/5 border border-white/10 text-gray-400 hover:bg-white/10 hover:border-yellow-500/30 hover:text-yellow-400'
+                ${
+                  isCurrent
+                    ? "bg-linear-to-br from-yellow-400 to-orange-500 text-black shadow-lg shadow-yellow-500/30"
+                    : isWatched
+                      ? "bg-green-500/10 border border-green-500/30 text-green-400 hover:bg-green-500/20"
+                      : "bg-white/5 border border-white/10 text-gray-400 hover:bg-white/10 hover:border-yellow-500/30 hover:text-yellow-400"
                 }
               `}
             >
@@ -99,13 +104,13 @@ export const EpisodeList: React.FC<EpisodeListProps> = ({
               {isCurrent && (
                 <div className="absolute inset-0 bg-linear-to-r from-white/30 to-transparent animate-pulse" />
               )}
-              
+
               <span className="relative z-10">{episode.number}</span>
-              
+
               {isWatched && !isCurrent && (
                 <Check className="w-3 h-3 relative z-10" />
               )}
-              
+
               {isCurrent && (
                 <Play className="w-3 h-3 relative z-10" fill="currentColor" />
               )}

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Send } from 'lucide-react';
-import { Avatar } from './avatar';
+import React, { useState } from "react";
+import { Send } from "lucide-react";
+import { Avatar } from "./avatar";
 
 interface CommentInputProps {
   userAvatar?: string;
@@ -14,24 +14,24 @@ interface CommentInputProps {
 
 export const CommentInput: React.FC<CommentInputProps> = ({
   userAvatar,
-  userName = 'Bạn',
-  placeholder = 'Chia sẻ cảm nghĩ của bạn...',
+  userName = "Bạn",
+  placeholder = "Chia sẻ cảm nghĩ của bạn...",
   onSubmit,
   isLoading = false,
   autoFocus = false,
   minRows = 2,
 }) => {
-  const [content, setContent] = useState('');
+  const [content, setContent] = useState("");
 
   const handleSubmit = () => {
     if (content.trim() && !isLoading) {
       onSubmit(content.trim());
-      setContent('');
+      setContent("");
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && e.ctrlKey) {
+    if (e.key === "Enter" && e.ctrlKey) {
       handleSubmit();
     }
   };
@@ -62,8 +62,8 @@ export const CommentInput: React.FC<CommentInputProps> = ({
             disabled={!content.trim() || isLoading}
             className={`flex items-center gap-2 px-6 py-2 rounded-xl text-sm font-bold transition-all ${
               content.trim() && !isLoading
-                ? 'bg-yellow-500 text-black hover:bg-yellow-400 shadow-lg shadow-yellow-500/20'
-                : 'bg-white/10 text-gray-500 cursor-not-allowed'
+                ? "bg-yellow-500 text-black hover:bg-yellow-400 shadow-lg shadow-yellow-500/20"
+                : "bg-white/10 text-gray-500 cursor-not-allowed"
             }`}
           >
             {isLoading ? (

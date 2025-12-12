@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
-import { StreamingService } from '@/services/StreamingService';
-import type { FilmDto } from '@/types/FilmDto';
+import { useState, useEffect } from "react";
+import { StreamingService } from "@/services/StreamingService";
+import type { FilmDto } from "@/types/FilmDto";
 
 interface UseStreamingUrlParams {
   filmId: string | undefined;
-  filmType: FilmDto['type'] | undefined;
+  filmType: FilmDto["type"] | undefined;
   season?: number;
   episode?: number;
   enabled?: boolean;
@@ -33,39 +33,48 @@ export const useStreamingUrl = ({
       return;
     }
 
-    // Đối với series, cần đợi episode được load
-    if (filmType === 'SERIES' && (season === undefined || episode === undefined)) {
-      console.log('Waiting for episode data...');
+    if (
+      filmType === "SERIES" &&
+      (season === undefined || episode === undefined)
+    ) {
+      console.log("Waiting for episode data...");
       return;
     }
 
-    console.log('Fetching streaming URL for', { filmId, filmType, season, episode });
     setLoading(true);
     setError(null);
 
     try {
       // Movie chỉ cần filmId, Series cần cả season và episode
-      const params = filmType === 'MOVIE'
-        ? { filmId }
-        : { filmId, season, episode };
+      const params =
+        filmType === "MOVIE" ? { filmId } : { filmId, season, episode };
 
-      const response = await StreamingService.streamControllerGetSubscriptionByUserIdV1(params);
+      // const response =
+      //   await StreamingService.streamControllerGetSubscriptionByUserIdV1(
+      //     params,
+      //   );
 
-      if (response.data?.url) {
-        setStreamUrl(response.data.url);
-      } else {
-        throw new Error('No streaming URL available');
-      }
+      // if (response.data?.url) {
+      //   setStreamUrl(response.data.url);
+      // } else {
+      //   throw new Error("No streaming URL available");
+      // }
+      setStreamUrl(
+        "http://localhost:3000/api/v1/streaming?filmId=" +
+          filmId +
+          (season ? "&season=" + season : "") +
+          (episode ? "&episode=" + episode : ""),
+      );
     } catch (err: any) {
-      console.error('Error fetching streaming URL:', err);
-      
+      console.error("Error fetching streaming URL:", err);
+
       // Handle specific error cases
       if (err.status === 401 || err.status === 403) {
-        setError('Bạn cần đăng nhập hoặc nâng cấp gói để xem nội dung này.');
+        setError("Bạn cần đăng nhập hoặc nâng cấp gói để xem nội dung này.");
       } else if (err.status === 404) {
-        setError('Không tìm thấy video này.');
+        setError("Không tìm thấy video này.");
       } else {
-        setError('Không thể tải video. Vui lòng thử lại sau.');
+        setError("Không thể tải video. Vui lòng thử lại sau.");
       }
       setStreamUrl(null);
     } finally {
@@ -77,10 +86,10 @@ export const useStreamingUrl = ({
     fetchStreamUrl();
   }, [filmId, filmType, season, episode, enabled]);
 
-  return { 
-    streamUrl, 
-    loading, 
-    error, 
-    refetch: fetchStreamUrl 
+  return {
+    streamUrl,
+    loading,
+    error,
+    refetch: fetchStreamUrl,
   };
 };

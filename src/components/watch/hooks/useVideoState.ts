@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from "react";
 
 interface UseVideoStateProps {
   videoRef: React.RefObject<HTMLVideoElement | null>;
@@ -17,10 +17,10 @@ export interface VideoState {
   playbackRate: number;
 }
 
-export const useVideoState = ({ 
-  videoRef, 
-  onTimeUpdate, 
-  onEnded 
+export const useVideoState = ({
+  videoRef,
+  onTimeUpdate,
+  onEnded,
 }: UseVideoStateProps) => {
   const [state, setState] = useState<VideoState>({
     isPlaying: false,
@@ -34,7 +34,7 @@ export const useVideoState = ({
   });
 
   const updateState = useCallback((updates: Partial<VideoState>) => {
-    setState(prev => ({ ...prev, ...updates }));
+    setState((prev) => ({ ...prev, ...updates }));
   }, []);
 
   useEffect(() => {
@@ -45,15 +45,15 @@ export const useVideoState = ({
       play: () => updateState({ isPlaying: true }),
       pause: () => updateState({ isPlaying: false }),
       volumechange: () => {
-        updateState({ 
+        updateState({
           volume: video.volume,
-          isMuted: video.muted 
+          isMuted: video.muted,
         });
       },
       loadedmetadata: () => {
-        updateState({ 
+        updateState({
           duration: video.duration,
-          isLoading: false 
+          isLoading: false,
         });
       },
       timeupdate: () => {
@@ -62,8 +62,8 @@ export const useVideoState = ({
       },
       progress: () => {
         if (video.buffered.length > 0) {
-          updateState({ 
-            buffered: video.buffered.end(video.buffered.length - 1) 
+          updateState({
+            buffered: video.buffered.end(video.buffered.length - 1),
           });
         }
       },

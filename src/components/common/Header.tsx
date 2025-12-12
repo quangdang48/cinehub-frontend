@@ -1,7 +1,7 @@
-import { Bell, Search } from "lucide-react"
-import { Link } from "react-router-dom"
-import { useAppSelector } from "@/store"
-import { useAuth } from "@/hooks"
+import { Bell, Search } from "lucide-react";
+import { Link } from "react-router-dom";
+import { useAppSelector } from "@/store";
+import { useAuth } from "@/hooks";
 import UserMenu from "./user-menu";
 import { useEffect, useState, useCallback } from "react";
 import { MegaMenuDropdown } from "./mega-menu-dropdown";
@@ -26,8 +26,8 @@ export default function Header() {
       setScrolled(window.scrollY > 50);
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const handleToggleDropdown = useCallback((dropdown: OpenDropdown) => {
@@ -41,66 +41,72 @@ export default function Header() {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-30 px-6 py-4 md:px-12 md:py-4 transition-all duration-300 ${
-        scrolled
-          ? 'bg-black/30 backdrop-blur-sm'
-          : 'bg-transparent'
+        scrolled ? "bg-black/30 backdrop-blur-sm" : "bg-transparent"
       }`}
     >
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between">
           {/* Left: Logo */}
           <div className="flex items-center gap-8">
-            <Link to="/" className="text-red-600 font-black text-2xl md:text-3xl hover:opacity-80 transition">
+            <Link
+              to="/"
+              className="text-red-600 font-black text-2xl md:text-3xl hover:opacity-80 transition"
+            >
               CINEHUB
             </Link>
-            </div>
-            <div>
-
+          </div>
+          <div>
             {/* Navigation Menu */}
-            
-              <nav className="hidden md:flex items-center gap-6 text-sm">
-                <Link to="/phim-le" className="text-neutral-300 hover:text-white transition">
-                  Phim Lẻ
-                </Link>
-                <Link to="/phim-bo" className="text-neutral-300 hover:text-white transition">
-                  Phim Bộ
-                </Link>
-                
-                {/* Thể loại Dropdown */}
-                <MegaMenuDropdown
-                  label="Thể loại"
-                  items={GENRE_LIST}
-                  isOpen={openDropdown === "genre"}
-                  onToggle={() => handleToggleDropdown("genre")}
-                  onClose={handleCloseDropdown}
-                  basePath="/genre"
-                  columns={5}
-                />
 
-                {/* Quốc gia Dropdown */}
-                <MegaMenuDropdown
-                  label="Quốc gia"
-                  items={COUNTRY_LIST}
-                  isOpen={openDropdown === "country"}
-                  onToggle={() => handleToggleDropdown("country")}
-                  onClose={handleCloseDropdown}
-                  basePath="/country"
-                  columns={4}
-                />
-              </nav>
+            <nav className="hidden md:flex items-center gap-6 text-sm">
+              <Link
+                to="/phim-le"
+                className="text-neutral-300 hover:text-white transition"
+              >
+                Phim Lẻ
+              </Link>
+              <Link
+                to="/phim-bo"
+                className="text-neutral-300 hover:text-white transition"
+              >
+                Phim Bộ
+              </Link>
+
+              {/* Thể loại Dropdown */}
+              <MegaMenuDropdown
+                label="Thể loại"
+                items={GENRE_LIST}
+                isOpen={openDropdown === "genre"}
+                onToggle={() => handleToggleDropdown("genre")}
+                onClose={handleCloseDropdown}
+                basePath="/genre"
+                columns={5}
+              />
+
+              {/* Quốc gia Dropdown */}
+              <MegaMenuDropdown
+                label="Quốc gia"
+                items={COUNTRY_LIST}
+                isOpen={openDropdown === "country"}
+                onToggle={() => handleToggleDropdown("country")}
+                onClose={handleCloseDropdown}
+                basePath="/country"
+                columns={4}
+              />
+            </nav>
           </div>
 
           {/* Right: Actions */}
           <div className="flex items-center gap-4">
             {/* Search Icon */}
-              <button className="p-2 text-neutral-300 hover:text-white transition">
-                <Search size={20} />
-              </button>
+            <button className="p-2 text-neutral-300 hover:text-white transition">
+              <Search size={20} />
+            </button>
 
             {signedIn ? (
               <>
                 {/* Notification Bell */}
-                <Link 
+                <Link
                   to="/profile?tab=notifications"
                   className="relative p-2 text-neutral-300 hover:text-white transition"
                 >
@@ -123,5 +129,5 @@ export default function Header() {
         </div>
       </div>
     </header>
-  )
+  );
 }

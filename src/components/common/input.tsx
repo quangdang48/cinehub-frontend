@@ -24,19 +24,17 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             {
               "border-red-600 bg-red-900/20": error,
             },
-            className
+            className,
           )}
           {...props}
         />
-        {error && (
-          <p className="text-red-600 text-sm mt-2">{error}</p>
-        )}
+        {error && <p className="text-red-600 text-sm mt-2">{error}</p>}
         {helperText && !error && (
           <p className="text-gray-400 text-xs mt-2">{helperText}</p>
         )}
       </div>
     );
-  }
+  },
 );
 
 Input.displayName = "Input";
