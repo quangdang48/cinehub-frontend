@@ -4,7 +4,6 @@ export { useCarouselData } from "./useCarousel";
 export { useWishlist } from "./useWishlist";
 export { useFilmData } from "./useFilmData";
 export { useEpisodesData } from "./useEpisodesData";
-export { useStreamingUrl } from "./useStreamingUrl";
 export { useCurrentEpisode } from "./useCurrentEpisode";
 export { useRecommendedFilms } from "./useRecommendedFilms";
 export { useUserActions } from "./useUserActions";

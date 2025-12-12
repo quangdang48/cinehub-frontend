@@ -12,6 +12,7 @@ import {
   MonitorPlay,
   PictureInPicture2,
   Loader2,
+  AlertCircle,
 } from "lucide-react";
 import {
   useHLS,
@@ -61,8 +62,17 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = memo(
     const [showSettings, setShowSettings] = useState(false);
     const [showQuality, setShowQuality] = useState(false);
     const [showVolumeSlider, setShowVolumeSlider] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-    const hlsRef = useHLS({ videoRef, src, onError });
+    const handleError = useCallback(
+      (error: any) => {
+        setError(error.message || 'Lỗi phát video');
+        onError?.(error);
+      },
+      [onError],
+    );
+
+    const hlsRef = useHLS({ videoRef, src, onError: handleError });
 
     const { state } = useVideoState({ videoRef, onTimeUpdate, onEnded });
     const controls = useVideoControls({ videoRef, state });
@@ -150,8 +160,31 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = memo(
           autoPlay={autoPlay}
         />
 
-        {/* Loading Spinner */}
-        {state.isLoading && (
+        {/* Error Overlay */}
+        {error && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/80 z-50">
+            <div className="text-center p-8 max-w-md">
+              <div className="relative mb-4">
+                <div className="absolute inset-0 blur-2xl bg-red-500/30 animate-pulse" />
+                <AlertCircle className="w-16 h-16 text-red-400 mx-auto relative" />
+              </div>
+              <h3 className="text-red-400 text-xl font-bold mb-2">Lỗi phát video</h3>
+              <p className="text-gray-300 text-sm mb-4">{error}</p>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  window.location.reload();
+                }}
+                className="px-6 py-2.5 bg-yellow-500 text-black font-bold rounded-xl hover:bg-yellow-400 transition-colors"
+              >
+                Tải lại trang
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Loading Spinner - Only show when actually buffering and not paused */}
+        {state.isLoading && !error && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-50 pointer-events-none">
             <div className="relative">
               <Loader2 className="w-16 h-16 text-yellow-500 animate-spin" />
@@ -161,7 +194,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = memo(
         )}
 
         {/* Play/Pause Overlay */}
-        {!state.isPlaying && !state.isLoading && (
+        {!state.isPlaying && !state.isLoading && !error && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/30 z-50 pointer-events-none">
             <div className="relative">
               <div className="absolute inset-0 bg-yellow-500/30 rounded-full blur-2xl animate-pulse scale-150" />

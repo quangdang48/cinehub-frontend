@@ -36,15 +36,12 @@ export const useHLS = ({ videoRef, src, onError }: UseHLSProps) => {
         maxMaxBufferLength: 600,
         maxBufferSize: 60 * 1000 * 1000, // 60MB
         maxBufferHole: 0.5,
-        // xhrSetup: (xhr) => {
-        //     console.log("Setting up HLS XHR with token:", token);
-        //     xhr.withCredentials = false;
-        //     if (token) {
-        //         xhr.setRequestHeader("Authorization", `Bearer ${token}`);
-        //     }
-        // }
+        xhrSetup: (xhr, url) => {
+            if (token && url.includes("localhost")) {
+                xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+            }
+        }
       });
-      console.log("Initializing HLS for", token);
       hls.loadSource(normalizeUrl(src));
       hls.attachMedia(video);
 
@@ -54,33 +51,32 @@ export const useHLS = ({ videoRef, src, onError }: UseHLSProps) => {
 
       hls.on(Hls.Events.ERROR, (_event, data) => {
         if (data.fatal) {
-          console.error("HLS fatal error:", data);
+          console.error("Fatal HLS error:", data);
+          let errorMessage = 'Lỗi phát video';
           switch (data.type) {
             case Hls.ErrorTypes.NETWORK_ERROR:
-              console.error("Network error, trying to recover...");
-              hls.startLoad();
+              errorMessage = 'Lỗi mạng khi tải video. Vui lòng kiểm tra kết nối internet.';
               break;
             case Hls.ErrorTypes.MEDIA_ERROR:
-              console.error("Media error, trying to recover...");
+              errorMessage = 'Lỗi giải mã video. Đang thử khôi phục...';
               hls.recoverMediaError();
               break;
             default:
-              console.error(
-                "Cannot recover from error, destroying HLS instance",
-              );
+              errorMessage = 'Không thể phát video. Vui lòng thử lại sau.';
               hls.destroy();
-              onError?.(data);
               break;
           }
+          onError?.({
+            ...data,
+            message: errorMessage
+          });
         }
       });
 
       hlsRef.current = hls;
     } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-      // Safari và iOS hỗ trợ native HLS
       video.src = src;
     } else {
-      // Fallback cho các format video khác (mp4, webm, etc.)
       video.src = src;
     }
 

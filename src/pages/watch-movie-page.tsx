@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useMemo } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { ChevronLeft, Loader2, AlertCircle } from "lucide-react";
 import {
@@ -13,59 +13,51 @@ import { CommentSection } from "@/components";
 import {
   useFilmData,
   useEpisodesData,
-  useStreamingUrl,
   useCurrentEpisode,
   useRecommendedFilms,
   useUserActions,
 } from "@/hooks";
 import {
+  getFilmHlsUrl,
   getVideoPoster,
   getVideoTitle,
   isSeries,
 } from "../utils/watchPageUtils";
+import { toast } from "sonner";
 
 export default function WatchMoviePage() {
   const { id: filmId } = useParams<{ id: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  // Get episode number từ URL query params
   const episodeNumberFromUrl = searchParams.get("ep");
 
-  // Fetch film data
   const { film, loading: filmLoading, error: filmError } = useFilmData(filmId);
 
-  // Fetch episodes (chỉ khi là series)
   const { episodes, loading: episodesLoading } = useEpisodesData(
     filmId,
     1, // TODO: Support multiple seasons
     isSeries(film),
   );
 
-  // Current episode management
   const { currentEpisode, setCurrentEpisode, selectNextEpisode } =
     useCurrentEpisode({
       episodes,
       episodeNumberFromUrl,
     });
 
-  // Fetch streaming URL
-  const {
-    streamUrl,
-    loading: streamLoading,
-    error: streamError,
-  } = useStreamingUrl({
-    filmId,
-    filmType: film?.type,
-    season: isSeries(film) ? 1 : undefined,
-    episode: currentEpisode?.number,
-    enabled: !!film, // Chỉ fetch khi đã có film data
-  });
-
-  // Fetch recommended films
   const { recommendedFilms } = useRecommendedFilms(filmId, 10);
+  const streamUrl = useMemo(() => {
+    if (!film) return null;
+    if (isSeries(film) && !currentEpisode) return null;
 
-  // User actions
+    return getFilmHlsUrl(
+      film.id,
+      isSeries(film) ? 1 : undefined,
+      isSeries(film) && currentEpisode ? currentEpisode.number : undefined,
+    );
+  }, [film, currentEpisode]);
+
   const {
     isFavorite,
     isInWatchlist,
@@ -77,12 +69,10 @@ export default function WatchMoviePage() {
     handleReport,
   } = useUserActions();
 
-  // Scroll to top khi component mount
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  // Handle episode selection
   const handleSelectEpisode = useCallback(
     (episode: typeof currentEpisode) => {
       if (!episode) return;
@@ -105,14 +95,14 @@ export default function WatchMoviePage() {
 
   const handleVideoError = useCallback((error: any) => {
     console.error("Video player error:", error);
+    toast.error("Lỗi phát video. Vui lòng thử lại sau.");
   }, []);
 
-  // Calculate loading state
-  const isLoading = filmLoading || episodesLoading || streamLoading;
-  const error = filmError || streamError;
+  const isLoading = filmLoading || episodesLoading;
+  const error = filmError;
 
   // Loading state
-  if (isLoading && !film) {
+  if (isLoading || !streamUrl) {
     return (
       <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
         <div className="text-center">
@@ -188,7 +178,6 @@ export default function WatchMoviePage() {
           }`}
         >
           <div className={theaterMode ? "w-full h-full" : ""}>
-            {streamUrl ? (
               <VideoPlayer
                 key={`${filmId}-${currentEpisode?.id || "movie"}`}
                 src={streamUrl}
@@ -198,26 +187,6 @@ export default function WatchMoviePage() {
                 autoPlay={false}
                 onError={handleVideoError}
               />
-            ) : streamLoading ? (
-              <div className="w-full aspect-video bg-black rounded-2xl flex items-center justify-center">
-                <div className="text-center">
-                  <Loader2 className="w-12 h-12 text-yellow-500 animate-spin mx-auto mb-3" />
-                  <p className="text-gray-400 text-sm">Đang tải video...</p>
-                </div>
-              </div>
-            ) : (
-              <div className="w-full aspect-video bg-black/50 rounded-2xl flex items-center justify-center border border-red-500/20">
-                <div className="text-center p-6">
-                  <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-3" />
-                  <p className="text-red-400 font-medium mb-2">
-                    {streamError || "Không thể tải video"}
-                  </p>
-                  <p className="text-gray-500 text-sm">
-                    Vui lòng thử lại sau hoặc liên hệ hỗ trợ
-                  </p>
-                </div>
-              </div>
-            )}
           </div>
         </div>
 

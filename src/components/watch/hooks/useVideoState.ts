@@ -42,8 +42,8 @@ export const useVideoState = ({
     if (!video) return;
 
     const handlers = {
-      play: () => updateState({ isPlaying: true }),
-      pause: () => updateState({ isPlaying: false }),
+      play: () => updateState({ isPlaying: true, isLoading: false }),
+      pause: () => updateState({ isPlaying: false, isLoading: false }),
       volumechange: () => {
         updateState({
           volume: video.volume,
@@ -69,8 +69,10 @@ export const useVideoState = ({
       },
       waiting: () => updateState({ isLoading: true }),
       canplay: () => updateState({ isLoading: false }),
+      canplaythrough: () => updateState({ isLoading: false }),
+      playing: () => updateState({ isLoading: false }),
       ended: () => {
-        updateState({ isPlaying: false });
+        updateState({ isPlaying: false, isLoading: false });
         onEnded?.();
       },
       ratechange: () => {

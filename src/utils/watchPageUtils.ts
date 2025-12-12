@@ -25,3 +25,13 @@ export const getVideoTitle = (
 export const isSeries = (film: FilmDto | null): boolean => {
   return film?.type === "SERIES";
 };
+
+export const getFilmHlsUrl = (filmId: string, season?: number, episode?: number): string => {
+  if (!filmId) return "";
+  const params = new URLSearchParams({ filmId });
+  if (season !== undefined && episode !== undefined) {
+    params.append("season", season.toString());
+    params.append("episode", episode.toString());
+  }
+  return `http://localhost:3000/api/v1/streaming?${params.toString()}`;
+}
