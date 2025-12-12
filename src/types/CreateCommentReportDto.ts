@@ -2,30 +2,18 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type CommentReportDto = {
-    /**
-     * ID của báo cáo
-     */
-    id: string;
+export type CreateCommentReportDto = {
     /**
      * Lý do báo cáo
      */
     reason: 'spam' | 'harassment' | 'hate_speech' | 'misinformation' | 'inappropriate' | 'other';
     /**
-     * Mô tả chi tiết
+     * Mô tả chi tiết (tùy chọn)
      */
-    description: string;
+    description?: string;
     /**
-     * ID của user báo cáo
-     */
-    userId: string;
-    /**
-     * ID của comment bị báo cáo
+     * ID của comment
      */
     commentId: string;
-    /**
-     * Thời gian tạo
-     */
-    createdAt: string;
 };
 

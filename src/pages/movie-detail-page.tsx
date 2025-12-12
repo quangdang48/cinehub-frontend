@@ -74,7 +74,7 @@ export default function MovieDetailPage() {
       case 'episodes':
         return <EpisodeSection film={film} episodes={episodes}/>;
       case 'cast':
-        return <ActorSection actors={film.actors} />;
+        return <ActorSection casts={film.casts} />;
       case 'trailer':
         return <TrailerSection film={film} />;
       case 'comments':

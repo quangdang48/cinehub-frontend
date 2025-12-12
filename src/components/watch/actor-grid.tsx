@@ -1,40 +1,40 @@
 import React from 'react';
 import { User } from 'lucide-react';
-import type { ActorDto } from '@/types/ActorDto';
+import type { CastDto } from '@/types/CastDto';
 
 interface ActorGridProps {
-  actors: ActorDto[];
+  casts: CastDto[];
   maxDisplay?: number;
   onViewAll?: () => void;
 }
 
 export const ActorGrid: React.FC<ActorGridProps> = ({
-  actors,
+  casts,
   maxDisplay = 8,
   onViewAll,
 }) => {
-  const displayActors = actors.slice(0, maxDisplay);
+  const displayCasts = casts.slice(0, maxDisplay);
 
   return (
     <div className="space-y-4">
       {/* Section Header */}
       <div className="flex items-center justify-between">
         <h3 className="text-xl font-bold text-white">Diễn viên</h3>
-        {actors.length > maxDisplay && onViewAll && (
+        {casts.length > maxDisplay && onViewAll && (
           <button 
             onClick={onViewAll}
             className="text-yellow-500 text-sm font-medium hover:text-yellow-400 transition-colors"
           >
-            Xem tất cả ({actors.length})
+            Xem tất cả ({casts.length})
           </button>
         )}
       </div>
 
       {/* Actors Grid */}
       <div className="grid grid-cols-3 gap-4">
-        {displayActors.map((actor) => (
+        {displayCasts.map((cast) => (
           <div 
-            key={actor.id} 
+            key={cast.id} 
             className="group text-center cursor-pointer"
           >
             <div className="relative mx-auto mb-3">
@@ -43,10 +43,10 @@ export const ActorGrid: React.FC<ActorGridProps> = ({
               
               {/* Avatar */}
               <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-white/10 group-hover:border-yellow-500/50 transition-all duration-300 shadow-lg">
-                {actor.photoUrl ? (
+                {cast.actor.photoUrl ? (
                   <img 
-                    src={actor.photoUrl} 
-                    alt={actor.name}
+                    src={cast.actor.photoUrl} 
+                    alt={cast.actor.name}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
                 ) : (
@@ -64,13 +64,13 @@ export const ActorGrid: React.FC<ActorGridProps> = ({
 
             {/* Name */}
             <p className="text-white text-sm font-bold group-hover:text-yellow-400 transition-colors line-clamp-1">
-              {actor.name}
+              {cast.actor.name}
             </p>
             
             {/* Role */}
-            {actor.bio && (
+            {cast.character && (
               <p className="text-gray-500 text-xs mt-0.5 line-clamp-1">
-                {actor.bio}
+                {cast.character}
               </p>
             )}
           </div>

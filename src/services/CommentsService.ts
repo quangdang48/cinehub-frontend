@@ -4,7 +4,8 @@ import type { CommentApiResponseDto } from "@/types/CommentApiResponseDto";
 import type { CreateCommentDto } from "@/types/CreateCommentDto";
 import type { UpdateCommentDto } from "@/types/UpdateCommentDto";
 import type { CreateCommentReactionDto, CommentReactionApiResponseDto } from "@/types/CommentReactionDto";
-import type { CreateCommentReportDto, CommentReportApiResponseDto } from "@/types/CommentReportDto";
+import type { CreateCommentReportDto } from "@/types/CreateCommentReportDto";
+import type { CommentReportApiResponseDto } from "@/types/CommentReportApiResponseDto";
 
 export class CommentsService {
     /**

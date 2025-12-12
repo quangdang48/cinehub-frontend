@@ -5,7 +5,7 @@ import type { ReviewDto } from '@/types/ReviewDto';
 import type { CreateCommentDto } from '@/types/CreateCommentDto';
 import type { CreateReviewDto } from '@/types/CreateReviewDto';
 import { ReactionType } from '@/types/CommentReactionDto';
-import { ReportReason } from '@/types/CommentReportDto';
+
 import { CommentItem, CommentInput, ReviewItem, ReviewInput } from '@/components/common';
 import { CommentsService } from '@/services/CommentsService';
 import { ReviewsService } from '@/services/ReviewsService';
@@ -270,7 +270,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
     }
   }, []);
 
-  const handleReportComment = useCallback(async (id: string, reason?: ReportReason, description?: string) => {
+  const handleReportComment = useCallback(async (id: string, reason?: string, description?: string) => {
     if (!signedIn) {
       setError('Vui lòng đăng nhập để báo cáo bình luận');
       return;
@@ -279,7 +279,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
       await CommentsService.reportCommentV1({
         requestBody: {
           commentId: id,
-          reason: reason || ReportReason.OTHER,
+          reason: reason || 'other' as any,
           description,
         },
       });
@@ -293,8 +293,6 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
       }
     }
   }, [signedIn]);
-
-  // ========== REVIEW HANDLERS ==========
 
   const handleSubmitReview = useCallback(async (content: string, rating: number) => {
     if (!signedIn) {
@@ -441,7 +439,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
     }
   }, [userReview]);
 
-  const handleReportReview = useCallback(async (id: string, reason?: ReportReason, description?: string) => {
+  const handleReportReview = useCallback(async (id: string, reason?: string, description?: string) => {
     if (!signedIn) {
       setError('Vui lòng đăng nhập để báo cáo đánh giá');
       return;
@@ -450,7 +448,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
       await ReviewsService.reportReviewV1({
         requestBody: {
           reviewId: id,
-          reason: reason || ReportReason.OTHER,
+          reason: reason || 'other' as any,
           description,
         },
       });

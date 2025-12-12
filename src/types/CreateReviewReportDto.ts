@@ -2,30 +2,18 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type ReviewReportDto = {
-    /**
-     * ID của báo cáo
-     */
-    id: string;
+export type CreateReviewReportDto = {
     /**
      * Lý do báo cáo
      */
     reason: 'spam' | 'harassment' | 'hate_speech' | 'misinformation' | 'inappropriate' | 'other';
     /**
-     * Mô tả chi tiết
+     * Mô tả chi tiết (tùy chọn)
      */
-    description: string;
+    description?: string;
     /**
-     * ID của user báo cáo
-     */
-    userId: string;
-    /**
-     * ID của review bị báo cáo
+     * ID của review
      */
     reviewId: string;
-    /**
-     * Thời gian tạo
-     */
-    createdAt: string;
 };
 

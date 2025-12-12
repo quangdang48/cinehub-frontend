@@ -4,7 +4,8 @@ import type { CreateReviewDto } from "@/types/CreateReviewDto";
 import type { ReviewApiResponseDto } from "@/types/ReviewApiResponseDto";
 import type { UpdateReviewDto } from "@/types/UpdateReviewDto";
 import type { CreateReviewReactionDto, ReviewReactionApiResponseDto } from "@/types/ReviewReactionDto";
-import type { CreateReviewReportDto, ReviewReportApiResponseDto } from "@/types/ReviewReportDto";
+import type { CreateReviewReportDto } from "@/types/CreateReviewReportDto";
+import type { ReviewReportApiResponseDto } from "@/types/ReviewReportApiResponseDto";
 
 export class ReviewsService {
     /**

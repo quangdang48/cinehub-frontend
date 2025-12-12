@@ -1,10 +1,6 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import { ChevronLeft, Loader2 } from 'lucide-react';
-import { FilmService } from '@/services/FilmService';
-import { EpisodesService } from '@/services/EpisodesService';
-import type { FilmDto } from '@/types/FilmDto';
-import type { EpisodeDto } from '@/types/EpisodeDto';
+import { ChevronLeft, Loader2, AlertCircle } from 'lucide-react';
 import {
   VideoPlayer,
   VideoActionBar,
@@ -14,102 +10,97 @@ import {
   RecommendedMovies,
 } from '@/components/watch';
 import { CommentSection } from '@/components';
+import {
+  useFilmData,
+  useEpisodesData,
+  useStreamingUrl,
+  useCurrentEpisode,
+  useRecommendedFilms,
+  useUserActions,
+} from '@/hooks';
+import { getVideoPoster, getVideoTitle, isSeries } from '../utils/watchPageUtils';
 
 export default function WatchMoviePage() {
-  const { id } = useParams<{ id: string }>();
+  const { id: filmId } = useParams<{ id: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  
-  const [film, setFilm] = useState<FilmDto | null>(null);
-  const [episodes, setEpisodes] = useState<EpisodeDto[]>([]);
-  const [currentEpisode, setCurrentEpisode] = useState<EpisodeDto | null>(null);
-  const [recommendedFilms, setRecommendedFilms] = useState<FilmDto[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  
-  // User actions state
-  const [isFavorite, setIsFavorite] = useState(false);
-  const [isInWatchlist, setIsInWatchlist] = useState(false);
-  const [theaterMode, setTheaterMode] = useState(false);
+
+  // Get episode number từ URL query params
+  const episodeNumberFromUrl = searchParams.get('ep');
 
   // Fetch film data
+  const { film, loading: filmLoading, error: filmError } = useFilmData(filmId);
+
+  // Fetch episodes (chỉ khi là series)
+  const { episodes, loading: episodesLoading } = useEpisodesData(
+    filmId,
+    1, // TODO: Support multiple seasons
+    isSeries(film)
+  );
+
+  // Current episode management
+  const { currentEpisode, setCurrentEpisode, selectNextEpisode } = useCurrentEpisode({
+    episodes,
+    episodeNumberFromUrl,
+  });
+
+  // Fetch streaming URL
+  const { streamUrl, loading: streamLoading, error: streamError } = useStreamingUrl({
+    filmId,
+    filmType: film?.type,
+    season: isSeries(film) ? 1 : undefined,
+    episode: currentEpisode?.number,
+    enabled: !!film, // Chỉ fetch khi đã có film data
+  });
+
+  // Fetch recommended films
+  const { recommendedFilms } = useRecommendedFilms(filmId, 10);
+
+  // User actions
+  const {
+    isFavorite,
+    isInWatchlist,
+    theaterMode,
+    toggleFavorite,
+    toggleWatchlist,
+    toggleTheaterMode,
+    handleShare,
+    handleReport,
+  } = useUserActions();
+
+  // Scroll to top khi component mount
   useEffect(() => {
-    const fetchData = async () => {
-      if (!id) return;
-
-      setLoading(true);
-      setError(null);
-
-      try {
-        // Fetch film details and recommended films
-        const [filmResponse, recommendedResponse] = await Promise.all([
-          FilmService.filmControllerGetOneV1(id),
-          FilmService.filmControllerGetAll(1, 10),
-        ]);
-
-        setFilm(filmResponse.data);
-        setRecommendedFilms(recommendedResponse.data);
-
-        // Fetch episodes for series
-        if (filmResponse.data.type === 'SERIES') {
-          const episodesResponse = await EpisodesService.episodeControllerGetAllV1({
-            filmId: id,
-            season: 1,
-          });
-          setEpisodes(episodesResponse.data);
-          
-          // Set current episode from URL or default to first
-          const episodeNumber = searchParams.get('ep');
-          if (episodeNumber) {
-            const ep = episodesResponse.data.find(e => e.number === parseInt(episodeNumber));
-            setCurrentEpisode(ep || episodesResponse.data[0] || null);
-          } else {
-            setCurrentEpisode(episodesResponse.data[0] || null);
-          }
-        }
-      } catch (err) {
-        console.error('Error fetching data:', err);
-        setError('Không thể tải phim. Vui lòng thử lại sau.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
     window.scrollTo(0, 0);
-    fetchData();
-  }, [id, searchParams]);
+  }, []);
 
   // Handle episode selection
-  const handleSelectEpisode = useCallback((episode: EpisodeDto) => {
+  const handleSelectEpisode = useCallback((episode: typeof currentEpisode) => {
+    if (!episode) return;
     setCurrentEpisode(episode);
     setSearchParams({ ep: episode.number.toString() });
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [setSearchParams]);
+  }, [setCurrentEpisode, setSearchParams]);
 
-  // Handle video ended
   const handleVideoEnded = useCallback(() => {
-    if (film?.type === 'SERIES' && currentEpisode) {
-      const currentIndex = episodes.findIndex(ep => ep.id === currentEpisode.id);
-      if (currentIndex < episodes.length - 1) {
-        handleSelectEpisode(episodes[currentIndex + 1]);
+    if (isSeries(film)) {
+      const hasNext = selectNextEpisode();
+      if (hasNext && currentEpisode) {
+        const nextEpisodeNumber = currentEpisode.number + 1;
+        setSearchParams({ ep: nextEpisodeNumber.toString() });
       }
     }
-  }, [film, currentEpisode, episodes, handleSelectEpisode]);
+  }, [film, selectNextEpisode, currentEpisode, setSearchParams]);
 
-  // Get video source (placeholder - should be from API)
-  const getVideoSource = () => {
-    // In real app, this would come from the API based on episode/film
-    return 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4';
-  };
+  const handleVideoError = useCallback((error: any) => {
+    console.error('Video player error:', error);
+  }, []);
 
-  // Get poster for video
-  const getVideoPoster = () => {
-    const backdropPoster = film?.posters.find(p => p.type === 'backdrop');
-    const thumbnailPoster = film?.posters.find(p => p.type === 'thumbnail');
-    return backdropPoster?.url || thumbnailPoster?.url;
-  };
+  // Calculate loading state
+  const isLoading = filmLoading || episodesLoading || streamLoading;
+  const error = filmError || streamError;
 
-  if (loading) {
+  // Loading state
+  if (isLoading && !film) {
     return (
       <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
         <div className="text-center">
@@ -123,11 +114,18 @@ export default function WatchMoviePage() {
     );
   }
 
+  // Error state
   if (error || !film) {
     return (
-      <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-400 text-lg mb-4">{error || 'Không tìm thấy phim'}</p>
+      <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center p-4">
+        <div className="text-center max-w-md">
+          <AlertCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
+          <p className="text-red-400 text-lg mb-2">
+            {error || 'Không tìm thấy phim'}
+          </p>
+          <p className="text-gray-500 text-sm mb-6">
+            Vui lòng kiểm tra lại hoặc thử tải lại trang
+          </p>
           <button
             onClick={() => navigate(-1)}
             className="px-6 py-3 bg-yellow-500 text-black font-bold rounded-xl hover:bg-yellow-400 transition-colors"
@@ -140,54 +138,81 @@ export default function WatchMoviePage() {
   }
 
   return (
-    <div className={`min-h-screen bg-[#0a0a0f] ${theaterMode ? 'theater-mode' : ''}`}>
+    <div className={`min-h-screen bg-[#0a0a0f]`}>
+      <div 
+        className={`fixed inset-0 bg-black/90 z-40 transition-opacity duration-500 pointer-events-auto ${
+          theaterMode ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
+        }`}
+        onClick={() => toggleTheaterMode()}
+      />
+
       {/* Main Content */}
-      <div className={`relative pt-20 ${theaterMode ? 'z-auto' : 'z-10'}`}>
-        {/* Header */}
-        <div className="top-0 bg-[#0a0a0f]/80 backdrop-blur-xl border-b border-white/5">
-          <div className="container mx-auto px-4 lg:px-8">
-            <div className="flex items-center gap-4 h-16">
-              <button
-                onClick={() => navigate(-1)}
-                className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors group"
-              >
-                <ChevronLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-                <span className="text-sm font-medium">Xem phim {film.title}</span>
-              </button>
+      <div className={`relative flex-1 pt-24 px-4 container mx-auto max-w-6xl z-auto`}>
+          <div className="top-0 bg-[#0a0a0f]/80 backdrop-blur-xl border-b border-white/5">
+            <div className="container mx-auto px-4 lg:px-8">
+              <div className="flex items-center gap-4 h-16">
+                <button
+                  onClick={() => navigate(-1)}
+                  className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors group"
+                  aria-label="Quay lại"
+                >
+                  <ChevronLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+                  <span className="text-sm font-medium">Xem phim {film.title}</span>
+                </button>
+              </div>
             </div>
           </div>
-        </div>
 
         {/* Video Section */}
-        <div className={`container mx-auto px-4 lg:px-8 ${theaterMode ? 'z-9999999999 relative' : ''}`}>
-          <div className={'pt-6'}>
-            <VideoPlayer
-              src={getVideoSource()}
-              poster={getVideoPoster()}
-              title={currentEpisode ? `${film.title} - Tập ${currentEpisode.number}` : film.title}
-              onEnded={handleVideoEnded}
-              autoPlay={false}
-            />
+        <div className={`relative w-full transition-all duration-300 ${
+            theaterMode ? 'z-50' : 'z-auto'
+          }`}>
+          <div className={theaterMode ? 'w-full h-full' : ''}>
+            {streamUrl ? (
+              <VideoPlayer
+                key={`${filmId}-${currentEpisode?.id || 'movie'}`}
+                src={streamUrl}
+                poster={getVideoPoster(film)}
+                title={getVideoTitle(film, currentEpisode?.number)}
+                onEnded={handleVideoEnded}
+                autoPlay={false}
+                onError={handleVideoError}
+              />
+            ) : streamLoading ? (
+              <div className="w-full aspect-video bg-black rounded-2xl flex items-center justify-center">
+                <div className="text-center">
+                  <Loader2 className="w-12 h-12 text-yellow-500 animate-spin mx-auto mb-3" />
+                  <p className="text-gray-400 text-sm">Đang tải video...</p>
+                </div>
+              </div>
+            ) : (
+              <div className="w-full aspect-video bg-black/50 rounded-2xl flex items-center justify-center border border-red-500/20">
+                <div className="text-center p-6">
+                  <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-3" />
+                  <p className="text-red-400 font-medium mb-2">
+                    {streamError || 'Không thể tải video'}
+                  </p>
+                  <p className="text-gray-500 text-sm">
+                    Vui lòng thử lại sau hoặc liên hệ hỗ trợ
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Content Below Video */}
-        <div className="container mx-auto px-4 lg:px-8 pb-16">
+        {/* Content Below Video - Ẩn trong theater mode */}
+          <div className="container mx-auto px-4 lg:px-8 pb-16">
           {/* Action Bar */}
           <VideoActionBar
             isFavorite={isFavorite}
             isInWatchlist={isInWatchlist}
             theaterModeActive={theaterMode}
-            onToggleFavorite={() => setIsFavorite(!isFavorite)}
-            onAddToWatchlist={() => setIsInWatchlist(!isInWatchlist)}
-            onTheaterMode={() => setTheaterMode(!theaterMode)}
-            onShare={() => {
-              navigator.clipboard.writeText(window.location.href);
-              // TODO: Show toast notification
-            }}
-            onReport={() => {
-              // TODO: Open report modal
-            }}
+            onToggleFavorite={toggleFavorite}
+            onAddToWatchlist={toggleWatchlist}
+            onTheaterMode={toggleTheaterMode}
+            onShare={handleShare}
+            onReport={handleReport}
           />
 
           {/* Main Layout */}
@@ -203,7 +228,7 @@ export default function WatchMoviePage() {
               />
 
               {/* Episode List (for series) */}
-              {film.type === 'SERIES' && episodes.length > 0 && (
+              {isSeries(film) && episodes.length > 0 && (
                 <EpisodeList
                   film={film}
                   episodes={episodes}
@@ -222,61 +247,25 @@ export default function WatchMoviePage() {
             {/* Right Column - Sidebar */}
             <div className="w-full lg:w-80 shrink-0 space-y-8">
               {/* Actors */}
-              {film.actors.length > 0 && (
+              {film.casts.length > 0 && (
                 <div className="bg-white/5 rounded-2xl border border-white/10 p-5">
-                  <ActorGrid
-                    actors={film.actors}
-                    maxDisplay={6}
-                  />
+                  <ActorGrid casts={film.casts} maxDisplay={6} />
                 </div>
               )}
 
               {/* Recommended Movies */}
-              <div className="bg-white/5 rounded-2xl border border-white/10 p-5">
-                <RecommendedMovies
-                  films={recommendedFilms}
-                  currentFilmId={film.id}
-                />
-              </div>
+              {recommendedFilms.length > 0 && (
+                <div className="bg-white/5 rounded-2xl border border-white/10 p-5">
+                  <RecommendedMovies
+                    films={recommendedFilms}
+                    currentFilmId={film.id}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>
       </div>
-
-      {/* Theater Mode Overlay */}
-      {theaterMode && (
-        <div className="fixed inset-0 bg-black/90 z-10000 pointer-events-none" />
-      )}
-
-      {/* Custom Styles */}
-      <style>{`
-        .theater-mode {
-          overflow: hidden;
-        }
-        .theater-mode .theater-video {
-          position: fixed;
-          inset: 0;
-          z-index: 50;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: black;
-        }
-        
-        @keyframes gradient-x {
-          0%, 100% {
-            background-position: 0% 50%;
-          }
-          50% {
-            background-position: 100% 50%;
-          }
-        }
-        
-        .animate-gradient-x {
-          animation: gradient-x 15s ease infinite;
-          background-size: 200% 200%;
-        }
-      `}</style>
     </div>
   );
 }
