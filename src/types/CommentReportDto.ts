@@ -1,36 +1,7 @@
-/**
- * Lý do báo cáo
- */
-export enum ReportReason {
-    SPAM = 'spam',
-    HARASSMENT = 'harassment',
-    HATE_SPEECH = 'hate_speech',
-    MISINFORMATION = 'misinformation',
-    INAPPROPRIATE = 'inappropriate',
-    OTHER = 'other',
-}
-
-/**
- * DTO để tạo báo cáo comment
- */
-export type CreateCommentReportDto = {
-    /**
-     * Lý do báo cáo
-     */
-    reason: ReportReason;
-    /**
-     * Mô tả chi tiết (tùy chọn)
-     */
-    description?: string;
-    /**
-     * ID của comment
-     */
-    commentId: string;
-};
-
-/**
- * Response trả về sau khi báo cáo
- */
+/* generated using openapi-typescript-codegen -- do not edit */
+/* istanbul ignore file */
+/* tslint:disable */
+/* eslint-disable */
 export type CommentReportDto = {
     /**
      * ID của báo cáo
@@ -39,11 +10,11 @@ export type CommentReportDto = {
     /**
      * Lý do báo cáo
      */
-    reason: ReportReason;
+    reason: 'spam' | 'harassment' | 'hate_speech' | 'misinformation' | 'inappropriate' | 'other';
     /**
      * Mô tả chi tiết
      */
-    description?: string;
+    description: string;
     /**
      * ID của user báo cáo
      */
@@ -58,11 +29,3 @@ export type CommentReportDto = {
     createdAt: string;
 };
 
-/**
- * API Response cho CommentReportDto
- */
-export type CommentReportApiResponseDto = {
-    data: CommentReportDto;
-    statusCode: number;
-    message: string;
-};

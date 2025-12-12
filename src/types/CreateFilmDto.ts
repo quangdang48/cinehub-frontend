@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { UpdateCastDto } from './UpdateCastDto';
 export type CreateFilmDto = {
     /**
      * Tiêu đề phim
@@ -46,7 +47,7 @@ export type CreateFilmDto = {
     /**
      * Diễn viên
      */
-    actors?: Array<string> | null;
+    casts?: Array<UpdateCastDto> | null;
     /**
      * Thể loại
      */

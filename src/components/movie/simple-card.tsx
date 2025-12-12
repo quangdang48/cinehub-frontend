@@ -1,11 +1,11 @@
-import type { FilmResponseDto } from "@/types/FilmResponseDto";
+import type { FilmDto } from "@/types/FilmDto";
 import classNames from "classnames";
 import { Play } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export interface SimpleCardProps {
-  movie: FilmResponseDto;
-  onEnter: (movie: FilmResponseDto, e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  movie: FilmDto;
+  onEnter: (movie: FilmDto, e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   onLeave: () => void;
   className?: string;
 }

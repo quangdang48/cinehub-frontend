@@ -111,8 +111,15 @@ export class FilmService {
         formData: {
             file: Blob;
         },
+        season?: number,
+        episode?: number,
     ): Promise<any> {
-        return ApiService.post(`films/${id}/video`, formData);
+        return ApiService.post(`films/${id}/video`, formData, {
+            params: {
+                season,
+                episode,
+            },
+        });
     }
     /**
      * Xoá video của film
@@ -122,7 +129,14 @@ export class FilmService {
      */
     public static filmControllerDeleteVideoV1(
         id: string,
+        season?: number,
+        episode?: number,
     ): Promise<any> {
-        return ApiService.delete(`films/${id}/video`);
+        return ApiService.delete(`films/${id}/video`, {
+            params: {
+                season,
+                episode,
+            },
+        });
     }
 }

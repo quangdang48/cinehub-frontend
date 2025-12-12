@@ -1,4 +1,4 @@
-import type { FilmResponseDto } from "@/types/FilmResponseDto";
+import type { FilmDto } from "@/types/FilmDto";
 import { Play, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -9,7 +9,7 @@ export interface ModalPosition {
 }
 
 export interface MoviePreviewModalProps {
-  movie: FilmResponseDto;
+  movie: FilmDto;
   position: ModalPosition;
   onLeave: () => void;
 }

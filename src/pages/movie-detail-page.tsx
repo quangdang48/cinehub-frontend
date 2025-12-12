@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { FilmService } from '@/services/FilmService';
-import { MovieHero, EpisodeSection, CommentSection, ReviewSection, ActorSection, TrailerSection, TrendingSection } from '@/components/movie-detail';
+import { MovieHero, EpisodeSection, ActorSection, TrailerSection, TrendingSection, CommentSection } from '@/components/movie-detail';
 import type { FilmDto } from '@/types/FilmDto';
-import { Film, Info, LayoutGrid, MessageCircle, MoreHorizontal, Star, Users } from 'lucide-react';
+import { Film, Info, LayoutGrid, MessageCircle, MoreHorizontal, Users } from 'lucide-react';
 import type { EpisodeDto } from '@/types/EpisodeDto';
 import { EpisodesService } from '@/services/EpisodesService';
 
@@ -55,7 +55,6 @@ export default function MovieDetailPage() {
     const baseTabs = [
       { id: 'cast', label: 'Diễn viên', icon: Users },
       { id: 'trailer', label: 'Trailer', icon: Film },
-      { id: 'reviews', label: 'Đánh giá', icon: Star },
       { id: 'comments', label: 'Bình luận', icon: MessageCircle },
       { id: 'related', label: 'Đề xuất', icon: LayoutGrid }
     ];
@@ -75,13 +74,11 @@ export default function MovieDetailPage() {
       case 'episodes':
         return <EpisodeSection film={film} episodes={episodes}/>;
       case 'cast':
-        return <ActorSection actors={film.actors} />;
+        return <ActorSection casts={film.casts} />;
       case 'trailer':
         return <TrailerSection film={film} />;
-      case 'reviews':
-        return <ReviewSection key={`reviews-${film.id}`} filmId={film.id} averageRating={film.userRating || film.imdbRating || 0} />;
       case 'comments':
-        return <CommentSection key={`comments-${film.id}`} filmId={film.id} />;
+        return <CommentSection key={`comments-${film.id}`} filmId={film.id} averageRating={film.userRating || 0} />;
       case 'info':
         return (
             <div className="text-gray-300 animate-fade-in bg-white/5 p-6 rounded-2xl border border-white/10">

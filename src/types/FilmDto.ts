@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { ActorDto } from './ActorDto';
+import type { CastDto } from './CastDto';
 import type { DirectorDto } from './DirectorDto';
 import type { GenreDto } from './GenreDto';
 import type { PosterDto } from './PosterDto';
@@ -83,7 +83,7 @@ export type FilmDto = {
     /**
      * Diễn viên
      */
-    actors: Array<ActorDto>;
+    casts: Array<CastDto>;
     /**
      * Áp phích phim
      */

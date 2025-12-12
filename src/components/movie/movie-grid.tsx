@@ -1,12 +1,12 @@
 import type React from "react";
-import type { FilmResponseDto } from "@/types/FilmResponseDto";
+import type { FilmDto } from "@/types/FilmDto";
 import classNames from "classnames";
 import { SimpleCard } from "./simple-card";
 import { useRef, useState } from "react";
 import { MoviePreviewModal, type ModalPosition } from "./preview-modal";
 
 interface MovieGridProps {
-  films: FilmResponseDto[];
+  films: FilmDto[];
   loading?: boolean;
   className?: string;
 }
@@ -16,11 +16,11 @@ export const MovieGrid: React.FC<MovieGridProps> = ({
   loading = false,
   className,
 }) => {
-  const [modalData, setModalData] = useState<FilmResponseDto | null>(null);
+  const [modalData, setModalData] = useState<FilmDto | null>(null);
   const [modalPosition, setModalPosition] = useState<ModalPosition | null>(null);
   const timerRef = useRef<number | null>(null);
 
-  const handleDelayedModalEnter = (movie: FilmResponseDto, targetElement: HTMLElement) => {
+  const handleDelayedModalEnter = (movie: FilmDto, targetElement: HTMLElement) => {
     if (timerRef.current) clearTimeout(timerRef.current);
 
     const rect = targetElement.getBoundingClientRect();
@@ -38,7 +38,7 @@ export const MovieGrid: React.FC<MovieGridProps> = ({
     }, 800);
   };
 
-  const onSimpleEnter = (movie: FilmResponseDto, event: React.MouseEvent<HTMLDivElement>) => {
+  const onSimpleEnter = (movie: FilmDto, event: React.MouseEvent<HTMLDivElement>) => {
     handleDelayedModalEnter(movie, event.currentTarget); 
   };
 

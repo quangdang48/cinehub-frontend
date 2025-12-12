@@ -1,11 +1,11 @@
-import type { FilmResponseDto } from "@/types/FilmResponseDto";
+import type { FilmDto } from "@/types/FilmDto";
 import { useNavigate } from "react-router-dom";
 
 export interface RankingCardProps {
-  movie: FilmResponseDto;
+  movie: FilmDto;
   index: number;
   hoveredId: string | null;
-  onEnter: (movie: FilmResponseDto, e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  onEnter: (movie: FilmDto, e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   onLeave: () => void;
 }
 

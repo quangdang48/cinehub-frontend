@@ -1,36 +1,7 @@
-/**
- * Lý do báo cáo
- */
-export enum ReportReason {
-    SPAM = 'spam',
-    HARASSMENT = 'harassment',
-    HATE_SPEECH = 'hate_speech',
-    MISINFORMATION = 'misinformation',
-    INAPPROPRIATE = 'inappropriate',
-    OTHER = 'other',
-}
-
-/**
- * DTO để tạo báo cáo review
- */
-export type CreateReviewReportDto = {
-    /**
-     * Lý do báo cáo
-     */
-    reason: ReportReason;
-    /**
-     * Mô tả chi tiết (tùy chọn)
-     */
-    description?: string;
-    /**
-     * ID của review
-     */
-    reviewId: string;
-};
-
-/**
- * Response trả về sau khi báo cáo
- */
+/* generated using openapi-typescript-codegen -- do not edit */
+/* istanbul ignore file */
+/* tslint:disable */
+/* eslint-disable */
 export type ReviewReportDto = {
     /**
      * ID của báo cáo
@@ -39,11 +10,11 @@ export type ReviewReportDto = {
     /**
      * Lý do báo cáo
      */
-    reason: ReportReason;
+    reason: 'spam' | 'harassment' | 'hate_speech' | 'misinformation' | 'inappropriate' | 'other';
     /**
      * Mô tả chi tiết
      */
-    description?: string;
+    description: string;
     /**
      * ID của user báo cáo
      */
@@ -58,11 +29,3 @@ export type ReviewReportDto = {
     createdAt: string;
 };
 
-/**
- * API Response cho ReviewReportDto
- */
-export type ReviewReportApiResponseDto = {
-    data: ReviewReportDto;
-    statusCode: number;
-    message: string;
-};
