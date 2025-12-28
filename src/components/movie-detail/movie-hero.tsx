@@ -32,7 +32,6 @@ export const MovieHero: React.FC<MovieHeroProps> = ({ film }) => {
     isInWishlist,
     loading: wishlistLoading,
     toggleWishlist,
-    isAuthenticated,
   } = useWishlist(film.id);
 
   const handleError = useCallback(
@@ -61,10 +60,6 @@ export const MovieHero: React.FC<MovieHeroProps> = ({ film }) => {
   }, [toastMessage]);
 
   const handleWishlistClick = async () => {
-    if (!isAuthenticated) {
-      setToastMessage("Vui lòng đăng nhập để thêm vào yêu thích");
-      return;
-    }
     const result = await toggleWishlist();
     setToastMessage(result.message);
   };

@@ -70,9 +70,9 @@ export const MoviePreviewModal: React.FC<MoviePreviewModalProps> = ({
           <button className="flex-1 bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-1.5 rounded flex items-center justify-center gap-1 transition-colors text-sm">
             <Play fill="black" size={16} /> Xem ngay
           </button>
-          <button className="p-1.5 border-2 border-gray-500 rounded-full hover:border-white text-white transition-colors">
+          {/* <button className="p-1.5 border-2 border-gray-500 rounded-full hover:border-white text-white transition-colors">
             <Plus size={18} />
-          </button>
+          </button> */}
         </div>
 
         <div className="text-gray-300 text-xs line-clamp-3 mb-2 leading-relaxed">

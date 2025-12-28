@@ -126,14 +126,13 @@ export function useWishlist(filmId?: string) {
 
   // Toggle wishlist status
   const toggleWishlist = useCallback(
-    async (id?: string) => {
-      const targetId = id || filmId;
-      if (!targetId) return { success: false, message: "Film ID không hợp lệ" };
+    async () => {
+      if (!filmId) return { success: false, message: "Film ID không hợp lệ" };
 
       if (isInWishlist) {
-        return removeFromWishlist(targetId);
+        return removeFromWishlist(filmId);
       } else {
-        return addToWishlist(targetId);
+        return addToWishlist(filmId);
       }
     },
     [isInWishlist, filmId, addToWishlist, removeFromWishlist],
