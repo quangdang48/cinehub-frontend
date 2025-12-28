@@ -10,7 +10,6 @@ export { default as ForgotPasswordForm } from "./forgot-password/forgot-password
 export { default as ProfileForm } from "./profile/profile-form";
 export { default as ProfileSidebar } from "./profile/profile-sidebar";
 export { default as FavoritesTab } from "./profile/favorites-tab";
-export { default as ListsTab } from "./profile/lists-tab";
 export { default as ContinueWatchingTab } from "./profile/continue-watching-tab";
 export { default as NotificationsTab } from "./profile/notifications-tab";
 
