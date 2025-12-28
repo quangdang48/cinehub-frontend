@@ -8,7 +8,6 @@ import { useAuth } from "@/hooks";
 import {
   FavoritesTab,
   ProfileForm,
-  ListsTab,
   ContinueWatchingTab,
   NotificationsTab,
   ProfileSidebar,
@@ -55,8 +54,6 @@ export default function ProfilePage() {
         return <ProfileForm user={user} onUpdate={handleUpdateProfile} />;
       case "favorites":
         return <FavoritesTab />;
-      case "lists":
-        return <ListsTab />;
       case "continue":
         return <ContinueWatchingTab />;
       case "notifications":

@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import {
   User,
   Heart,
-  List,
   PlayCircle,
   Bell,
   CreditCard,
@@ -47,11 +46,6 @@ export default function UserMenu({ user, onLogout }: UserMenuProps) {
       icon: Heart,
       label: "Yêu thích",
       href: "/profile?tab=favorites",
-    },
-    {
-      icon: List,
-      label: "Danh sách",
-      href: "/profile?tab=lists",
     },
     {
       icon: PlayCircle,

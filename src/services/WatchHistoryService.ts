@@ -1,5 +1,6 @@
 import type { CreateWatchHistoryDto } from "@/types/CreateWatchHistoryDto";
 import ApiService from "./ApiService";
+import type { PaginatedWatchHistoryApiResponseDto } from "@/types/PaginatedWatchHistoryApiResponseDto";
 
 export class WatchHistoryService {
   /**
@@ -17,11 +18,21 @@ export class WatchHistoryService {
   /**
    * Lấy danh sách lịch sử xem
    * Trả về danh sách tất cả các phim đã xem của người dùng
+   * @param page Page number
+   * @param limit Items per page
    * @returns any Danh sách lịch sử xem
    * @throws ApiError
    */
-  public static watchHistoryControllerGetUserWatchHistoryV1(): Promise<any> {
-    return ApiService.get(`watch-history`);
+  public static watchHistoryControllerGetUserWatchHistoryV1(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<PaginatedWatchHistoryApiResponseDto> {
+    return ApiService.get(`watch-history`, {
+      params: {
+        page,
+        limit
+      }
+    });
   }
   /**
    * Xóa toàn bộ lịch sử xem

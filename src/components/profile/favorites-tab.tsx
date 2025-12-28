@@ -133,7 +133,7 @@ export default function FavoritesTab() {
             >
               {/* Poster */}
               <div
-                className="aspect-[2/3] cursor-pointer"
+                className="aspect-2/3 cursor-pointer"
                 onClick={() => handleNavigateToFilm(film.id)}
               >
                 <img
