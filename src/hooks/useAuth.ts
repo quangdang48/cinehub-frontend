@@ -30,12 +30,41 @@ export function useAuth() {
     createdAt: "",
     updatedAt: "",
   };
+
+  const verify = async ({ email, otp }: { email: string; otp: string }): Promise<
+      | {
+        status: string;
+        message: string;
+      }
+    | undefined
+  > => {
+    try {
+      const res = await AuthService.verifyOtp({ email, code: otp });
+      if (res.data) {
+        const { accessToken, refreshToken } = res.data;
+        dispatch(signInSuccess({ accessToken, refreshToken }));
+        dispatch(setUser(res.data.user || defaultUser));
+        navigate(appConfig.authenticatedEntryPath);
+        return {
+          status: "success",
+          message: "",
+        };
+      }
+    } catch (error: any) {
+      return {
+        status: "failed",
+        message: error?.response?.data?.message || error.toString(),
+      };
+    }
+  };
+
   const login = async (
     values: LoginDto,
   ): Promise<
     | {
         status: Status;
         message: string;
+        code?: string;
       }
     | undefined
   > => {
@@ -43,8 +72,8 @@ export function useAuth() {
       const redirectUrl = query.get("redirectUrl");
       const resp = await AuthService.login(values);
       if (resp.data) {
-        const token = resp.data.accessToken;
-        dispatch(signInSuccess(token));
+        const { accessToken, refreshToken } = resp.data;
+        dispatch(signInSuccess({ accessToken, refreshToken }));
         dispatch(setUser(resp.data.user || defaultUser));
 
         navigate(redirectUrl ? redirectUrl : appConfig.authenticatedEntryPath);
@@ -54,9 +83,13 @@ export function useAuth() {
         };
       }
     } catch (errors: any) {
+      const errorCode = errors?.response?.data?.code;
+      const errorMessage = errors?.response?.data?.message || errors.toString();
+      
       return {
         status: "failed",
-        message: errors?.response?.data?.message || errors.toString(),
+        message: errorMessage,
+        code: errorCode,
       };
     }
   };
@@ -107,8 +140,8 @@ export function useAuth() {
         codeVerifier,
       });
       if (resp.data) {
-        const token = resp.data.accessToken;
-        dispatch(signInSuccess(token));
+        const { accessToken, refreshToken } = resp.data;
+        dispatch(signInSuccess({ accessToken, refreshToken }));
         dispatch(setUser(resp.data.user || defaultUser));
         navigate(redirectUrl ? redirectUrl : appConfig.authenticatedEntryPath);
         localStorage.removeItem("pkce_code_verifier");
@@ -139,6 +172,7 @@ export function useAuth() {
   return {
     token,
     authenticated: token && signedIn,
+    verify,
     login,
     signOut,
     loginWithGoogle,

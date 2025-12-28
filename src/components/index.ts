@@ -5,6 +5,7 @@ export * from "./common";
 export { default as LoginForm } from "./login/login-form";
 export { default as RegisterForm } from "./register/register-form";
 export { default as ForgotPasswordForm } from "./forgot-password/forgot-password-form";
+export { default as VerifyEmailForm } from "./verify-email/verify-email-form";
 
 // Profile components
 export { default as ProfileForm } from "./profile/profile-form";

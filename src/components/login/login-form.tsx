@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useFormik } from "formik";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Input, Button, AuthCard, Divider, Alert } from "../common";
 import { loginSchema } from "@/utils/validation-schemas";
 import type { LoginDto } from "@/types/LoginDto";
@@ -10,6 +10,7 @@ export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState<string>("");
   const { login, loginWithGoogle } = useAuth();
+  const navigate = useNavigate();
 
   const formik = useFormik<LoginDto>({
     initialValues: {
@@ -24,7 +25,11 @@ export default function LoginForm() {
       const result = await login(values);
 
       if (result?.status === "failed") {
-        setApiError(result.message);
+        if (result.code === "ERR_USER_NOT_VERIFIED") {
+          navigate(`/verify-email?email=${encodeURIComponent(values.email)}`);
+        } else {
+          setApiError(result.message);
+        }
       }
       setIsLoading(false);
     },

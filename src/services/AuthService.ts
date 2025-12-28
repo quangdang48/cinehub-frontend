@@ -6,6 +6,7 @@ import type { ResetPasswordDto } from "@/types/ResetPasswordDto";
 import type { UserApiResponseDto } from "@/types/UserApiResponseDto";
 import type { LoginDto } from "@/types/LoginDto";
 import type { GoogleLoginDto } from "@/types/GoogleLoginDto";
+import type { RefreshDto } from "@/types/RefreshDto";
 
 export class AuthService {
   /**
@@ -34,12 +35,12 @@ export class AuthService {
 
   /**
    * Xác thực OTP
-   * @param requestBody Dữ liệu xác thực (ví dụ: email, otp)
+   * @param requestBody Dữ liệu xác thực (ví dụ: email, code)
    * @returns ApiResponse<null> Kết quả xác thực OTP
    */
   public static verifyOtp(
-    requestBody: RegisterDto,
-  ): Promise<ApiResponse<null>> {
+    requestBody: { email: string; code: string },
+  ): Promise<LoginResponseApiResponseDto> {
     return ApiService.post("auth/verify-otp", requestBody);
   }
 
@@ -69,5 +70,16 @@ export class AuthService {
     requestBody: GoogleLoginDto,
   ): Promise<LoginResponseApiResponseDto> {
     return ApiService.post("auth/google/callback", requestBody);
+  }
+
+  /**
+   * Refresh access token using refresh token
+   * @param requestBody Refresh token
+   * @returns LoginResponseApiResponseDto New access token and refresh token
+   */
+  public static refreshToken(
+    requestBody: RefreshDto,
+  ): Promise<LoginResponseApiResponseDto> {
+    return ApiService.post("auth/refresh-token", requestBody);
   }
 }
