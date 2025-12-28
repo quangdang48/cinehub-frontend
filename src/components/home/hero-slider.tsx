@@ -5,6 +5,7 @@ import { Play, Heart, Info, ChevronLeft, ChevronRight } from "lucide-react";
 import classNames from "classnames";
 import type { FilmDto } from "@/types/FilmDto";
 import { normalizeUrl } from "@/utils/videoUtils";
+import { useWishlist } from "@/hooks/useWishlist";
 
 interface HeroSliderProps {
   films: FilmDto[];
@@ -22,6 +23,19 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
   const currentFilm = films[currentIndex];
+
+  // Wishlist hook
+  const { isInWishlist, toggleWishlist, loading: wishlistLoading, isAuthenticated } = useWishlist(currentFilm?.id);
+
+  const handleToggleWishlist = async () => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+    if (currentFilm) {
+      await toggleWishlist(currentFilm.id);
+    }
+  };
 
   // Auto play
   useEffect(() => {
@@ -156,8 +170,22 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({
             >
               <Play size={28} className="text-black ml-1" fill="black" />
             </button>
-            <button className="flex items-center justify-center w-12 h-12 bg-neutral-700/80 hover:bg-neutral-600 rounded-full transition-all hover:scale-110">
-              <Heart size={22} className="text-white" />
+            <button 
+              onClick={handleToggleWishlist}
+              disabled={wishlistLoading}
+              className={classNames(
+                "flex items-center justify-center w-12 h-12 rounded-full transition-all hover:scale-110",
+                isInWishlist 
+                  ? "bg-red-600 hover:bg-red-500" 
+                  : "bg-neutral-700/80 hover:bg-neutral-600",
+                wishlistLoading && "opacity-50 cursor-not-allowed"
+              )}
+            >
+              <Heart 
+                size={22} 
+                className={isInWishlist ? "text-white" : "text-white"} 
+                fill={isInWishlist ? "currentColor" : "none"}
+              />
             </button>
             <button
               onClick={handleDetail}
