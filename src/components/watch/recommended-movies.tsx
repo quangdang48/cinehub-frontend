@@ -2,6 +2,7 @@ import React from "react";
 import { Star, Play, Calendar } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { FilmDto } from "@/types/FilmDto";
+import { normalizeUrl } from "@/utils/videoUtils";
 
 interface RecommendedMoviesProps {
   films: FilmDto[];
@@ -50,7 +51,7 @@ export const RecommendedMovies: React.FC<RecommendedMoviesProps> = ({
               {/* Thumbnail */}
               <div className="relative w-16 h-24 rounded-xl overflow-hidden shrink-0 shadow-lg">
                 <img
-                  src={defaultPoster?.url}
+                  src={defaultPoster ? normalizeUrl(defaultPoster.url) : "/placeholder.jpg"}
                   alt={film.title}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />

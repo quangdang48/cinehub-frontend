@@ -1,4 +1,5 @@
 import type { FilmDto } from "@/types/FilmDto";
+import { normalizeUrl } from "@/utils/videoUtils";
 import { Star } from "lucide-react";
 
 interface TrendingSectionProps {
@@ -40,7 +41,7 @@ export const TrendingSection: React.FC<TrendingSectionProps> = ({
 
             <div className="w-16 h-24 rounded-lg overflow-hidden shrink-0 shadow-lg relative z-10 group-hover:scale-105 transition-transform duration-300">
               <img
-                src={film.posters.find((p) => p.type === "default")?.url}
+                src={film.posters.find((p) => p.type === "default") ? normalizeUrl(film.posters.find((p) => p.type === "default")!.url) : "/placeholder.jpg"}
                 alt={film.title}
                 className="w-full h-full object-cover"
               />

@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useMemo, useState, useCallback } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { FilmService } from "@/services/FilmService";
 import {
   MovieHero,
@@ -23,12 +23,14 @@ import { EpisodesService } from "@/services/EpisodesService";
 
 export default function MovieDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [film, setFilm] = useState<FilmDto | null>(null);
   const [episodes, setEpisodes] = useState<EpisodeDto[]>([]);
   const [topFilms, setTopFilms] = useState<FilmDto[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState<string>("");
+  const [currentSeason, setCurrentSeason] = useState<number>(1);
 
   useEffect(() => {
     const fetchFilmDetail = async () => {
@@ -69,6 +71,25 @@ export default function MovieDetailPage() {
     fetchFilmDetail();
   }, [id]);
 
+  const handleSelectSeason = useCallback(async (seasonNumber: number) => {
+    if (!id) return;
+    setCurrentSeason(seasonNumber);
+    try {
+      const response = await EpisodesService.episodeControllerGetAllV1({
+        filmId: id,
+        season: seasonNumber,
+      });
+      setEpisodes(response.data);
+    } catch (err) {
+      console.error("Error fetching episodes for season:", err);
+    }
+  }, [id]);
+
+  const handleEpisodeClick = useCallback((episode: EpisodeDto) => {
+    if (!film) return;
+    navigate(`/watch/${film.id}?season=${currentSeason}&ep=${episode.number}`);
+  }, [film, currentSeason, navigate]);
+
   const tabs = useMemo(() => {
     if (!film) return [];
     const baseTabs = [
@@ -95,7 +116,16 @@ export default function MovieDetailPage() {
 
     switch (activeTab) {
       case "episodes":
-        return <EpisodeSection film={film} episodes={episodes} />;
+        return (
+          <EpisodeSection 
+            film={film} 
+            episodes={episodes} 
+            seasons={film.seasons}
+            currentSeason={currentSeason}
+            onSelectSeason={handleSelectSeason}
+            onEpisodeClick={handleEpisodeClick}
+          />
+        );
       case "cast":
         return <ActorSection casts={film.casts} />;
       case "trailer":

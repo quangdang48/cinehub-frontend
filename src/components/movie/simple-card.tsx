@@ -1,4 +1,5 @@
 import type { FilmDto } from "@/types/FilmDto";
+import { normalizeUrl } from "@/utils/videoUtils";
 import classNames from "classnames";
 import { Play } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -39,7 +40,9 @@ export const SimpleCard: React.FC<SimpleCardProps> = ({
       <div className="relative aspect-2/3 rounded-lg overflow-hidden mb-2 bg-slate-800 shadow-md group-hover:shadow-lg group-hover:shadow-yellow-500/10 transition-all duration-300 group-hover:scale-[1.03]">
         <img
           src={
-            movie.posters.find((p) => p.type === "thumbnail")?.url ||
+            movie.posters.find((p) => p.type === "default")
+              ? normalizeUrl(movie.posters.find((p) => p.type === "default")!.url)
+              :
             "/placeholder.svg"
           }
           alt={movie.title}

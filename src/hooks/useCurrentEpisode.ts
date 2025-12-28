@@ -8,7 +8,7 @@ interface UseCurrentEpisodeParams {
 
 interface UseCurrentEpisodeReturn {
   currentEpisode: EpisodeDto | null;
-  setCurrentEpisode: (episode: EpisodeDto) => void;
+  setCurrentEpisode: (episode: EpisodeDto | null) => void;
   selectNextEpisode: () => boolean;
   selectPreviousEpisode: () => boolean;
 }

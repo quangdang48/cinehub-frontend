@@ -7,7 +7,7 @@ export type AppConfig = {
 };
 
 const appConfig: AppConfig = {
-  apiPrefix: import.meta.env.VITE_API_URL || "http://localhost:3000/api/v1",
+  apiPrefix: import.meta.env.VITE_API_URL || "http://localhost:8080/api/v1",
   googleClientId: import.meta.env.VITE_GOOGLE_CLIENT_ID || "",
   googleRedirectUri: import.meta.env.VITE_GOOGLE_REDIRECT_URI || "",
   authenticatedEntryPath: "/",

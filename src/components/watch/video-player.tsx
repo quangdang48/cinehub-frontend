@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useRef, useState } from "react";
+import React, { memo, useCallback, useRef, useState, useEffect } from "react";
 import {
   Play,
   Pause,
@@ -29,6 +29,7 @@ import {
   PLAYBACK_RATES,
   formatPlaybackRate,
 } from "../../utils/videoUtils";
+import { useHeartbeat } from "./hooks";
 
 export interface VideoPlayerProps {
   src: string;
@@ -38,6 +39,12 @@ export interface VideoPlayerProps {
   onEnded?: () => void;
   autoPlay?: boolean;
   onError?: (error: any) => void;
+  /** Film ID for heartbeat tracking */
+  filmId?: string;
+  /** Season number for heartbeat tracking (series only) */
+  season?: number;
+  /** Episode number for heartbeat tracking (series only) */
+  episode?: number;
 }
 
 export interface VideoQuality {
@@ -55,6 +62,9 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = memo(
     onEnded,
     autoPlay = false,
     onError,
+    filmId,
+    season,
+    episode,
   }) => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -88,6 +98,15 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = memo(
       },
     );
 
+    // Heartbeat tracking - gửi tín hiệu định kỳ khi video đang phát
+    useHeartbeat({
+      filmId,
+      season,
+      episode,
+      isPlaying: state.isPlaying,
+      intervalMs: 30000, // 30 giây
+    });
+
     useKeyboardShortcuts({
       togglePlay: controls.togglePlay,
       toggleFullscreen,
@@ -96,6 +115,22 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = memo(
       setVolume: controls.setVolume,
       currentVolume: state.volume,
     });
+
+    // Đóng tất cả popup khi click ra ngoài
+    useEffect(() => {
+      const handleClickOutside = (e: MouseEvent) => {
+        const target = e.target as HTMLElement;
+        // Nếu click không nằm trong vùng settings hoặc quality popup
+        if (!target.closest('[data-popup="settings"]') && 
+            !target.closest('[data-popup="quality"]')) {
+          setShowSettings(false);
+          setShowQuality(false);
+        }
+      };
+
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }, []);
 
     const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       controls.setVolume(parseFloat(e.target.value));
@@ -363,9 +398,12 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = memo(
 
               <div className="flex items-center gap-3">
                 {/* Quality Selector */}
-                <div className="relative">
+                <div className="relative" data-popup="quality">
                   <button
-                    onClick={() => setShowQuality(!showQuality)}
+                    onClick={() => {
+                      setShowQuality(!showQuality);
+                      setShowSettings(false);
+                    }}
                     className="text-white hover:text-yellow-400 transition-colors"
                   >
                     <MonitorPlay
@@ -400,9 +438,12 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = memo(
                 </div>
 
                 {/* Settings */}
-                <div className="relative">
+                <div className="relative" data-popup="settings">
                   <button
-                    onClick={() => setShowSettings(!showSettings)}
+                    onClick={() => {
+                      setShowSettings(!showSettings);
+                      setShowQuality(false);
+                    }}
                     className="text-white hover:text-yellow-400 transition-colors"
                   >
                     <Settings

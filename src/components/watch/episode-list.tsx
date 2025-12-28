@@ -2,6 +2,8 @@ import React from "react";
 import { Play, Check } from "lucide-react";
 import type { EpisodeDto } from "@/types/EpisodeDto";
 import type { FilmDto } from "@/types/FilmDto";
+import type { SeasonDto } from "@/types/SeasonDto";
+import { normalizeUrl } from "@/utils/videoUtils";
 
 interface EpisodeListProps {
   film: FilmDto;
@@ -9,6 +11,9 @@ interface EpisodeListProps {
   currentEpisodeId?: string;
   watchedEpisodes?: string[];
   onSelectEpisode: (episode: EpisodeDto) => void;
+  seasons?: SeasonDto[];
+  currentSeason?: number;
+  onSelectSeason?: (seasonNumber: number) => void;
 }
 
 export const EpisodeList: React.FC<EpisodeListProps> = ({
@@ -17,6 +22,9 @@ export const EpisodeList: React.FC<EpisodeListProps> = ({
   currentEpisodeId,
   watchedEpisodes = [],
   onSelectEpisode,
+  seasons = [],
+  currentSeason = 1,
+  onSelectSeason,
 }) => {
   const defaultPoster =
     film.posters.find((p) => p.type === "thumbnail") ||
@@ -42,7 +50,7 @@ export const EpisodeList: React.FC<EpisodeListProps> = ({
             {/* Thumbnail */}
             <div className="relative w-40 h-24 rounded-xl overflow-hidden shrink-0">
               <img
-                src={defaultPoster?.url}
+                src={defaultPoster ? normalizeUrl(defaultPoster.url) : "/placeholder.jpg"}
                 alt={film.title}
                 className="w-full h-full object-cover"
               />
@@ -73,6 +81,33 @@ export const EpisodeList: React.FC<EpisodeListProps> = ({
                 <div className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
                 <span>Đang xem - Tập {currentEpisode.number}</span>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Season Selector */}
+      {seasons.length > 1 && onSelectSeason && (
+        <div className="space-y-3">
+          <div className="flex items-center gap-3">
+            <span className="text-gray-400 text-sm font-medium">Chọn mùa:</span>
+          </div>
+          <div className="relative w-full sm:w-48">
+            <select
+              value={currentSeason}
+              onChange={(e) => onSelectSeason(Number(e.target.value))}
+              className="w-full appearance-none bg-white/5 border border-white/10 text-white text-sm font-medium rounded-lg px-4 py-2.5 pr-10 focus:outline-none focus:border-yellow-500/50 focus:ring-1 focus:ring-yellow-500/50 transition-all cursor-pointer hover:bg-white/10"
+            >
+              {seasons.map((season) => (
+                <option key={season.id} value={season.number} className="bg-gray-900 text-white">
+                  Mùa {season.number}
+                </option>
+              ))}
+            </select>
+            <div className="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-gray-400">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+              </svg>
             </div>
           </div>
         </div>

@@ -1,4 +1,5 @@
 import type { FilmDto } from "@/types/FilmDto";
+import { normalizeUrl } from "@/utils/videoUtils";
 import { useNavigate } from "react-router-dom";
 
 export interface RankingCardProps {
@@ -46,7 +47,9 @@ export const RankingCard: React.FC<RankingCardProps> = ({
         <div className={`w-[120%] h-full -ml-[10%] ${unSkewClass} relative`}>
           <img
             src={
-              movie.posters.find((p) => p.type === "default")?.url ||
+              movie.posters.find((p) => p.type === "default")
+                ? normalizeUrl(movie.posters.find((p) => p.type === "default")!.url)
+                :
               "/placeholder.svg"
             }
             alt={movie.title}

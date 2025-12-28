@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Play, Heart, Info, ChevronLeft, ChevronRight } from "lucide-react";
 import classNames from "classnames";
 import type { FilmDto } from "@/types/FilmDto";
+import { normalizeUrl } from "@/utils/videoUtils";
 
 interface HeroSliderProps {
   films: FilmDto[];
@@ -83,7 +84,7 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({
         >
           <img
             src={
-              film.posters.find((p) => p.type === "backdrop")?.url ||
+              film.posters.find((p) => p.type === "backdrop") ? normalizeUrl(film.posters.find((p) => p.type === "backdrop")!.url) :
               "/placeholder.svg"
             }
             alt={film.title}
@@ -182,7 +183,7 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({
             >
               <img
                 src={
-                  film.posters.find((p) => p.type === "thumbnail")?.url ||
+                  film.posters.find((p) => p.type === "thumbnail") ? normalizeUrl(film.posters.find((p) => p.type === "thumbnail")!.url) :
                   "/placeholder.svg"
                 }
                 alt={film.title}

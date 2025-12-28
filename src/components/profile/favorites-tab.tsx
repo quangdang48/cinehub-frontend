@@ -4,6 +4,7 @@ import { Heart, Trash2, Play, Loader2 } from "lucide-react";
 import { useWishlist } from "@/hooks";
 import { FilmService } from "@/services/FilmService";
 import type { FilmDto } from "@/types/FilmDto";
+import { normalizeUrl } from "@/utils/videoUtils";
 
 interface WishlistFilm extends FilmDto {
   wishlistId: string;
@@ -137,8 +138,7 @@ export default function FavoritesTab() {
               >
                 <img
                   src={
-                    film.posters?.find((p) => p.type === "thumbnail")?.url ||
-                    "/placeholder.jpg"
+                    film.posters?.find((p) => p.type === "thumbnail") ? normalizeUrl(film.posters.find((p) => p.type === "thumbnail")!.url) : "/placeholder.jpg"
                   }
                   alt={film.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"

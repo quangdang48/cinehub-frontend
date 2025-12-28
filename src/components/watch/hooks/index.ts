@@ -5,3 +5,4 @@ export { useFullscreen } from "./useFullscreen";
 export { useKeyboardShortcuts } from "./useKeyboardShortcuts";
 export { useControlsVisibility } from "./useControlsVisibility";
 export { useQualityLevels } from "./useQualityLevels";
+export { useHeartbeat } from "./useHeartbeat";

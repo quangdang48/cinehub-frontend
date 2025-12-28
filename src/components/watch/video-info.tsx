@@ -2,6 +2,7 @@ import React from "react";
 import { Star, MessageCircle, ChevronRight, Play } from "lucide-react";
 import type { FilmDto } from "@/types/FilmDto";
 import type { EpisodeDto } from "@/types/EpisodeDto";
+import { normalizeUrl } from "@/utils/videoUtils";
 
 interface VideoInfoProps {
   film: FilmDto;
@@ -29,7 +30,7 @@ export const VideoInfo: React.FC<VideoInfoProps> = ({
         <div className="relative w-28 h-40 rounded-xl overflow-hidden border-2 border-white/10 group-hover/poster:border-yellow-500/50 transition-colors shadow-xl">
           <div className="absolute -inset-1 bg-linear-to-br from-yellow-500/40 to-orange-600/40 rounded-xl blur-md opacity-0 group-hover/poster:opacity-100 transition-opacity duration-500" />
           <img
-            src={defaultPoster?.url}
+            src={defaultPoster ? normalizeUrl(defaultPoster.url) : "/placeholder.jpg"}
             alt={film.title}
             className="w-full h-full object-cover group-hover/poster:scale-105 transition-transform duration-500"
           />

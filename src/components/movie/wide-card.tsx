@@ -1,4 +1,5 @@
 import type { FilmDto } from "@/types/FilmDto";
+import { normalizeUrl } from "@/utils/videoUtils";
 import { Play } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -32,7 +33,9 @@ export const WideCard: React.FC<WideCardProps> = ({
       <div className="relative aspect-video rounded-xl overflow-hidden shadow-lg group-hover:shadow-yellow-500/20 transition-all duration-300 group-hover:scale-[1.02] bg-slate-800">
         <img
           src={
-            movie.posters.find((p) => p.type === "backdrop")?.url ||
+            movie.posters.find((p) => p.type === "backdrop")
+              ? normalizeUrl(movie.posters.find((p) => p.type === "backdrop")!.url)
+              :
             "/placeholder.svg"
           }
           alt={movie.title}
@@ -55,7 +58,9 @@ export const WideCard: React.FC<WideCardProps> = ({
         <div className="relative w-20 md:w-[100px] aspect-2/3 flex-none rounded-lg overflow-hidden shadow-lg ring-1 ring-white/10 group-hover:ring-yellow-500/50 transition-all duration-300 group-hover:-translate-y-2">
           <img
             src={
-              movie.posters.find((p) => p.type === "default")?.url ||
+              movie.posters.find((p) => p.type === "default")
+                ? normalizeUrl(movie.posters.find((p) => p.type === "default")!.url)
+                :
               "/placeholder.svg"
             }
             alt="poster"

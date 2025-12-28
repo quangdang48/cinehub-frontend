@@ -1,4 +1,5 @@
 import type { FilmDto } from "@/types/FilmDto";
+import { normalizeUrl } from "@/utils/videoUtils";
 import { Play, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -38,7 +39,9 @@ export const MoviePreviewModal: React.FC<MoviePreviewModalProps> = ({
       <div className="relative aspect-video w-full">
         <img
           src={
-            movie.posters.find((p) => p.type === "thumbnail")?.url ||
+            movie.posters.find((p) => p.type === "thumbnail")
+              ? normalizeUrl(movie.posters.find((p) => p.type === "thumbnail")!.url)
+              :
             "/placeholder.svg"
           }
           alt={movie.title}

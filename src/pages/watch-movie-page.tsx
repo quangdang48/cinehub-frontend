@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useMemo } from "react";
+import { useEffect, useCallback, useMemo, useState } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { ChevronLeft, Loader2, AlertCircle } from "lucide-react";
 import {
@@ -31,12 +31,25 @@ export default function WatchMoviePage() {
   const navigate = useNavigate();
 
   const episodeNumberFromUrl = searchParams.get("ep");
+  const seasonNumberFromUrl = searchParams.get("season");
 
   const { film, loading: filmLoading, error: filmError } = useFilmData(filmId);
 
+  // Lấy mùa hiện tại từ URL hoặc mặc định là 1
+  const [currentSeason, setCurrentSeason] = useState<number>(
+    seasonNumberFromUrl ? parseInt(seasonNumberFromUrl) : 1
+  );
+
+  // Lấy danh sách seasons từ film
+  const seasons = useMemo(() => {
+    if (!film || !isSeries(film)) return [];
+    return film.seasons || [];
+  }, [film]);
+
+  // Lấy episodes của mùa hiện tại
   const { episodes, loading: episodesLoading } = useEpisodesData(
     filmId,
-    1, // TODO: Support multiple seasons
+    currentSeason,
     isSeries(film),
   );
 
@@ -47,16 +60,17 @@ export default function WatchMoviePage() {
     });
 
   const { recommendedFilms } = useRecommendedFilms(filmId, 10);
+  
   const streamUrl = useMemo(() => {
     if (!film) return null;
     if (isSeries(film) && !currentEpisode) return null;
 
     return getFilmHlsUrl(
       film.id,
-      isSeries(film) ? 1 : undefined,
+      isSeries(film) ? currentSeason : undefined,
       isSeries(film) && currentEpisode ? currentEpisode.number : undefined,
     );
-  }, [film, currentEpisode]);
+  }, [film, currentEpisode, currentSeason]);
 
   const {
     isFavorite,
@@ -73,14 +87,35 @@ export default function WatchMoviePage() {
     window.scrollTo(0, 0);
   }, []);
 
+  // Cập nhật currentSeason khi URL thay đổi
+  useEffect(() => {
+    if (seasonNumberFromUrl) {
+      setCurrentSeason(parseInt(seasonNumberFromUrl));
+    }
+  }, [seasonNumberFromUrl]);
+
+  const handleSelectSeason = useCallback(
+    (seasonNumber: number) => {
+      setCurrentSeason(seasonNumber);
+      setCurrentEpisode(null);
+      setSearchParams({ season: seasonNumber.toString() });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    },
+    [setCurrentEpisode, setSearchParams],
+  );
+
   const handleSelectEpisode = useCallback(
     (episode: typeof currentEpisode) => {
       if (!episode) return;
       setCurrentEpisode(episode);
-      setSearchParams({ ep: episode.number.toString() });
+      const params: Record<string, string> = { ep: episode.number.toString() };
+      if (currentSeason > 1) {
+        params.season = currentSeason.toString();
+      }
+      setSearchParams(params);
       window.scrollTo({ top: 0, behavior: "smooth" });
     },
-    [setCurrentEpisode, setSearchParams],
+    [setCurrentEpisode, setSearchParams, currentSeason],
   );
 
   const handleVideoEnded = useCallback(() => {
@@ -88,10 +123,14 @@ export default function WatchMoviePage() {
       const hasNext = selectNextEpisode();
       if (hasNext && currentEpisode) {
         const nextEpisodeNumber = currentEpisode.number + 1;
-        setSearchParams({ ep: nextEpisodeNumber.toString() });
+        const params: Record<string, string> = { ep: nextEpisodeNumber.toString() };
+        if (currentSeason > 1) {
+          params.season = currentSeason.toString();
+        }
+        setSearchParams(params);
       }
     }
-  }, [film, selectNextEpisode, currentEpisode, setSearchParams]);
+  }, [film, selectNextEpisode, currentEpisode, setSearchParams, currentSeason]);
 
   const handleVideoError = useCallback((error: any) => {
     console.error("Video player error:", error);
@@ -179,13 +218,16 @@ export default function WatchMoviePage() {
         >
           <div className={theaterMode ? "w-full h-full" : ""}>
               <VideoPlayer
-                key={`${filmId}-${currentEpisode?.id || "movie"}`}
+                key={`${filmId}-${currentSeason}-${currentEpisode?.id || "movie"}`}
                 src={streamUrl}
                 poster={getVideoPoster(film)}
                 title={getVideoTitle(film, currentEpisode?.number)}
                 onEnded={handleVideoEnded}
                 autoPlay={false}
                 onError={handleVideoError}
+                filmId={film.id}
+                season={isSeries(film) ? currentSeason : undefined}
+                episode={isSeries(film) && currentEpisode ? currentEpisode.number : undefined}
               />
           </div>
         </div>
@@ -223,6 +265,9 @@ export default function WatchMoviePage() {
                   episodes={episodes}
                   currentEpisodeId={currentEpisode?.id}
                   onSelectEpisode={handleSelectEpisode}
+                  seasons={seasons}
+                  currentSeason={currentSeason}
+                  onSelectSeason={handleSelectSeason}
                 />
               )}
 

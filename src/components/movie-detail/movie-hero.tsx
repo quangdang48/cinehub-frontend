@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Play,
@@ -12,6 +12,9 @@ import {
 } from "lucide-react";
 import type { FilmDto } from "@/types/FilmDto";
 import { useWishlist } from "@/hooks/useWishlist";
+import { normalizeUrl } from "@/utils/videoUtils";
+import { useHLS } from "../watch";
+import { getFilmHlsUrl, isSeries } from "@/utils/watchPageUtils";
 
 interface MovieHeroProps {
   film: FilmDto;
@@ -31,6 +34,23 @@ export const MovieHero: React.FC<MovieHeroProps> = ({ film }) => {
     toggleWishlist,
     isAuthenticated,
   } = useWishlist(film.id);
+
+  const handleError = useCallback(
+    () => {
+      setIsVideoLoaded(false);
+    }, []
+  );
+
+  const streamUrl = useMemo(() => {
+    if (!film) return null;
+    if (isSeries(film)) return "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4";
+
+    return getFilmHlsUrl(
+      film.id,
+    );
+  }, [film]) || "";
+
+  useHLS({ videoRef, src: streamUrl, onError: handleError });
 
   // Auto hide toast after 3 seconds
   useEffect(() => {
@@ -93,7 +113,7 @@ export const MovieHero: React.FC<MovieHeroProps> = ({ film }) => {
       {/* Background Layers */}
       <div className="absolute inset-0 z-0 select-none">
         <img
-          src={displayPoster?.url || "/placeholder.jpg"}
+          src={displayPoster ? normalizeUrl(displayPoster.url) : "/placeholder.jpg"}
           alt="Backdrop"
           className={`w-full h-full object-cover transition-opacity duration-1000 ${isVideoLoaded ? "opacity-0" : "opacity-100"}`}
         />
@@ -101,9 +121,6 @@ export const MovieHero: React.FC<MovieHeroProps> = ({ film }) => {
       <div className="absolute inset-0 z-1 select-none pointer-events-none">
         <video
           ref={videoRef}
-          src={
-            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4"
-          }
           loop
           muted={isMuted}
           playsInline
@@ -129,7 +146,7 @@ export const MovieHero: React.FC<MovieHeroProps> = ({ film }) => {
           <div className="absolute -inset-1 bg-linear-to-br from-yellow-500 to-orange-600 rounded-xl blur opacity-20 group-hover/poster:opacity-40 transition duration-500"></div>
           <div className="relative rounded-xl overflow-hidden shadow-2xl ring-1 ring-white/10">
             <img
-              src={defaultPoster?.url}
+              src={defaultPoster ? normalizeUrl(defaultPoster.url) : "/placeholder.jpg"}
               alt={film.title}
               className="w-full h-auto object-cover transform transition-transform duration-700 group-hover/poster:scale-105"
             />
