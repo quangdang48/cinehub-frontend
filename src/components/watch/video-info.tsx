@@ -1,7 +1,8 @@
-import React from 'react';
-import { Star, MessageCircle, ChevronRight, Play } from 'lucide-react';
-import type { FilmDto } from '@/types/FilmDto';
-import type { EpisodeDto } from '@/types/EpisodeDto';
+import React from "react";
+import { Star, MessageCircle, ChevronRight, Play } from "lucide-react";
+import type { FilmDto } from "@/types/FilmDto";
+import type { EpisodeDto } from "@/types/EpisodeDto";
+import { normalizeUrl } from "@/utils/videoUtils";
 
 interface VideoInfoProps {
   film: FilmDto;
@@ -20,7 +21,7 @@ export const VideoInfo: React.FC<VideoInfoProps> = ({
   onRate,
   onComment,
 }) => {
-  const defaultPoster = film.posters.find(p => p.type === 'default');
+  const defaultPoster = film.posters.find((p) => p.type === "default");
 
   return (
     <div className="flex gap-6 py-6">
@@ -28,10 +29,10 @@ export const VideoInfo: React.FC<VideoInfoProps> = ({
       <div className="hidden sm:block relative group/poster shrink-0">
         <div className="relative w-28 h-40 rounded-xl overflow-hidden border-2 border-white/10 group-hover/poster:border-yellow-500/50 transition-colors shadow-xl">
           <div className="absolute -inset-1 bg-linear-to-br from-yellow-500/40 to-orange-600/40 rounded-xl blur-md opacity-0 group-hover/poster:opacity-100 transition-opacity duration-500" />
-          <img 
-            src={defaultPoster?.url} 
-            alt={film.title} 
-            className="w-full h-full object-cover group-hover/poster:scale-105 transition-transform duration-500" 
+          <img
+            src={defaultPoster ? normalizeUrl(defaultPoster.url) : "/placeholder.jpg"}
+            alt={film.title}
+            className="w-full h-full object-cover group-hover/poster:scale-105 transition-transform duration-500"
           />
           {currentEpisode && (
             <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black to-transparent p-2">
@@ -51,7 +52,9 @@ export const VideoInfo: React.FC<VideoInfoProps> = ({
             <h1 className="text-2xl font-bold text-white mb-1 truncate">
               {film.title}
               {currentEpisode && (
-                <span className="text-yellow-500 ml-2">- Tập {currentEpisode.number}</span>
+                <span className="text-yellow-500 ml-2">
+                  - Tập {currentEpisode.number}
+                </span>
               )}
             </h1>
             <p className="text-yellow-500/80 text-sm font-medium mb-3 truncate">
@@ -62,7 +65,7 @@ export const VideoInfo: React.FC<VideoInfoProps> = ({
             <div className="flex flex-wrap items-center gap-2 mb-4">
               <span className="flex items-center gap-1 bg-yellow-500/10 text-yellow-400 text-xs font-bold px-2.5 py-1 rounded-lg border border-yellow-500/20">
                 <Star className="w-3 h-3" fill="currentColor" />
-                IMDb {film.imdbRating?.toFixed(1) || 'N/A'}
+                IMDb {film.imdbRating?.toFixed(1) || "N/A"}
               </span>
               <span className="bg-white/10 text-white text-xs font-bold px-2.5 py-1 rounded-lg border border-white/10">
                 {film.ageLimit}
@@ -78,7 +81,7 @@ export const VideoInfo: React.FC<VideoInfoProps> = ({
             {/* Genres */}
             <div className="flex flex-wrap gap-1.5">
               {film.genres.slice(0, 4).map((genre) => (
-                <span 
+                <span
                   key={genre.id}
                   className="bg-white/5 text-gray-400 text-xs px-2.5 py-1 rounded-full border border-white/10 hover:bg-white/10 hover:text-white hover:border-white/20 cursor-pointer transition-all"
                 >
@@ -95,24 +98,32 @@ export const VideoInfo: React.FC<VideoInfoProps> = ({
               className="flex flex-col items-center gap-1 p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-yellow-500/30 transition-all group"
             >
               <Star className="w-5 h-5 text-gray-400 group-hover:text-yellow-400 transition-colors" />
-              <span className="text-xs text-gray-500 group-hover:text-gray-300">Đánh giá</span>
+              <span className="text-xs text-gray-500 group-hover:text-gray-300">
+                Đánh giá
+              </span>
             </button>
-            
+
             <button
               onClick={onComment}
               className="flex flex-col items-center gap-1 p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-yellow-500/30 transition-all group"
             >
               <MessageCircle className="w-5 h-5 text-gray-400 group-hover:text-yellow-400 transition-colors" />
-              <span className="text-xs text-gray-500 group-hover:text-gray-300">Bình luận</span>
+              <span className="text-xs text-gray-500 group-hover:text-gray-300">
+                Bình luận
+              </span>
             </button>
 
             {/* Rating Badge */}
             <div className="flex flex-col items-center gap-1 px-4 py-2.5 rounded-xl bg-linear-to-br from-green-500/20 to-green-600/10 border border-green-500/30">
               <div className="flex items-center gap-1.5">
                 <div className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse" />
-                <span className="text-xl font-bold text-green-400">{totalRatings}</span>
+                <span className="text-xl font-bold text-green-400">
+                  {totalRatings}
+                </span>
               </div>
-              <span className="text-xs text-green-500/70 font-medium">Đánh giá</span>
+              <span className="text-xs text-green-500/70 font-medium">
+                Đánh giá
+              </span>
             </div>
           </div>
         </div>

@@ -18,12 +18,14 @@ export const IconButton: React.FC<IconButtonProps> = ({
   className,
   ...props
 }) => {
-  const baseStyles = "inline-flex items-center justify-center transition-colors rounded-lg";
-  
+  const baseStyles =
+    "inline-flex items-center justify-center transition-colors rounded-lg";
+
   const variants = {
     default: "text-neutral-300 hover:text-white hover:bg-neutral-800",
     ghost: "text-neutral-300 hover:text-white",
-    outline: "border border-neutral-700 text-neutral-300 hover:text-white hover:border-neutral-500",
+    outline:
+      "border border-neutral-700 text-neutral-300 hover:text-white hover:border-neutral-500",
   };
 
   const sizes = {
@@ -45,7 +47,7 @@ export const IconButton: React.FC<IconButtonProps> = ({
         variants[variant],
         sizes[size],
         showLabel ? "flex-col" : "",
-        className
+        className,
       )}
       {...props}
     >

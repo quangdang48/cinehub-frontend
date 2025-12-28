@@ -2,23 +2,22 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { SeasonDto } from './SeasonDto';
+import type { SeasonDto } from "./SeasonDto";
 export type SeasonApiResponseDto = {
-    /**
-     * Indicates if the request was successful
-     */
-    success: boolean;
-    /**
-     * Timestamp of the response
-     */
-    timestamp: string;
-    /**
-     * Path of the request
-     */
-    path: string;
-    /**
-     * Response data
-     */
-    data: SeasonDto;
+  /**
+   * Indicates if the request was successful
+   */
+  success: boolean;
+  /**
+   * Timestamp of the response
+   */
+  timestamp: string;
+  /**
+   * Path of the request
+   */
+  path: string;
+  /**
+   * Response data
+   */
+  data: SeasonDto;
 };
-

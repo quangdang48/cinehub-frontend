@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { FilmService } from '@/services/FilmService';
-import type { FilmDto } from '@/types/FilmDto';
+import { useState, useEffect } from "react";
+import { FilmService } from "@/services/FilmService";
+import type { FilmDto } from "@/types/FilmDto";
 
 interface UseFilmDataReturn {
   film: FilmDto | null;
@@ -16,7 +16,7 @@ export const useFilmData = (filmId: string | undefined): UseFilmDataReturn => {
 
   const fetchFilm = async () => {
     if (!filmId) {
-      setError('Film ID is required');
+      setError("Film ID is required");
       setLoading(false);
       return;
     }
@@ -28,8 +28,8 @@ export const useFilmData = (filmId: string | undefined): UseFilmDataReturn => {
       const response = await FilmService.filmControllerGetOneV1(filmId);
       setFilm(response.data);
     } catch (err) {
-      console.error('Error fetching film:', err);
-      setError('Không thể tải thông tin phim. Vui lòng thử lại sau.');
+      console.error("Error fetching film:", err);
+      setError("Không thể tải thông tin phim. Vui lòng thử lại sau.");
     } finally {
       setLoading(false);
     }

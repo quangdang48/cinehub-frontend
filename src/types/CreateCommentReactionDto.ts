@@ -3,13 +3,12 @@
 /* tslint:disable */
 /* eslint-disable */
 export type CreateCommentReactionDto = {
-    /**
-     * Loại reaction (like/dislike)
-     */
-    type: 'like' | 'dislike';
-    /**
-     * ID của comment
-     */
-    commentId: string;
+  /**
+   * Loại reaction (like/dislike)
+   */
+  type: "like" | "dislike";
+  /**
+   * ID của comment
+   */
+  commentId: string;
 };
-

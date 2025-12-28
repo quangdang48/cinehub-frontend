@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
 interface KeyboardShortcuts {
   togglePlay: () => void;
@@ -28,65 +28,72 @@ export const useKeyboardShortcuts = ({
       }
 
       const key = e.key.toLowerCase();
-      
+
       switch (key) {
-        case ' ':
-        case 'k':
+        case " ":
+        case "k":
           e.preventDefault();
           togglePlay();
           break;
-        
-        case 'f':
+
+        case "f":
           e.preventDefault();
           toggleFullscreen();
           break;
-        
-        case 'm':
+
+        case "m":
           e.preventDefault();
           toggleMute();
           break;
-        
-        case 'arrowleft':
+
+        case "arrowleft":
           e.preventDefault();
           skip(-10);
           break;
-        
-        case 'arrowright':
-          e.preventDefault();
-          skip(10);
-          break;
-        
-        case 'j':
-          e.preventDefault();
-          skip(-10);
-          break;
-        
-        case 'l':
+
+        case "arrowright":
           e.preventDefault();
           skip(10);
           break;
 
-        case 'f11':
+        case "j":
+          e.preventDefault();
+          skip(-10);
+          break;
+
+        case "l":
+          e.preventDefault();
+          skip(10);
+          break;
+
+        case "f11":
           e.preventDefault();
           toggleFullscreen();
           break;
-        
-        case 'arrowup':
+
+        case "arrowup":
           e.preventDefault();
           setVolume(currentVolume + 0.1);
           break;
-        
-        case 'arrowdown':
+
+        case "arrowdown":
           e.preventDefault();
           setVolume(currentVolume - 0.1);
           break;
-        
+
         default:
           break;
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [togglePlay, toggleFullscreen, toggleMute, skip, setVolume, currentVolume]);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [
+    togglePlay,
+    toggleFullscreen,
+    toggleMute,
+    skip,
+    setVolume,
+    currentVolume,
+  ]);
 };

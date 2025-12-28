@@ -26,7 +26,7 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
       className={classNames(
         "bg-neutral-900 border-b border-neutral-800",
         sticky && "sticky top-16 z-10",
-        className
+        className,
       )}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -41,7 +41,7 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
                 "py-4 px-2 font-semibold transition-colors relative",
                 activeTab === tab.id
                   ? "text-white"
-                  : "text-neutral-400 hover:text-white"
+                  : "text-neutral-400 hover:text-white",
               )}
             >
               {tab.label}

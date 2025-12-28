@@ -22,7 +22,7 @@ export const registerSchema = Yup.object().shape({
     .max(50, "Password must not exceed 50 characters")
     .matches(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      "Password must contain at least one uppercase letter, one lowercase letter, and one number"
+      "Password must contain at least one uppercase letter, one lowercase letter, and one number",
     )
     .required("Password is required"),
   confirmPassword: Yup.string()
@@ -52,7 +52,7 @@ export const resetPasswordSchema = Yup.object().shape({
     .max(50, "Password must not exceed 50 characters")
     .matches(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      "Password must contain at least one uppercase letter, one lowercase letter, and one number"
+      "Password must contain at least one uppercase letter, one lowercase letter, and one number",
     )
     .required("New password is required"),
   confirmPassword: Yup.string()

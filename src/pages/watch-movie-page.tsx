@@ -1,6 +1,6 @@
-import { useEffect, useCallback } from 'react';
-import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import { ChevronLeft, Loader2, AlertCircle } from 'lucide-react';
+import { useEffect, useCallback, useMemo, useState } from "react";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
+import { ChevronLeft, Loader2, AlertCircle } from "lucide-react";
 import {
   VideoPlayer,
   VideoActionBar,
@@ -8,55 +8,70 @@ import {
   EpisodeList,
   ActorGrid,
   RecommendedMovies,
-} from '@/components/watch';
-import { CommentSection } from '@/components';
+} from "@/components/watch";
+import { CommentSection } from "@/components";
 import {
   useFilmData,
   useEpisodesData,
-  useStreamingUrl,
   useCurrentEpisode,
   useRecommendedFilms,
   useUserActions,
-} from '@/hooks';
-import { getVideoPoster, getVideoTitle, isSeries } from '../utils/watchPageUtils';
+} from "@/hooks";
+import {
+  getFilmHlsUrl,
+  getVideoPoster,
+  getVideoTitle,
+  isSeries,
+} from "../utils/watchPageUtils";
+import { toast } from "sonner";
 
 export default function WatchMoviePage() {
   const { id: filmId } = useParams<{ id: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  // Get episode number từ URL query params
-  const episodeNumberFromUrl = searchParams.get('ep');
+  const episodeNumberFromUrl = searchParams.get("ep");
+  const seasonNumberFromUrl = searchParams.get("season");
 
-  // Fetch film data
   const { film, loading: filmLoading, error: filmError } = useFilmData(filmId);
 
-  // Fetch episodes (chỉ khi là series)
-  const { episodes, loading: episodesLoading } = useEpisodesData(
-    filmId,
-    1, // TODO: Support multiple seasons
-    isSeries(film)
+  // Lấy mùa hiện tại từ URL hoặc mặc định là 1
+  const [currentSeason, setCurrentSeason] = useState<number>(
+    seasonNumberFromUrl ? parseInt(seasonNumberFromUrl) : 1
   );
 
-  // Current episode management
-  const { currentEpisode, setCurrentEpisode, selectNextEpisode } = useCurrentEpisode({
-    episodes,
-    episodeNumberFromUrl,
-  });
+  // Lấy danh sách seasons từ film
+  const seasons = useMemo(() => {
+    if (!film || !isSeries(film)) return [];
+    return film.seasons || [];
+  }, [film]);
 
-  // Fetch streaming URL
-  const { streamUrl, loading: streamLoading, error: streamError } = useStreamingUrl({
+  // Lấy episodes của mùa hiện tại
+  const { episodes, loading: episodesLoading } = useEpisodesData(
     filmId,
-    filmType: film?.type,
-    season: isSeries(film) ? 1 : undefined,
-    episode: currentEpisode?.number,
-    enabled: !!film, // Chỉ fetch khi đã có film data
-  });
+    currentSeason,
+    isSeries(film),
+  );
 
-  // Fetch recommended films
+  const { currentEpisode, setCurrentEpisode, selectNextEpisode } =
+    useCurrentEpisode({
+      episodes,
+      episodeNumberFromUrl,
+    });
+
   const { recommendedFilms } = useRecommendedFilms(filmId, 10);
+  
+  const streamUrl = useMemo(() => {
+    if (!film) return null;
+    if (isSeries(film) && !currentEpisode) return null;
 
-  // User actions
+    return getFilmHlsUrl(
+      film.id,
+      isSeries(film) ? currentSeason : undefined,
+      isSeries(film) && currentEpisode ? currentEpisode.number : undefined,
+    );
+  }, [film, currentEpisode, currentSeason]);
+
   const {
     isFavorite,
     isInWatchlist,
@@ -68,39 +83,65 @@ export default function WatchMoviePage() {
     handleReport,
   } = useUserActions();
 
-  // Scroll to top khi component mount
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  // Handle episode selection
-  const handleSelectEpisode = useCallback((episode: typeof currentEpisode) => {
-    if (!episode) return;
-    setCurrentEpisode(episode);
-    setSearchParams({ ep: episode.number.toString() });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [setCurrentEpisode, setSearchParams]);
+  // Cập nhật currentSeason khi URL thay đổi
+  useEffect(() => {
+    if (seasonNumberFromUrl) {
+      setCurrentSeason(parseInt(seasonNumberFromUrl));
+    }
+  }, [seasonNumberFromUrl]);
+
+  const handleSelectSeason = useCallback(
+    (seasonNumber: number) => {
+      setCurrentSeason(seasonNumber);
+      setCurrentEpisode(null);
+      setSearchParams({ season: seasonNumber.toString() });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    },
+    [setCurrentEpisode, setSearchParams],
+  );
+
+  const handleSelectEpisode = useCallback(
+    (episode: typeof currentEpisode) => {
+      if (!episode) return;
+      setCurrentEpisode(episode);
+      const params: Record<string, string> = { ep: episode.number.toString() };
+      if (currentSeason > 1) {
+        params.season = currentSeason.toString();
+      }
+      setSearchParams(params);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    },
+    [setCurrentEpisode, setSearchParams, currentSeason],
+  );
 
   const handleVideoEnded = useCallback(() => {
     if (isSeries(film)) {
       const hasNext = selectNextEpisode();
       if (hasNext && currentEpisode) {
         const nextEpisodeNumber = currentEpisode.number + 1;
-        setSearchParams({ ep: nextEpisodeNumber.toString() });
+        const params: Record<string, string> = { ep: nextEpisodeNumber.toString() };
+        if (currentSeason > 1) {
+          params.season = currentSeason.toString();
+        }
+        setSearchParams(params);
       }
     }
-  }, [film, selectNextEpisode, currentEpisode, setSearchParams]);
+  }, [film, selectNextEpisode, currentEpisode, setSearchParams, currentSeason]);
 
   const handleVideoError = useCallback((error: any) => {
-    console.error('Video player error:', error);
+    console.error("Video player error:", error);
+    toast.error("Lỗi phát video. Vui lòng thử lại sau.");
   }, []);
 
-  // Calculate loading state
-  const isLoading = filmLoading || episodesLoading || streamLoading;
-  const error = filmError || streamError;
+  const isLoading = filmLoading || episodesLoading;
+  const error = filmError;
 
   // Loading state
-  if (isLoading && !film) {
+  if (isLoading || !streamUrl) {
     return (
       <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
         <div className="text-center">
@@ -121,7 +162,7 @@ export default function WatchMoviePage() {
         <div className="text-center max-w-md">
           <AlertCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
           <p className="text-red-400 text-lg mb-2">
-            {error || 'Không tìm thấy phim'}
+            {error || "Không tìm thấy phim"}
           </p>
           <p className="text-gray-500 text-sm mb-6">
             Vui lòng kiểm tra lại hoặc thử tải lại trang
@@ -139,70 +180,60 @@ export default function WatchMoviePage() {
 
   return (
     <div className={`min-h-screen bg-[#0a0a0f]`}>
-      <div 
+      <div
         className={`fixed inset-0 bg-black/90 z-40 transition-opacity duration-500 pointer-events-auto ${
-          theaterMode ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
+          theaterMode
+            ? "opacity-100 visible"
+            : "opacity-0 invisible pointer-events-none"
         }`}
         onClick={() => toggleTheaterMode()}
       />
 
       {/* Main Content */}
-      <div className={`relative flex-1 pt-24 px-4 container mx-auto max-w-6xl z-auto`}>
-          <div className="top-0 bg-[#0a0a0f]/80 backdrop-blur-xl border-b border-white/5">
-            <div className="container mx-auto px-4 lg:px-8">
-              <div className="flex items-center gap-4 h-16">
-                <button
-                  onClick={() => navigate(-1)}
-                  className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors group"
-                  aria-label="Quay lại"
-                >
-                  <ChevronLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-                  <span className="text-sm font-medium">Xem phim {film.title}</span>
-                </button>
-              </div>
+      <div
+        className={`relative flex-1 pt-24 px-4 container mx-auto max-w-6xl z-auto`}
+      >
+        <div className="top-0 bg-[#0a0a0f]/80 backdrop-blur-xl border-b border-white/5">
+          <div className="container mx-auto px-4 lg:px-8">
+            <div className="flex items-center gap-4 h-16">
+              <button
+                onClick={() => navigate(-1)}
+                className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors group"
+                aria-label="Quay lại"
+              >
+                <ChevronLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+                <span className="text-sm font-medium">
+                  Xem phim {film.title}
+                </span>
+              </button>
             </div>
           </div>
+        </div>
 
         {/* Video Section */}
-        <div className={`relative w-full transition-all duration-300 ${
-            theaterMode ? 'z-50' : 'z-auto'
-          }`}>
-          <div className={theaterMode ? 'w-full h-full' : ''}>
-            {streamUrl ? (
+        <div
+          className={`relative w-full transition-all duration-300 ${
+            theaterMode ? "z-50" : "z-auto"
+          }`}
+        >
+          <div className={theaterMode ? "w-full h-full" : ""}>
               <VideoPlayer
-                key={`${filmId}-${currentEpisode?.id || 'movie'}`}
+                key={`${filmId}-${currentSeason}-${currentEpisode?.id || "movie"}`}
                 src={streamUrl}
                 poster={getVideoPoster(film)}
                 title={getVideoTitle(film, currentEpisode?.number)}
                 onEnded={handleVideoEnded}
                 autoPlay={false}
                 onError={handleVideoError}
+                filmId={film.id}
+                season={isSeries(film) ? currentSeason : undefined}
+                episode={isSeries(film) && currentEpisode ? currentEpisode.number : undefined}
               />
-            ) : streamLoading ? (
-              <div className="w-full aspect-video bg-black rounded-2xl flex items-center justify-center">
-                <div className="text-center">
-                  <Loader2 className="w-12 h-12 text-yellow-500 animate-spin mx-auto mb-3" />
-                  <p className="text-gray-400 text-sm">Đang tải video...</p>
-                </div>
-              </div>
-            ) : (
-              <div className="w-full aspect-video bg-black/50 rounded-2xl flex items-center justify-center border border-red-500/20">
-                <div className="text-center p-6">
-                  <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-3" />
-                  <p className="text-red-400 font-medium mb-2">
-                    {streamError || 'Không thể tải video'}
-                  </p>
-                  <p className="text-gray-500 text-sm">
-                    Vui lòng thử lại sau hoặc liên hệ hỗ trợ
-                  </p>
-                </div>
-              </div>
-            )}
           </div>
         </div>
 
         {/* Content Below Video - Ẩn trong theater mode */}
-          <div className="container mx-auto px-4 lg:px-8 pb-16">
+        <div className="container mx-auto px-4 lg:px-8 pb-16">
           {/* Action Bar */}
           <VideoActionBar
             isFavorite={isFavorite}
@@ -234,6 +265,9 @@ export default function WatchMoviePage() {
                   episodes={episodes}
                   currentEpisodeId={currentEpisode?.id}
                   onSelectEpisode={handleSelectEpisode}
+                  seasons={seasons}
+                  currentSeason={currentSeason}
+                  onSelectSeason={handleSelectSeason}
                 />
               )}
 

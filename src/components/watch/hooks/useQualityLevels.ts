@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from "react";
 
 export interface QualityLevel {
   height: number;
@@ -24,7 +24,9 @@ export const useQualityLevels = ({
   videoRef,
   hlsRef,
 }: UseQualityLevelsProps): UseQualityLevelsReturn => {
-  const [availableQualities, setAvailableQualities] = useState<QualityLevel[]>([]);
+  const [availableQualities, setAvailableQualities] = useState<QualityLevel[]>(
+    [],
+  );
   const [currentQuality, setCurrentQuality] = useState<number>(-1); // -1 = auto
 
   // Detect available qualities
@@ -34,7 +36,7 @@ export const useQualityLevels = ({
 
     const updateQualities = () => {
       const qualities: QualityLevel[] = [
-        { height: -1, label: 'Auto' }, // Auto quality
+        { height: -1, label: "Auto" }, // Auto quality
       ];
 
       // Nếu có HLS instance, lấy levels từ HLS
@@ -42,28 +44,29 @@ export const useQualityLevels = ({
         const hls = hlsRef.current;
         if (hls.levels && hls.levels.length > 0) {
           // Sắp xếp theo độ phân giải từ thấp đến cao
+          console.log("HLS levels detected:", hls.levels);
           const hlsQualities = hls.levels
             .map((level: any) => ({
               height: level.height,
               label: `${level.height}p`,
             }))
             .sort((a: QualityLevel, b: QualityLevel) => a.height - b.height);
-          
+
           qualities.push(...hlsQualities);
         }
       } else if (video.videoHeight) {
         // Fallback: dựa trên video dimensions
         const height = video.videoHeight;
         const standardQualities = [360, 480, 720, 1080, 1440, 2160];
-        
+
         // Chỉ hiển thị các quality <= video height
-        const availableHeights = standardQualities.filter(h => h <= height);
-        
+        const availableHeights = standardQualities.filter((h) => h <= height);
+
         qualities.push(
-          ...availableHeights.map(h => ({
+          ...availableHeights.map((h) => ({
             height: h,
             label: `${h}p`,
-          }))
+          })),
         );
       }
 
@@ -75,29 +78,34 @@ export const useQualityLevels = ({
       updateQualities();
     }
 
-    video.addEventListener('loadedmetadata', updateQualities);
-    return () => video.removeEventListener('loadedmetadata', updateQualities);
+    video.addEventListener("loadedmetadata", updateQualities);
+    return () => video.removeEventListener("loadedmetadata", updateQualities);
   }, [videoRef, hlsRef]);
 
   // Set quality
-  const setQuality = useCallback((height: number) => {
-    if (hlsRef?.current) {
-      const hls = hlsRef.current;
-      
-      if (height === -1) {
-        // Auto quality
-        hls.currentLevel = -1;
-      } else {
-        // Find matching level
-        const levelIndex = hls.levels.findIndex((level: any) => level.height === height);
-        if (levelIndex !== -1) {
-          hls.currentLevel = levelIndex;
+  const setQuality = useCallback(
+    (height: number) => {
+      if (hlsRef?.current) {
+        const hls = hlsRef.current;
+
+        if (height === -1) {
+          // Auto quality
+          hls.currentLevel = -1;
+        } else {
+          // Find matching level
+          const levelIndex = hls.levels.findIndex(
+            (level: any) => level.height === height,
+          );
+          if (levelIndex !== -1) {
+            hls.currentLevel = levelIndex;
+          }
         }
       }
-    }
-    
-    setCurrentQuality(height);
-  }, [hlsRef]);
+
+      setCurrentQuality(height);
+    },
+    [hlsRef],
+  );
 
   return {
     availableQualities,

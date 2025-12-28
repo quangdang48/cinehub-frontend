@@ -2,23 +2,22 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { LoginResponseDto } from './LoginResponseDto';
+import type { LoginResponseDto } from "./LoginResponseDto";
 export type LoginResponseApiResponseDto = {
-    /**
-     * Indicates if the request was successful
-     */
-    success: boolean;
-    /**
-     * Timestamp of the response
-     */
-    timestamp: string;
-    /**
-     * Path of the request
-     */
-    path: string;
-    /**
-     * Response data
-     */
-    data: LoginResponseDto;
+  /**
+   * Indicates if the request was successful
+   */
+  success: boolean;
+  /**
+   * Timestamp of the response
+   */
+  timestamp: string;
+  /**
+   * Path of the request
+   */
+  path: string;
+  /**
+   * Response data
+   */
+  data: LoginResponseDto;
 };
-

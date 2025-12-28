@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
-import type { EpisodeDto } from '@/types/EpisodeDto';
+import { useState, useEffect, useCallback } from "react";
+import type { EpisodeDto } from "@/types/EpisodeDto";
 
 interface UseCurrentEpisodeParams {
   episodes: EpisodeDto[];
@@ -8,7 +8,7 @@ interface UseCurrentEpisodeParams {
 
 interface UseCurrentEpisodeReturn {
   currentEpisode: EpisodeDto | null;
-  setCurrentEpisode: (episode: EpisodeDto) => void;
+  setCurrentEpisode: (episode: EpisodeDto | null) => void;
   selectNextEpisode: () => boolean;
   selectPreviousEpisode: () => boolean;
 }
@@ -29,7 +29,7 @@ export const useCurrentEpisode = ({
     // Nếu có episode number từ URL, tìm episode đó
     if (episodeNumberFromUrl) {
       const episodeNumber = parseInt(episodeNumberFromUrl);
-      const foundEpisode = episodes.find(ep => ep.number === episodeNumber);
+      const foundEpisode = episodes.find((ep) => ep.number === episodeNumber);
       if (foundEpisode) {
         setCurrentEpisode(foundEpisode);
         return;
@@ -43,7 +43,9 @@ export const useCurrentEpisode = ({
   const selectNextEpisode = useCallback((): boolean => {
     if (!currentEpisode || episodes.length === 0) return false;
 
-    const currentIndex = episodes.findIndex(ep => ep.id === currentEpisode.id);
+    const currentIndex = episodes.findIndex(
+      (ep) => ep.id === currentEpisode.id,
+    );
     if (currentIndex < episodes.length - 1) {
       setCurrentEpisode(episodes[currentIndex + 1]);
       return true;
@@ -55,7 +57,9 @@ export const useCurrentEpisode = ({
   const selectPreviousEpisode = useCallback((): boolean => {
     if (!currentEpisode || episodes.length === 0) return false;
 
-    const currentIndex = episodes.findIndex(ep => ep.id === currentEpisode.id);
+    const currentIndex = episodes.findIndex(
+      (ep) => ep.id === currentEpisode.id,
+    );
     if (currentIndex > 0) {
       setCurrentEpisode(episodes[currentIndex - 1]);
       return true;

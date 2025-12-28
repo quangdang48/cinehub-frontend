@@ -65,12 +65,16 @@ export default function MovieListPage() {
     // Check path for specific pages
     const path = location.pathname.split("/").pop() || "";
     if (path === "genre") {
-        const genre = GENRE_LIST.find((g) => g.slug === searchParams.get("genre"));
-        return genre ? `Phim ${genre.label}` : "Thể loại";
+      const genre = GENRE_LIST.find(
+        (g) => g.slug === searchParams.get("genre"),
+      );
+      return genre ? `Phim ${genre.label}` : "Thể loại";
     }
     if (path === "country") {
-        const country = COUNTRY_LIST.find((c) => c.slug === searchParams.get("country"));
-        return country ? `Phim ${country.label}` : "Quốc gia";
+      const country = COUNTRY_LIST.find(
+        (c) => c.slug === searchParams.get("country"),
+      );
+      return country ? `Phim ${country.label}` : "Quốc gia";
     }
     return PAGE_TITLES[path] || "Danh sách phim";
   };
@@ -78,7 +82,7 @@ export default function MovieListPage() {
   // Set initial filter type based on route
   useEffect(() => {
     const initialFilters = getFiltersFromUrl();
-    
+
     // Auto-set type based on route
     if (location.pathname.includes("phim-le")) {
       initialFilters.type = "movie";
@@ -96,9 +100,7 @@ export default function MovieListPage() {
 
       setLoading(true);
       try {
-        const sortParam = filters.sortBy
-          ? SORT_MAP[filters.sortBy]
-          : undefined;
+        const sortParam = filters.sortBy ? SORT_MAP[filters.sortBy] : undefined;
 
         // Call API based on sort type
         let response;
@@ -139,7 +141,7 @@ export default function MovieListPage() {
         setLoading(false);
       }
     },
-    [filters.sortBy, loading]
+    [filters.sortBy, loading],
   );
 
   // Initial load
@@ -165,7 +167,7 @@ export default function MovieListPage() {
         root: null,
         rootMargin: "100px",
         threshold: 0.1,
-      }
+      },
     );
 
     if (loadMoreRef.current) {
@@ -198,7 +200,7 @@ export default function MovieListPage() {
     if (filters.year) params.set("year", filters.year);
     if (filters.sortBy) params.set("sort", filters.sortBy);
 
-    navigate(`/filter?${params.toString()}`)
+    navigate(`/filter?${params.toString()}`);
 
     // Reset and reload films
     setFilms([]);
@@ -249,10 +251,7 @@ export default function MovieListPage() {
 
         {/* Load More Trigger */}
         {hasMore && (
-          <div
-            ref={loadMoreRef}
-            className="flex justify-center py-8"
-          >
+          <div ref={loadMoreRef} className="flex justify-center py-8">
             {loading && (
               <div className="w-10 h-10 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin" />
             )}

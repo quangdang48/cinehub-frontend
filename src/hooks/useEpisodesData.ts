@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { EpisodesService } from '@/services/EpisodesService';
-import type { EpisodeDto } from '@/types/EpisodeDto';
+import { useState, useEffect } from "react";
+import { EpisodesService } from "@/services/EpisodesService";
+import type { EpisodeDto } from "@/types/EpisodeDto";
 
 interface UseEpisodesDataReturn {
   episodes: EpisodeDto[];
@@ -12,7 +12,7 @@ interface UseEpisodesDataReturn {
 export const useEpisodesData = (
   filmId: string | undefined,
   season: number = 1,
-  enabled: boolean = true
+  enabled: boolean = true,
 ): UseEpisodesDataReturn => {
   const [episodes, setEpisodes] = useState<EpisodeDto[]>([]);
   const [loading, setLoading] = useState(false);
@@ -29,8 +29,8 @@ export const useEpisodesData = (
       });
       setEpisodes(response.data);
     } catch (err) {
-      console.error('Error fetching episodes:', err);
-      setError('Không thể tải danh sách tập phim.');
+      console.error("Error fetching episodes:", err);
+      setError("Không thể tải danh sách tập phim.");
       setEpisodes([]);
     } finally {
       setLoading(false);
@@ -43,10 +43,10 @@ export const useEpisodesData = (
     }
   }, [filmId, season, enabled]);
 
-  return { 
-    episodes, 
-    loading, 
-    error, 
-    refetch: fetchEpisodes 
+  return {
+    episodes,
+    loading,
+    error,
+    refetch: fetchEpisodes,
   };
 };

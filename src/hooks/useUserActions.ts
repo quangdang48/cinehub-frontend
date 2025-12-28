@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from "react";
 
 interface UseUserActionsReturn {
   isFavorite: boolean;
@@ -17,43 +17,44 @@ export const useUserActions = (): UseUserActionsReturn => {
   const [theaterMode, setTheaterMode] = useState(false);
 
   const toggleFavorite = useCallback(() => {
-    setIsFavorite(prev => {
+    setIsFavorite((prev) => {
       const newValue = !prev;
       // TODO: Call API to update favorite status
-      console.log('Toggle favorite:', newValue);
+      console.log("Toggle favorite:", newValue);
       return newValue;
     });
   }, []);
 
   const toggleWatchlist = useCallback(() => {
-    setIsInWatchlist(prev => {
+    setIsInWatchlist((prev) => {
       const newValue = !prev;
       // TODO: Call API to update watchlist status
-      console.log('Toggle watchlist:', newValue);
+      console.log("Toggle watchlist:", newValue);
       return newValue;
     });
   }, []);
 
   const toggleTheaterMode = useCallback(() => {
-    setTheaterMode(prev => !prev);
+    setTheaterMode((prev) => !prev);
   }, []);
 
   const handleShare = useCallback(() => {
     if (navigator.clipboard && window.location.href) {
-      navigator.clipboard.writeText(window.location.href)
+      navigator.clipboard
+        .writeText(window.location.href)
         .then(() => {
           // TODO: Show success toast notification
-          console.log('Link copied to clipboard');
+          console.log("Link copied to clipboard");
         })
-        .catch(err => {
-          console.error('Failed to copy link:', err);
+        .catch((err) => {
+          console.error("Failed to copy link:", err);
         });
     }
   }, []);
 
   const handleReport = useCallback(() => {
     // TODO: Open report modal
-    console.log('Open report modal');
+    console.log("Open report modal");
   }, []);
 
   return {

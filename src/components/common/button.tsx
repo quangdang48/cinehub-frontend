@@ -18,12 +18,14 @@ export const Button: React.FC<ButtonProps> = ({
   disabled,
   ...props
 }) => {
-  const baseStyles = "font-semibold rounded transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black";
-  
+  const baseStyles =
+    "font-semibold rounded transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black";
+
   const variants = {
     primary: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
     secondary: "bg-gray-700 text-white hover:bg-gray-600 focus:ring-gray-500",
-    outline: "border-2 border-gray-700 text-white hover:bg-gray-700 focus:ring-gray-500",
+    outline:
+      "border-2 border-gray-700 text-white hover:bg-gray-700 focus:ring-gray-500",
   };
 
   const sizes = {
@@ -42,7 +44,7 @@ export const Button: React.FC<ButtonProps> = ({
           "w-full": fullWidth,
           "opacity-50 cursor-not-allowed": disabled || isLoading,
         },
-        className
+        className,
       )}
       disabled={disabled || isLoading}
       {...props}

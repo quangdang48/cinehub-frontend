@@ -3,13 +3,12 @@
 /* tslint:disable */
 /* eslint-disable */
 export type UpdateCastDto = {
-    /**
-     * Tên nhân vật
-     */
-    character: string;
-    /**
-     * Id diễn viên
-     */
-    actorId: string;
+  /**
+   * Tên nhân vật
+   */
+  character: string;
+  /**
+   * Id diễn viên
+   */
+  actorId: string;
 };
-

@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
-import { WhistlesService } from '@/services/WhistlesService';
-import { useAppSelector } from '@/store';
+import { useState, useEffect, useCallback } from "react";
+import { WhistlesService } from "@/services/WhistlesService";
+import { useAppSelector } from "@/store";
 
 interface WishlistItem {
   id: string;
@@ -34,12 +34,11 @@ export function useWishlist(filmId?: string) {
 
     try {
       setLoading(true);
-      const response = await WhistlesService.whistlesControllerIsInWhistlesV1(
-        filmId
-      );
+      const response =
+        await WhistlesService.whistlesControllerIsInWhistlesV1(filmId);
       setIsInWishlist(response?.data?.inWhistles || false);
     } catch (err) {
-      console.error('Error checking wishlist status:', err);
+      console.error("Error checking wishlist status:", err);
       setIsInWishlist(false);
     } finally {
       setLoading(false);
@@ -60,8 +59,8 @@ export function useWishlist(filmId?: string) {
         await WhistlesService.whistlesControllerGetUserWhistlesV1();
       setWishlistItems(response?.data?.data || []);
     } catch (err) {
-      console.error('Error fetching wishlist:', err);
-      setError('Không thể tải danh sách yêu thích');
+      console.error("Error fetching wishlist:", err);
+      setError("Không thể tải danh sách yêu thích");
       setWishlistItems([]);
     } finally {
       setLoading(false);
@@ -74,7 +73,7 @@ export function useWishlist(filmId?: string) {
       if (!signedIn || !token) {
         return {
           success: false,
-          message: 'Vui lòng đăng nhập để thêm vào yêu thích',
+          message: "Vui lòng đăng nhập để thêm vào yêu thích",
         };
       }
 
@@ -84,24 +83,24 @@ export function useWishlist(filmId?: string) {
         if (filmId === id) {
           setIsInWishlist(true);
         }
-        return { success: true, message: 'Đã thêm vào danh sách yêu thích' };
+        return { success: true, message: "Đã thêm vào danh sách yêu thích" };
       } catch (err: unknown) {
         const error = err as { response?: { data?: { message?: string } } };
         const message =
-          error?.response?.data?.message || 'Không thể thêm vào yêu thích';
+          error?.response?.data?.message || "Không thể thêm vào yêu thích";
         return { success: false, message };
       } finally {
         setLoading(false);
       }
     },
-    [signedIn, token, filmId]
+    [signedIn, token, filmId],
   );
 
   // Remove film from wishlist
   const removeFromWishlist = useCallback(
     async (id: string) => {
       if (!signedIn || !token) {
-        return { success: false, message: 'Vui lòng đăng nhập' };
+        return { success: false, message: "Vui lòng đăng nhập" };
       }
 
       try {
@@ -112,24 +111,24 @@ export function useWishlist(filmId?: string) {
         }
         // Update local state
         setWishlistItems((prev) => prev.filter((item) => item.filmId !== id));
-        return { success: true, message: 'Đã xóa khỏi danh sách yêu thích' };
+        return { success: true, message: "Đã xóa khỏi danh sách yêu thích" };
       } catch (err: unknown) {
         const error = err as { response?: { data?: { message?: string } } };
         const message =
-          error?.response?.data?.message || 'Không thể xóa khỏi yêu thích';
+          error?.response?.data?.message || "Không thể xóa khỏi yêu thích";
         return { success: false, message };
       } finally {
         setLoading(false);
       }
     },
-    [signedIn, token, filmId]
+    [signedIn, token, filmId],
   );
 
   // Toggle wishlist status
   const toggleWishlist = useCallback(
     async (id?: string) => {
       const targetId = id || filmId;
-      if (!targetId) return { success: false, message: 'Film ID không hợp lệ' };
+      if (!targetId) return { success: false, message: "Film ID không hợp lệ" };
 
       if (isInWishlist) {
         return removeFromWishlist(targetId);
@@ -137,7 +136,7 @@ export function useWishlist(filmId?: string) {
         return addToWishlist(targetId);
       }
     },
-    [isInWishlist, filmId, addToWishlist, removeFromWishlist]
+    [isInWishlist, filmId, addToWishlist, removeFromWishlist],
   );
 
   // Check status when filmId changes

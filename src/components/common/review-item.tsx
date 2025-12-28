@@ -1,10 +1,20 @@
-import React, { useState } from 'react';
-import { Star, ThumbsUp, ThumbsDown, MessageSquare, MoreHorizontal, Edit, Trash2, Flag, ChevronUp } from 'lucide-react';
-import type { ReviewDto } from '@/types/ReviewDto';
-import type { CommentDto } from '@/types/CommentDto';
-import { timeAgo } from '@/utils/time';
-import { CommentItem } from './comment-item';
-import { CommentInput } from './comment-input';
+import React, { useState } from "react";
+import {
+  Star,
+  ThumbsUp,
+  ThumbsDown,
+  MessageSquare,
+  MoreHorizontal,
+  Edit,
+  Trash2,
+  Flag,
+  ChevronUp,
+} from "lucide-react";
+import type { ReviewDto } from "@/types/ReviewDto";
+import type { CommentDto } from "@/types/CommentDto";
+import { timeAgo } from "@/utils/time";
+import { CommentItem } from "./comment-item";
+import { CommentInput } from "./comment-input";
 
 interface ReviewItemProps {
   review: ReviewDto;
@@ -15,7 +25,10 @@ interface ReviewItemProps {
   onDislike?: (id: string) => void;
   onLoadComments?: (reviewId: string) => Promise<CommentDto[]>;
   onSubmitComment?: (reviewId: string, content: string) => Promise<void>;
-  onReplyToComment?: (parentId: string, content: string) => Promise<CommentDto | null>;
+  onReplyToComment?: (
+    parentId: string,
+    content: string,
+  ) => Promise<CommentDto | null>;
   onLoadReplies?: (parentId: string) => Promise<CommentDto[]>;
   onEdit?: (id: string, content: string, rating: number) => void;
   onDelete?: (id: string) => void;
@@ -90,7 +103,7 @@ export const ReviewItem: React.FC<ReviewItemProps> = ({
         const loadedComments = await onLoadComments(review.id);
         setComments(loadedComments);
       } catch (err) {
-        console.error('Error loading comments:', err);
+        console.error("Error loading comments:", err);
       } finally {
         setLoadingComments(false);
       }
@@ -100,7 +113,7 @@ export const ReviewItem: React.FC<ReviewItemProps> = ({
 
   const handleSubmitComment = async (content: string) => {
     if (!onSubmitComment) return;
-    
+
     setSubmittingComment(true);
     try {
       await onSubmitComment(review.id, content);
@@ -110,7 +123,7 @@ export const ReviewItem: React.FC<ReviewItemProps> = ({
         setComments(loadedComments);
       }
     } catch (err) {
-      console.error('Error submitting comment:', err);
+      console.error("Error submitting comment:", err);
     } finally {
       setSubmittingComment(false);
     }
@@ -127,14 +140,14 @@ export const ReviewItem: React.FC<ReviewItemProps> = ({
             onClick={() => interactive && setEditRating(star)}
             onMouseEnter={() => interactive && setHoverRating(star)}
             onMouseLeave={() => interactive && setHoverRating(0)}
-            className={`${interactive ? 'cursor-pointer' : 'cursor-default'} transition-transform ${interactive ? 'hover:scale-110' : ''}`}
+            className={`${interactive ? "cursor-pointer" : "cursor-default"} transition-transform ${interactive ? "hover:scale-110" : ""}`}
           >
             <Star
               size={size}
               className={`transition-colors ${
-                star <= (interactive ? (hoverRating || editRating) : rating)
-                  ? 'text-yellow-400 fill-yellow-400'
-                  : 'text-gray-600'
+                star <= (interactive ? hoverRating || editRating : rating)
+                  ? "text-yellow-400 fill-yellow-400"
+                  : "text-gray-600"
               }`}
             />
           </button>
@@ -148,9 +161,10 @@ export const ReviewItem: React.FC<ReviewItemProps> = ({
       <div className="flex gap-4">
         <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-transparent group-hover:border-yellow-500 transition-colors shrink-0 shadow-lg">
           <img
-            src={review.author.gender === 'male'
-              ? `https://randomuser.me/api/portraits/men/${Math.abs(review.author.id.charCodeAt(0) % 99)}.jpg`
-              : `https://randomuser.me/api/portraits/women/${Math.abs(review.author.id.charCodeAt(0) % 99)}.jpg`
+            src={
+              review.author.gender === "male"
+                ? `https://randomuser.me/api/portraits/men/${Math.abs(review.author.id.charCodeAt(0) % 99)}.jpg`
+                : `https://randomuser.me/api/portraits/women/${Math.abs(review.author.id.charCodeAt(0) % 99)}.jpg`
             }
             alt={review.author.name}
             className="w-full h-full object-cover"
@@ -164,7 +178,9 @@ export const ReviewItem: React.FC<ReviewItemProps> = ({
                 <span className="text-white font-bold text-base group-hover:text-yellow-400 transition-colors">
                   {review.author.name}
                 </span>
-                <span className="text-gray-500 text-xs">{timeAgo(review.createdAt)}</span>
+                <span className="text-gray-500 text-xs">
+                  {timeAgo(review.createdAt)}
+                </span>
                 {review.updatedAt !== review.createdAt && (
                   <span className="text-gray-600 text-xs">(đã chỉnh sửa)</span>
                 )}
@@ -172,12 +188,16 @@ export const ReviewItem: React.FC<ReviewItemProps> = ({
               {isEditing ? (
                 <div className="mt-2">
                   {renderStars(editRating, true, 20)}
-                  <span className="ml-2 text-sm text-yellow-400 font-bold">{editRating}/10</span>
+                  <span className="ml-2 text-sm text-yellow-400 font-bold">
+                    {editRating}/10
+                  </span>
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
                   {renderStars(review.rating)}
-                  <span className="text-yellow-400 font-bold text-sm">{review.rating}/10</span>
+                  <span className="text-yellow-400 font-bold text-sm">
+                    {review.rating}/10
+                  </span>
                 </div>
               )}
             </div>
@@ -254,23 +274,28 @@ export const ReviewItem: React.FC<ReviewItemProps> = ({
               </div>
             </div>
           ) : (
-            <p className="text-gray-300 text-sm leading-relaxed mb-4">{review.content}</p>
+            <p className="text-gray-300 text-sm leading-relaxed mb-4">
+              {review.content}
+            </p>
           )}
 
           {showActions && !isEditing && (
             <div className="flex items-center gap-6 text-xs text-gray-500 font-medium">
               <button
                 onClick={handleLike}
-                className={`flex items-center gap-1.5 transition-colors ${liked ? 'text-blue-400' : 'hover:text-blue-400'}`}
+                className={`flex items-center gap-1.5 transition-colors ${liked ? "text-blue-400" : "hover:text-blue-400"}`}
               >
-                <ThumbsUp size={14} className={liked ? 'fill-current' : ''} />
+                <ThumbsUp size={14} className={liked ? "fill-current" : ""} />
                 Hữu ích ({review.totalLikes})
               </button>
               <button
                 onClick={handleDislike}
-                className={`flex items-center gap-1.5 transition-colors ${disliked ? 'text-red-400' : 'hover:text-red-400'}`}
+                className={`flex items-center gap-1.5 transition-colors ${disliked ? "text-red-400" : "hover:text-red-400"}`}
               >
-                <ThumbsDown size={14} className={disliked ? 'fill-current' : ''} />
+                <ThumbsDown
+                  size={14}
+                  className={disliked ? "fill-current" : ""}
+                />
                 {review.totalDislikes}
               </button>
               {review.totalComments > 0 && (
@@ -286,7 +311,9 @@ export const ReviewItem: React.FC<ReviewItemProps> = ({
                   ) : (
                     <MessageSquare size={14} />
                   )}
-                  {showComments ? 'Ẩn bình luận' : `${review.totalComments} bình luận`}
+                  {showComments
+                    ? "Ẩn bình luận"
+                    : `${review.totalComments} bình luận`}
                 </button>
               )}
             </div>
@@ -311,7 +338,7 @@ export const ReviewItem: React.FC<ReviewItemProps> = ({
 
               {/* Comments List */}
               <div className="space-y-4">
-                {comments.map(comment => (
+                {comments.map((comment) => (
                   <CommentItem
                     key={comment.id}
                     comment={comment}

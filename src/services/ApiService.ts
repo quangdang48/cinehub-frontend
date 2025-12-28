@@ -1,8 +1,8 @@
-import axios, { AxiosError } from 'axios';
-import appConfig from '@/config/app.config';
-import deepParseJson from '@/utils/deepParseJson';
-import store, { signOutSuccess } from '@/store';
-import { toast } from 'sonner';
+import axios, { AxiosError } from "axios";
+import appConfig from "@/config/app.config";
+import deepParseJson from "@/utils/deepParseJson";
+import store, { signOutSuccess } from "@/store";
+import { toast } from "sonner";
 
 const unauthorizedCode = [401];
 
@@ -10,7 +10,7 @@ const ApiService = axios.create({
   timeout: 60000,
   baseURL: appConfig.apiPrefix,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
@@ -29,7 +29,7 @@ ApiService.interceptors.request.use(
 
     // Cách 2: Nếu không có, thử lấy từ localStorage
     if (!accessToken) {
-      const rawPersistData = localStorage.getItem('cinehub-root');
+      const rawPersistData = localStorage.getItem("cinehub-root");
       if (rawPersistData) {
         const persistData = deepParseJson(rawPersistData);
         accessToken = (persistData as any)?.auth?.session?.token || null;
@@ -37,14 +37,14 @@ ApiService.interceptors.request.use(
     }
 
     if (accessToken) {
-      config.headers['Authorization'] = `Bearer ${accessToken}`;
+      config.headers["Authorization"] = `Bearer ${accessToken}`;
     }
 
     return config;
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 ApiService.interceptors.response.use(
@@ -53,13 +53,13 @@ ApiService.interceptors.response.use(
     const { response } = error;
     if (response && unauthorizedCode.includes(response.status)) {
       store.dispatch(signOutSuccess());
-      toast.error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+      toast.error("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
       setTimeout(() => {
-        window.location.href = '/login';
+        window.location.href = "/login";
       }, 1500);
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export default ApiService;
