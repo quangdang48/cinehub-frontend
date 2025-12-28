@@ -1,38 +1,14 @@
 import { useState, useCallback } from "react";
 
 interface UseUserActionsReturn {
-  isFavorite: boolean;
-  isInWatchlist: boolean;
   theaterMode: boolean;
-  toggleFavorite: () => void;
-  toggleWatchlist: () => void;
   toggleTheaterMode: () => void;
   handleShare: () => void;
   handleReport: () => void;
 }
 
 export const useUserActions = (): UseUserActionsReturn => {
-  const [isFavorite, setIsFavorite] = useState(false);
-  const [isInWatchlist, setIsInWatchlist] = useState(false);
   const [theaterMode, setTheaterMode] = useState(false);
-
-  const toggleFavorite = useCallback(() => {
-    setIsFavorite((prev) => {
-      const newValue = !prev;
-      // TODO: Call API to update favorite status
-      console.log("Toggle favorite:", newValue);
-      return newValue;
-    });
-  }, []);
-
-  const toggleWatchlist = useCallback(() => {
-    setIsInWatchlist((prev) => {
-      const newValue = !prev;
-      // TODO: Call API to update watchlist status
-      console.log("Toggle watchlist:", newValue);
-      return newValue;
-    });
-  }, []);
 
   const toggleTheaterMode = useCallback(() => {
     setTheaterMode((prev) => !prev);
@@ -58,11 +34,7 @@ export const useUserActions = (): UseUserActionsReturn => {
   }, []);
 
   return {
-    isFavorite,
-    isInWatchlist,
     theaterMode,
-    toggleFavorite,
-    toggleWatchlist,
     toggleTheaterMode,
     handleShare,
     handleReport,

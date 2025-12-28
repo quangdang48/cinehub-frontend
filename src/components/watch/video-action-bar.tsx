@@ -1,21 +1,19 @@
 import React from "react";
 import {
   Heart,
-  Plus,
   Film,
   Users,
   Share2,
   Flag,
   HeartOff,
-  Check,
   X,
 } from "lucide-react";
 
 interface VideoActionBarProps {
   isFavorite?: boolean;
+  wishlistLoading?: boolean;
   isInWatchlist?: boolean;
   onToggleFavorite?: () => void;
-  onAddToWatchlist?: () => void;
   onSkipIntro?: () => void;
   onTheaterMode?: () => void;
   onWatchTogether?: () => void;
@@ -27,9 +25,8 @@ interface VideoActionBarProps {
 
 export const VideoActionBar: React.FC<VideoActionBarProps> = ({
   isFavorite = false,
-  isInWatchlist = false,
+  wishlistLoading = false,
   onToggleFavorite,
-  onAddToWatchlist,
   onSkipIntro,
   onTheaterMode,
   onWatchTogether,
@@ -45,13 +42,6 @@ export const VideoActionBar: React.FC<VideoActionBarProps> = ({
       onClick: onToggleFavorite,
       active: isFavorite,
       activeColor: "text-red-500",
-    },
-    {
-      icon: isInWatchlist ? Check : Plus,
-      label: "Thêm vào",
-      onClick: onAddToWatchlist,
-      active: isInWatchlist,
-      activeColor: "text-green-500",
     },
     {
       icon: X,
@@ -88,6 +78,7 @@ export const VideoActionBar: React.FC<VideoActionBarProps> = ({
             <button
               key={index}
               onClick={action.onClick}
+              disabled={wishlistLoading}
               className={`
                 group flex items-center gap-2 px-4 py-2.5 rounded-xl
                 transition-all duration-300 

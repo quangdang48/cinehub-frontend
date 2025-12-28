@@ -16,6 +16,7 @@ import {
   useCurrentEpisode,
   useRecommendedFilms,
   useUserActions,
+  useWishlist,
 } from "@/hooks";
 import {
   getFilmHlsUrl,
@@ -73,15 +74,17 @@ export default function WatchMoviePage() {
   }, [film, currentEpisode, currentSeason]);
 
   const {
-    isFavorite,
-    isInWatchlist,
     theaterMode,
-    toggleFavorite,
-    toggleWatchlist,
     toggleTheaterMode,
     handleShare,
     handleReport,
   } = useUserActions();
+
+  const {
+      isInWishlist,
+      loading: wishlistLoading,
+      toggleWishlist,
+    } = useWishlist(film?.id);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -236,11 +239,10 @@ export default function WatchMoviePage() {
         <div className="container mx-auto px-4 lg:px-8 pb-16">
           {/* Action Bar */}
           <VideoActionBar
-            isFavorite={isFavorite}
-            isInWatchlist={isInWatchlist}
+            isFavorite={isInWishlist}
+            wishlistLoading={wishlistLoading}
             theaterModeActive={theaterMode}
-            onToggleFavorite={toggleFavorite}
-            onAddToWatchlist={toggleWatchlist}
+            onToggleFavorite={toggleWishlist}
             onTheaterMode={toggleTheaterMode}
             onShare={handleShare}
             onReport={handleReport}

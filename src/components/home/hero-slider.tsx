@@ -6,6 +6,7 @@ import classNames from "classnames";
 import type { FilmDto } from "@/types/FilmDto";
 import { normalizeUrl } from "@/utils/videoUtils";
 import { useWishlist } from "@/hooks/useWishlist";
+import { toast } from "sonner";
 
 interface HeroSliderProps {
   films: FilmDto[];
@@ -29,7 +30,7 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({
 
   const handleToggleWishlist = async () => {
     if (!isAuthenticated) {
-      navigate('/login');
+      toast.error("Vui lòng đăng nhập để thêm vào yêu thích");
       return;
     }
     if (currentFilm) {

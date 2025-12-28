@@ -15,6 +15,12 @@ const authRoute: Routes = [
     authority: [],
   },
   {
+    key: "verifyEmail",
+    path: `/verify-email`,
+    component: lazy(() => import("@/pages/verify-email-page")),
+    authority: [],
+  },
+  {
     key: "forgotPassword",
     path: `/forgot-password`,
     component: lazy(() => import("@/pages/forgot-password-page")),
