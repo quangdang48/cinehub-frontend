@@ -23,9 +23,11 @@ export default function Home() {
   );
   const latestReleaseMovies = useCarouselData<FilmDto>(
     FilmService.filmControllerGetAll,
+    20,
+    '{"releaseDate":"DESC"}',
   );
   const newTrendingMovies = useCarouselData<FilmDto>(
-    FilmService.filmControllerGetAll,
+    FilmService.filmControllerGetAllUpcoming,
   );
 
   const [hoveredRankingId, setHoveredRankingId] = useState<string | null>(null);

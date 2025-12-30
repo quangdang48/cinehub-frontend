@@ -162,7 +162,14 @@ export default function MovieDetailPage() {
   };
 
   if (loading || !film) {
-    return;
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center pt-20">
+        <div className="text-center text-white">
+          <div className="loader mb-4"></div>
+          <p>Đang tải thông tin phim...</p>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
