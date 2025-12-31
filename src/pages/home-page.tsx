@@ -17,9 +17,12 @@ export default function Home() {
   const heroFilms = useCarouselData<FilmDto>(
     FilmService.filmControllerGetAll,
     5,
+    '{"views":"DESC"}',
   );
   const mostViewMovies = useCarouselData<FilmDto>(
     FilmService.filmControllerGetAll,
+    20,
+    '{"views":"DESC"}',
   );
   const latestReleaseMovies = useCarouselData<FilmDto>(
     FilmService.filmControllerGetAll,

@@ -20,6 +20,8 @@ import {
 } from "lucide-react";
 import type { EpisodeDto } from "@/types/EpisodeDto";
 import { EpisodesService } from "@/services/EpisodesService";
+import { useAuth } from "@/hooks";
+import { toast } from "sonner";
 
 export default function MovieDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -31,6 +33,7 @@ export default function MovieDetailPage() {
   const [loading, setLoading] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState<string>("");
   const [currentSeason, setCurrentSeason] = useState<number>(1);
+  const { authenticated } = useAuth();
 
   useEffect(() => {
     const fetchFilmDetail = async () => {
@@ -41,7 +44,7 @@ export default function MovieDetailPage() {
 
       try {
         const filmPromise = FilmService.filmControllerGetOneV1(id);
-        const trendingPromise = FilmService.filmControllerGetAll(1, 5);
+        const trendingPromise = FilmService.filmControllerGetAll(1, 5, '{"views":"DESC"}');
         const [filmResponse, trendingResponse] = await Promise.all([
           filmPromise,
           trendingPromise,
@@ -87,6 +90,11 @@ export default function MovieDetailPage() {
 
   const handleEpisodeClick = useCallback((episode: EpisodeDto) => {
     if (!film) return;
+    if (!authenticated) {
+      toast.info("Vui lòng đăng nhập để xem phim.");
+      navigate(`/login`);
+      return;
+    }
     navigate(`/watch/${film.id}?season=${currentSeason}&ep=${episode.number}`);
   }, [film, currentSeason, navigate]);
 

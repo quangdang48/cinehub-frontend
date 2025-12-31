@@ -1,4 +1,6 @@
+import type { HeartbeatDto } from "@/types/HeartbeatDto";
 import ApiService from "./ApiService";
+import type { ApiResponse } from "@/types/ApiResponse";
 
 export class StreamingService {
   /**
@@ -6,7 +8,7 @@ export class StreamingService {
    * @returns StreamingApiResponseDto Lấy URL streaming của phim
    * @throws ApiError
    */
-  public static streamControllerGetSubscriptionByUserIdV1({
+  public static streamControllerGetStreamingFileV1({
     filmId,
     season,
     episode,
@@ -39,6 +41,7 @@ export class StreamingService {
     filmId,
     season,
     episode,
+    requestBody,
   }: {
     filmId: string;
     /**
@@ -49,8 +52,9 @@ export class StreamingService {
      * Số tập (nếu có)
      */
     episode?: number;
-  }): Promise<void> {
-    return ApiService.post("streaming/heartbeat", undefined, {
+    requestBody: HeartbeatDto;
+  }): Promise<ApiResponse<{watchId: string}>> {
+    return ApiService.post("streaming/heartbeat", requestBody, {
       params: {
         filmId,
         season,

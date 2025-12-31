@@ -44,7 +44,6 @@ export const useQualityLevels = ({
         const hls = hlsRef.current;
         if (hls.levels && hls.levels.length > 0) {
           // Sắp xếp theo độ phân giải từ thấp đến cao
-          console.log("HLS levels detected:", hls.levels);
           const hlsQualities = hls.levels
             .map((level: any) => ({
               height: level.height,

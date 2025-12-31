@@ -6,34 +6,43 @@ interface UseHeartbeatProps {
   season?: number;
   episode?: number;
   isPlaying: boolean;
+  currentTime?: number;
   intervalMs?: number;
 }
 
-/**
- * Hook để gửi heartbeat định kỳ khi người dùng đang xem video
- * Heartbeat được gửi mỗi 30 giây (mặc định) khi video đang phát
- */
 export const useHeartbeat = ({
   filmId,
   season,
   episode,
   isPlaying,
+  currentTime = 0,
   intervalMs = 10000, // 10 seconds default
 }: UseHeartbeatProps) => {
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const lastHeartbeatRef = useRef<number>(0);
+  const currentTimeRef = useRef<number>(currentTime);
+  const watchIdRef = useRef<string | undefined>(undefined);
+
+  useEffect(() => {
+    currentTimeRef.current = currentTime;
+  }, [currentTime]);
 
   const sendHeartbeat = useCallback(async () => {
     if (!filmId) return;
+    console.log("lastHeartbeatRef.current", lastHeartbeatRef.current);
 
     try {
-      await StreamingService.sendHeartbeat({
+      const response = await StreamingService.sendHeartbeat({
         filmId,
         season,
         episode,
+        requestBody: {
+          currentTime: currentTimeRef.current,
+          watchId: watchIdRef.current,
+        },
       });
+      watchIdRef.current = response.data.watchId;
       lastHeartbeatRef.current = Date.now();
-      console.log("Heartbeat sent successfully");
     } catch (error) {
       console.error("Failed to send heartbeat:", error);
     }
@@ -74,6 +83,7 @@ export const useHeartbeat = ({
           filmId,
           season,
           episode,
+          requestBody: { currentTime: currentTimeRef.current },
         }).catch(() => {});
       }
     };

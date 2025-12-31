@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import {
   Play,
   Heart,
-  Plus,
   Share2,
   VolumeX,
   Volume2,
@@ -15,6 +14,8 @@ import { useWishlist } from "@/hooks/useWishlist";
 import { normalizeUrl } from "@/utils/videoUtils";
 import { useHLS } from "../watch";
 import { getFilmHlsUrl, isSeries } from "@/utils/watchPageUtils";
+import { toast } from "sonner";
+import { useAuth } from "@/hooks";
 
 interface MovieHeroProps {
   film: FilmDto;
@@ -26,7 +27,7 @@ export const MovieHero: React.FC<MovieHeroProps> = ({ film }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const { authenticated } = useAuth();
 
   const {
     isInWishlist,
@@ -42,34 +43,34 @@ export const MovieHero: React.FC<MovieHeroProps> = ({ film }) => {
 
   const streamUrl = useMemo(() => {
     if (!film) return null;
-    if (isSeries(film)) return "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4";
+    if (!authenticated || isSeries(film)) return "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4";
 
     return getFilmHlsUrl(
       film.id,
     );
-  }, [film]) || "";
+  }, [film, authenticated]) || "";
 
   useHLS({ videoRef, src: streamUrl, onError: handleError });
 
-  // Auto hide toast after 3 seconds
-  useEffect(() => {
-    if (toastMessage) {
-      const timer = setTimeout(() => setToastMessage(null), 3000);
-      return () => clearTimeout(timer);
+  const handlePlayClick = async () => {
+    if (!authenticated) {
+      toast.info("Vui lòng đăng nhập để xem phim.");
+      navigate(`/login`);
+      return;
     }
-  }, [toastMessage]);
+    navigate(`/watch/${film.id}`);
+  };
 
   const handleWishlistClick = async () => {
-    const result = await toggleWishlist();
-    setToastMessage(result.message);
+    await toggleWishlist();
   };
 
   const handleShareClick = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href);
-      setToastMessage("Đã sao chép liên kết vào clipboard");
+      toast.info("Đã sao chép liên kết vào clipboard");
     } catch {
-      setToastMessage("Không thể sao chép liên kết");
+      toast.error("Không thể sao chép liên kết");
     }
   };
 
@@ -194,7 +195,7 @@ export const MovieHero: React.FC<MovieHeroProps> = ({ film }) => {
 
           <div className="flex flex-col sm:flex-row gap-5 items-start sm:items-center">
             <button
-              onClick={() => navigate(`/watch/${film.id}`)}
+              onClick={handlePlayClick}
               className="group relative flex items-center justify-center gap-3 bg-linear-to-r from-yellow-400 to-orange-500 text-black font-bold text-lg px-8 py-4 rounded-2xl overflow-hidden transition-all hover:shadow-[0_0_40px_rgba(234,179,8,0.4)] hover:scale-105 active:scale-95"
             >
               <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
@@ -229,14 +230,6 @@ export const MovieHero: React.FC<MovieHeroProps> = ({ film }) => {
                 )}
               </button>
 
-              {/* Watch Later Button */}
-              <button className="flex flex-col items-center justify-center w-14 h-14 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-yellow-500/50 hover:text-yellow-400 transition-all group/btn">
-                <Plus
-                  size={20}
-                  className="mb-1 group-hover/btn:scale-110 transition-transform"
-                />
-              </button>
-
               {/* Share Button */}
               <button
                 onClick={handleShareClick}
@@ -251,15 +244,6 @@ export const MovieHero: React.FC<MovieHeroProps> = ({ film }) => {
           </div>
         </div>
       </div>
-
-      {/* Toast Notification */}
-      {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 animate-fade-in">
-          <div className="bg-neutral-800 text-white px-6 py-3 rounded-lg shadow-lg border border-neutral-700">
-            {toastMessage}
-          </div>
-        </div>
-      )}
     </div>
   );
 };

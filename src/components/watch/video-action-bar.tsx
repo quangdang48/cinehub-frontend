@@ -2,7 +2,6 @@ import React from "react";
 import {
   Heart,
   Film,
-  Users,
   Share2,
   Flag,
   HeartOff,
@@ -16,7 +15,6 @@ interface VideoActionBarProps {
   onToggleFavorite?: () => void;
   onSkipIntro?: () => void;
   onTheaterMode?: () => void;
-  onWatchTogether?: () => void;
   onShare?: () => void;
   onReport?: () => void;
   showSkipIntro?: boolean;
@@ -29,7 +27,6 @@ export const VideoActionBar: React.FC<VideoActionBarProps> = ({
   onToggleFavorite,
   onSkipIntro,
   onTheaterMode,
-  onWatchTogether,
   onShare,
   onReport,
   showSkipIntro = false,
@@ -55,11 +52,6 @@ export const VideoActionBar: React.FC<VideoActionBarProps> = ({
       label: "Rạp phim",
       onClick: onTheaterMode,
       badge: theaterModeActive ? "ON" : "OFF",
-    },
-    {
-      icon: Users,
-      label: "Xem chung",
-      onClick: onWatchTogether,
     },
     {
       icon: Share2,

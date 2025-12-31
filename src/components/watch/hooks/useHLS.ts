@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import Hls from "hls.js";
-import { normalizeUrl } from "../../../utils/videoUtils";
+import { normalizeUrl } from "@/utils/videoUtils";
 import { useAuth } from "@/hooks";
 
 interface UseHLSProps {
@@ -51,11 +51,10 @@ export const useHLS = ({ videoRef, src, onError }: UseHLSProps) => {
 
       hls.on(Hls.Events.ERROR, (_event, data) => {
         if (data.fatal) {
-          console.error("Fatal HLS error:", data);
           let errorMessage = 'Lỗi phát video';
           switch (data.type) {
             case Hls.ErrorTypes.NETWORK_ERROR:
-              errorMessage = 'Lỗi mạng khi tải video. Vui lòng kiểm tra kết nối internet.';
+              errorMessage = data.response?.code === 404 ? 'Video không tồn tại.' : 'Lỗi mạng khi tải video. Vui lòng kiểm tra kết nối internet.';
               break;
             case Hls.ErrorTypes.MEDIA_ERROR:
               errorMessage = 'Lỗi giải mã video. Đang thử khôi phục...';
