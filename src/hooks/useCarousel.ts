@@ -8,6 +8,7 @@ export function useCarouselData<T>(
     sort?: string,
   ) => Promise<PaginatedApiResponse<T>>,
   pageSize: number = 10,
+  sort?: string,
 ) {
   const [page, setPage] = useState(1);
   const [items, setItems] = useState<T[]>([]);
@@ -15,7 +16,7 @@ export function useCarouselData<T>(
   const [hasMore, setHasMore] = useState(true);
 
   const load = useCallback(
-    async (pageNumber: number, sort?: string, resetList: boolean = false) => {
+    async (pageNumber: number, resetList: boolean = false) => {
       if (loading) return;
 
       setLoading(true);
@@ -40,7 +41,7 @@ export function useCarouselData<T>(
   );
 
   useEffect(() => {
-    load(1, undefined, true);
+    load(1, true);
   }, []);
 
   const loadMore = () => {

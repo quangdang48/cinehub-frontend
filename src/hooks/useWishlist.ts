@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { WhistlesService } from "@/services/WhistlesService";
 import { useAppSelector } from "@/store";
+import { toast } from "sonner";
 
 interface WishlistItem {
   id: string;
@@ -71,6 +72,7 @@ export function useWishlist(filmId?: string) {
   const addToWishlist = useCallback(
     async (id: string) => {
       if (!signedIn || !token) {
+        toast.error("Vui lòng đăng nhập để thêm vào yêu thích");
         return {
           success: false,
           message: "Vui lòng đăng nhập để thêm vào yêu thích",
@@ -100,6 +102,7 @@ export function useWishlist(filmId?: string) {
   const removeFromWishlist = useCallback(
     async (id: string) => {
       if (!signedIn || !token) {
+        toast.error("Vui lòng đăng nhập");
         return { success: false, message: "Vui lòng đăng nhập" };
       }
 

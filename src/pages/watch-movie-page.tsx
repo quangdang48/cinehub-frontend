@@ -200,7 +200,7 @@ export default function WatchMoviePage() {
           <div className="container mx-auto px-4 lg:px-8">
             <div className="flex items-center gap-4 h-16">
               <button
-                onClick={() => navigate(-1)}
+                onClick={() => navigate(`/movie/${film.id}`)}
                 className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors group"
                 aria-label="Quay lại"
               >

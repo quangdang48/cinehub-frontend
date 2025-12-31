@@ -89,8 +89,14 @@ ApiService.interceptors.response.use(
       }
 
       try {
-        const { AuthService } = await import("./AuthService");
-        const response = await AuthService.refreshToken({ token: refreshToken });
+        const refreshApi = axios.create({
+          timeout: 60000,
+          baseURL: appConfig.apiPrefix,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const response = await refreshApi.post("/auth/refresh-token", { token: refreshToken });
         
         const { accessToken, refreshToken: newRefreshToken } = response.data;
         

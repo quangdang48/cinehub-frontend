@@ -64,6 +64,21 @@ export class FilmService {
       },
     });
   }
+  public static filmControllerGetAllUpcoming(
+    page: number = 1,
+    limit: number = 10,
+    sort?: string,
+  ): Promise<PaginatedFilmApiResponseDto> {
+    return ApiService.get("films", {
+      params: {
+        page,
+        limit,
+        sort,
+        status: "UPCOMING",
+      },
+    });
+  }
+
   /**
    * Lấy chi tiết một film theo id
    * @param id

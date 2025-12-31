@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { toast } from "sonner";
 
 interface UseUserActionsReturn {
   theaterMode: boolean;
@@ -19,11 +20,10 @@ export const useUserActions = (): UseUserActionsReturn => {
       navigator.clipboard
         .writeText(window.location.href)
         .then(() => {
-          // TODO: Show success toast notification
-          console.log("Link copied to clipboard");
+          toast.info("Đã sao chép liên kết vào clipboard");
         })
-        .catch((err) => {
-          console.error("Failed to copy link:", err);
+        .catch(() => {
+          toast.error("Không thể sao chép liên kết");
         });
     }
   }, []);

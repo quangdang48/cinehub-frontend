@@ -104,7 +104,8 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = memo(
       season,
       episode,
       isPlaying: state.isPlaying,
-      intervalMs: 30000, // 30 giây
+      currentTime: state.currentTime,
+      intervalMs: 10000,
     });
 
     useKeyboardShortcuts({
