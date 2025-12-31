@@ -58,6 +58,10 @@ ApiService.interceptors.response.use(
   async (error: AxiosError) => {
     const { response, config } = error;
     const originalRequest = config as any;
+    if (response && response.status === 401 && (response.data as any).message === "Tài khoản đã bị khóa") {
+      toast.error("Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên để biết thêm chi tiết.");
+      return Promise.reject(error);
+    }
 
     if (response && unauthorizedCode.includes(response.status) && !originalRequest._retry) {
       if (isRefreshing) {

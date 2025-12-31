@@ -171,19 +171,6 @@ export default function ProfileForm({ user, onUpdate }: ProfileFormProps) {
             Cập nhật
           </Button>
         </div>
-
-        {/* Additional Info */}
-        <div className="pt-4 border-t border-gray-800">
-          <p className="text-gray-400 text-sm">
-            Đã nhập khẩu, nhấn vào{" "}
-            <button
-              type="button"
-              className="text-yellow-600 hover:text-yellow-500 underline"
-            >
-              đây
-            </button>
-          </p>
-        </div>
       </form>
     </div>
   );

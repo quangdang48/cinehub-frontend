@@ -7,6 +7,7 @@ import type { UserApiResponseDto } from "@/types/UserApiResponseDto";
 import type { LoginDto } from "@/types/LoginDto";
 import type { GoogleLoginDto } from "@/types/GoogleLoginDto";
 import type { RefreshDto } from "@/types/RefreshDto";
+import type { ChangePassDto } from "@/types/ChangePassDto";
 
 export class AuthService {
   /**
@@ -81,5 +82,16 @@ export class AuthService {
     requestBody: RefreshDto,
   ): Promise<LoginResponseApiResponseDto> {
     return ApiService.post("auth/refresh-token", requestBody);
+  }
+
+  /**
+   * Đổi mật khẩu
+   * @param requestBody Dữ liệu đổi mật khẩu
+   * @returns ApiResponse<null> Kết quả đổi mật khẩu
+   */
+  public static changePassword(
+    requestBody: ChangePassDto,
+  ): Promise<ApiResponse<null>> {
+    return ApiService.post("auth/change-password", requestBody);
   }
 }
