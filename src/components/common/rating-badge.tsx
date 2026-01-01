@@ -42,9 +42,7 @@ export const RatingBadge: React.FC<RatingBadgeProps> = ({
           {rating.toFixed(1)}
         </span> */}
       </div>
-      {showLabel && (
-        <span className="text-sm text-neutral-400">Đánh giá</span>
-      )}
+      {showLabel && <span className="text-sm text-neutral-400">Đánh giá</span>}
     </div>
   );
 };

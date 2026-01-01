@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from "react";
 
 interface UseFullscreenProps {
   containerRef: React.RefObject<HTMLElement | null>;
@@ -22,7 +22,7 @@ export const useFullscreen = ({ containerRef }: UseFullscreenProps) => {
         }
       }
     } catch (error) {
-      console.error('Fullscreen error:', error);
+      console.error("Fullscreen error:", error);
     }
   }, [containerRef, isFullscreen]);
 
@@ -31,16 +31,25 @@ export const useFullscreen = ({ containerRef }: UseFullscreenProps) => {
       setIsFullscreen(!!document.fullscreenElement);
     };
 
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
-    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
+    document.addEventListener("mozfullscreenchange", handleFullscreenChange);
+    document.addEventListener("MSFullscreenChange", handleFullscreenChange);
 
     return () => {
-      document.removeEventListener('fullscreenchange', handleFullscreenChange);
-      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
-      document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
-      document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+      document.removeEventListener(
+        "webkitfullscreenchange",
+        handleFullscreenChange,
+      );
+      document.removeEventListener(
+        "mozfullscreenchange",
+        handleFullscreenChange,
+      );
+      document.removeEventListener(
+        "MSFullscreenChange",
+        handleFullscreenChange,
+      );
     };
   }, []);
 

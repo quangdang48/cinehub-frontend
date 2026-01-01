@@ -3,9 +3,8 @@
 /* tslint:disable */
 /* eslint-disable */
 export type StreamingDto = {
-    /**
-     * URL streaming của phim
-     */
-    url: string;
+  /**
+   * URL streaming của phim
+   */
+  url: string;
 };
-

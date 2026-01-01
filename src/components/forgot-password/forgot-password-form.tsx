@@ -2,7 +2,10 @@ import { useState } from "react";
 import { useFormik } from "formik";
 import { Link } from "react-router-dom";
 import { Input, Button, AuthCard, Alert, PasswordStrength } from "../common";
-import { resetPasswordSchema, forgotPasswordSchema } from "@/utils/validation-schemas";
+import {
+  resetPasswordSchema,
+  forgotPasswordSchema,
+} from "@/utils/validation-schemas";
 import type { ResetPasswordDto } from "@/types/ResetPasswordDto";
 import { AuthService } from "@/services/AuthService";
 
@@ -34,8 +37,8 @@ export default function ForgotPasswordForm() {
       } catch (error: any) {
         setApiError(
           error?.response?.data?.message ||
-          error?.message ||
-          "Failed to send OTP. Please try again."
+            error?.message ||
+            "Failed to send OTP. Please try again.",
         );
       } finally {
         setIsLoading(false);
@@ -59,17 +62,17 @@ export default function ForgotPasswordForm() {
       try {
         const { confirmPassword, ...resetData } = values;
         await AuthService.resetPassword(resetData);
-        
+
         setSuccessMessage("Password reset successful! Redirecting to login...");
-        
+
         setTimeout(() => {
           window.location.href = "/login";
         }, 2000);
       } catch (error: any) {
         setApiError(
           error?.response?.data?.message ||
-          error?.message ||
-          "Failed to reset password. Please try again."
+            error?.message ||
+            "Failed to reset password. Please try again.",
         );
       } finally {
         setIsLoading(false);
@@ -88,8 +91,8 @@ export default function ForgotPasswordForm() {
     } catch (error: any) {
       setApiError(
         error?.response?.data?.message ||
-        error?.message ||
-        "Failed to resend OTP"
+          error?.message ||
+          "Failed to resend OTP",
       );
     } finally {
       setIsLoading(false);
@@ -97,12 +100,24 @@ export default function ForgotPasswordForm() {
   };
 
   return (
-    <AuthCard 
-      title="Reset Password" 
-      subtitle={step === "email" ? "Enter your email to receive OTP" : "Enter OTP and new password"}
+    <AuthCard
+      title="Reset Password"
+      subtitle={
+        step === "email"
+          ? "Enter your email to receive OTP"
+          : "Enter OTP and new password"
+      }
     >
-      <Alert message={apiError} variant="error" onClose={() => setApiError("")} />
-      <Alert message={successMessage} variant="success" onClose={() => setSuccessMessage("")} />
+      <Alert
+        message={apiError}
+        variant="error"
+        onClose={() => setApiError("")}
+      />
+      <Alert
+        message={successMessage}
+        variant="success"
+        onClose={() => setSuccessMessage("")}
+      />
 
       {step === "email" ? (
         <form onSubmit={emailFormik.handleSubmit} className="space-y-6">
@@ -113,7 +128,11 @@ export default function ForgotPasswordForm() {
             value={emailFormik.values.email}
             onChange={emailFormik.handleChange}
             onBlur={emailFormik.handleBlur}
-            error={emailFormik.touched.email && emailFormik.errors.email ? emailFormik.errors.email : undefined}
+            error={
+              emailFormik.touched.email && emailFormik.errors.email
+                ? emailFormik.errors.email
+                : undefined
+            }
             autoComplete="email"
             helperText="We'll send you an OTP to reset your password"
           />
@@ -145,7 +164,11 @@ export default function ForgotPasswordForm() {
             value={resetFormik.values.otp}
             onChange={resetFormik.handleChange}
             onBlur={resetFormik.handleBlur}
-            error={resetFormik.touched.otp && resetFormik.errors.otp ? resetFormik.errors.otp : undefined}
+            error={
+              resetFormik.touched.otp && resetFormik.errors.otp
+                ? resetFormik.errors.otp
+                : undefined
+            }
             maxLength={6}
             helperText="Enter the 6-digit OTP sent to your email"
           />
@@ -157,7 +180,11 @@ export default function ForgotPasswordForm() {
             value={resetFormik.values.newPassword}
             onChange={resetFormik.handleChange}
             onBlur={resetFormik.handleBlur}
-            error={resetFormik.touched.newPassword && resetFormik.errors.newPassword ? resetFormik.errors.newPassword : undefined}
+            error={
+              resetFormik.touched.newPassword && resetFormik.errors.newPassword
+                ? resetFormik.errors.newPassword
+                : undefined
+            }
             autoComplete="new-password"
           />
           <PasswordStrength password={resetFormik.values.newPassword} />
@@ -169,7 +196,12 @@ export default function ForgotPasswordForm() {
             value={resetFormik.values.confirmPassword}
             onChange={resetFormik.handleChange}
             onBlur={resetFormik.handleBlur}
-            error={resetFormik.touched.confirmPassword && resetFormik.errors.confirmPassword ? resetFormik.errors.confirmPassword : undefined}
+            error={
+              resetFormik.touched.confirmPassword &&
+              resetFormik.errors.confirmPassword
+                ? resetFormik.errors.confirmPassword
+                : undefined
+            }
             autoComplete="new-password"
           />
 

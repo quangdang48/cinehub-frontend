@@ -15,9 +15,7 @@ const profileSchema = Yup.object().shape({
     .min(2, "Tên phải có ít nhất 2 ký tự")
     .max(50, "Tên không được quá 50 ký tự")
     .required("Tên là bắt buộc"),
-  email: Yup.string()
-    .email("Email không hợp lệ")
-    .required("Email là bắt buộc"),
+  email: Yup.string().email("Email không hợp lệ").required("Email là bắt buộc"),
   gender: Yup.string().oneOf(["male", "female", "other"]),
 });
 
@@ -47,8 +45,8 @@ export default function ProfileForm({ user, onUpdate }: ProfileFormProps) {
       } catch (error: any) {
         setApiError(
           error?.response?.data?.message ||
-          error?.message ||
-          "Có lỗi xảy ra khi cập nhật thông tin"
+            error?.message ||
+            "Có lỗi xảy ra khi cập nhật thông tin",
         );
       } finally {
         setIsLoading(false);
@@ -172,19 +170,6 @@ export default function ProfileForm({ user, onUpdate }: ProfileFormProps) {
           >
             Cập nhật
           </Button>
-        </div>
-
-        {/* Additional Info */}
-        <div className="pt-4 border-t border-gray-800">
-          <p className="text-gray-400 text-sm">
-            Đã nhập khẩu, nhấn vào{" "}
-            <button
-              type="button"
-              className="text-yellow-600 hover:text-yellow-500 underline"
-            >
-              đây
-            </button>
-          </p>
         </div>
       </form>
     </div>

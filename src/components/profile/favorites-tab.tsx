@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Heart, Trash2, Play, Loader2 } from 'lucide-react';
-import { useWishlist } from '@/hooks';
-import { FilmService } from '@/services/FilmService';
-import type { FilmDto } from '@/types/FilmDto';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Heart, Trash2, Play, Loader2 } from "lucide-react";
+import { useWishlist } from "@/hooks";
+import { FilmService } from "@/services/FilmService";
+import type { FilmDto } from "@/types/FilmDto";
+import { normalizeUrl } from "@/utils/videoUtils";
 
 interface WishlistFilm extends FilmDto {
   wishlistId: string;
@@ -11,7 +12,12 @@ interface WishlistFilm extends FilmDto {
 
 export default function FavoritesTab() {
   const navigate = useNavigate();
-  const { wishlistItems, fetchWishlist, removeFromWishlist, loading: wishlistLoading } = useWishlist();
+  const {
+    wishlistItems,
+    fetchWishlist,
+    removeFromWishlist,
+    loading: wishlistLoading,
+  } = useWishlist();
   const [films, setFilms] = useState<WishlistFilm[]>([]);
   const [loading, setLoading] = useState(true);
   const [removingId, setRemovingId] = useState<string | null>(null);
@@ -37,7 +43,9 @@ export default function FavoritesTab() {
       try {
         const filmPromises = wishlistItems.map(async (item) => {
           try {
-            const response = await FilmService.filmControllerGetOneV1(item.filmId);
+            const response = await FilmService.filmControllerGetOneV1(
+              item.filmId,
+            );
             return { ...response.data, wishlistId: item.id } as WishlistFilm;
           } catch (err) {
             console.error(`Error fetching film ${item.filmId}:`, err);
@@ -48,7 +56,7 @@ export default function FavoritesTab() {
         const filmResults = await Promise.all(filmPromises);
         setFilms(filmResults.filter((f): f is WishlistFilm => f !== null));
       } catch (err) {
-        console.error('Error loading film details:', err);
+        console.error("Error loading film details:", err);
       } finally {
         setLoading(false);
       }
@@ -63,7 +71,7 @@ export default function FavoritesTab() {
     setRemovingId(filmId);
     const result = await removeFromWishlist(filmId);
     if (result.success) {
-      setFilms(prev => prev.filter(f => f.id !== filmId));
+      setFilms((prev) => prev.filter((f) => f.id !== filmId));
     }
     setRemovingId(null);
   };
@@ -77,7 +85,9 @@ export default function FavoritesTab() {
       <div className="bg-gray-900 rounded-lg p-6 md:p-8 border border-gray-800">
         <div className="flex items-center justify-center py-12">
           <Loader2 className="w-8 h-8 text-yellow-500 animate-spin" />
-          <span className="ml-3 text-gray-400">Đang tải danh sách yêu thích...</span>
+          <span className="ml-3 text-gray-400">
+            Đang tải danh sách yêu thích...
+          </span>
         </div>
       </div>
     );
@@ -88,10 +98,9 @@ export default function FavoritesTab() {
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-white mb-2">Yêu thích</h2>
         <p className="text-gray-400 text-sm">
-          {films.length > 0 
+          {films.length > 0
             ? `Bạn có ${films.length} phim trong danh sách yêu thích`
-            : 'Danh sách phim yêu thích của bạn'
-          }
+            : "Danh sách phim yêu thích của bạn"}
         </p>
       </div>
 
@@ -107,8 +116,8 @@ export default function FavoritesTab() {
           <p className="text-gray-400 mb-6">
             Bắt đầu thêm các bộ phim yêu thích của bạn
           </p>
-          <button 
-            onClick={() => navigate('/')}
+          <button
+            onClick={() => navigate("/")}
             className="px-6 py-3 bg-yellow-600 text-white font-semibold rounded-lg hover:bg-yellow-700 transition"
           >
             Khám phá phim
@@ -118,22 +127,27 @@ export default function FavoritesTab() {
         /* Films Grid */
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {films.map((film) => (
-            <div 
-              key={film.id} 
+            <div
+              key={film.id}
               className="group relative bg-gray-800 rounded-lg overflow-hidden hover:ring-2 hover:ring-yellow-500 transition-all"
             >
               {/* Poster */}
-              <div 
-                className="aspect-[2/3] cursor-pointer"
+              <div
+                className="aspect-2/3 cursor-pointer"
                 onClick={() => handleNavigateToFilm(film.id)}
               >
                 <img
-                  src={film.posters?.find(p => p.type === 'thumbnail')?.url || '/placeholder.jpg'}
+                  src={
+                    film.posters?.find((p) => p.type === "thumbnail") ? normalizeUrl(film.posters.find((p) => p.type === "thumbnail")!.url) : "/placeholder.jpg"
+                  }
                   alt={film.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  onError={(e) => e.currentTarget.src = 'https://via.placeholder.com/300x450/1e293b/ffffff?text=NO+IMAGE'}
+                  onError={(e) =>
+                    (e.currentTarget.src =
+                      "https://via.placeholder.com/300x450/1e293b/ffffff?text=NO+IMAGE")
+                  }
                 />
-                
+
                 {/* Overlay on hover */}
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                   <button
@@ -166,14 +180,18 @@ export default function FavoritesTab() {
 
               {/* Info */}
               <div className="p-3">
-                <h4 
+                <h4
                   className="text-white font-medium text-sm truncate cursor-pointer hover:text-yellow-400 transition"
                   onClick={() => handleNavigateToFilm(film.id)}
                 >
                   {film.title}
                 </h4>
                 <p className="text-gray-500 text-xs mt-1">
-                  {new Date(film.releaseDate).getFullYear()} • {film.genres?.map(g => g.name).slice(0, 2).join(', ')}
+                  {new Date(film.releaseDate).getFullYear()} •{" "}
+                  {film.genres
+                    ?.map((g) => g.name)
+                    .slice(0, 2)
+                    .join(", ")}
                 </p>
               </div>
 

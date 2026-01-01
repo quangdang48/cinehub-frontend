@@ -2,23 +2,22 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { EpisodeDto } from './EpisodeDto';
+import type { EpisodeDto } from "./EpisodeDto";
 export type EpisodeApiResponseDto = {
-    /**
-     * Indicates if the request was successful
-     */
-    success: boolean;
-    /**
-     * Timestamp of the response
-     */
-    timestamp: string;
-    /**
-     * Path of the request
-     */
-    path: string;
-    /**
-     * Response data
-     */
-    data: EpisodeDto;
+  /**
+   * Indicates if the request was successful
+   */
+  success: boolean;
+  /**
+   * Timestamp of the response
+   */
+  timestamp: string;
+  /**
+   * Path of the request
+   */
+  path: string;
+  /**
+   * Response data
+   */
+  data: EpisodeDto;
 };
-

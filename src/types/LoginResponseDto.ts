@@ -2,10 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { UserDto } from './UserDto';
+import type { UserDto } from "./UserDto";
 export type LoginResponseDto = {
-    accessToken: string;
-    refreshToken: string;
-    user: UserDto;
+  accessToken: string;
+  refreshToken: string;
+  user: UserDto;
 };
-

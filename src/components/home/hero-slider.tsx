@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Play, Heart, Info, ChevronLeft, ChevronRight } from "lucide-react";
 import classNames from "classnames";
 import type { FilmDto } from "@/types/FilmDto";
+import { normalizeUrl } from "@/utils/videoUtils";
 import { useWishlist } from "@/hooks/useWishlist";
 
 interface HeroSliderProps {
@@ -24,15 +25,11 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({
   const currentFilm = films[currentIndex];
 
   // Wishlist hook
-  const { isInWishlist, toggleWishlist, loading: wishlistLoading, isAuthenticated } = useWishlist(currentFilm?.id);
+  const { isInWishlist, toggleWishlist, loading: wishlistLoading } = useWishlist(currentFilm?.id);
 
   const handleToggleWishlist = async () => {
-    if (!isAuthenticated) {
-      navigate('/login');
-      return;
-    }
     if (currentFilm) {
-      await toggleWishlist(currentFilm.id);
+      await toggleWishlist();
     }
   };
 
@@ -92,11 +89,14 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({
           key={index}
           className={classNames(
             "absolute inset-0 transition-opacity duration-1000",
-            index === currentIndex ? "opacity-100" : "opacity-0"
+            index === currentIndex ? "opacity-100" : "opacity-0",
           )}
         >
           <img
-            src={film.posters.find((p) => p.type === "backdrop")?.url || "/placeholder.svg"}
+            src={
+              film.posters.find((p) => p.type === "backdrop") ? normalizeUrl(film.posters.find((p) => p.type === "backdrop")!.url) :
+              "/placeholder.svg"
+            }
             alt={film.title}
             className="w-full h-full object-cover"
           />
@@ -111,7 +111,7 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({
       <div className="relative z-10 h-full flex flex-col justify-center px-6 md:px-12 lg:px-20">
         <div className="max-w-2xl">
           {/* Title */}
-          <h1 
+          <h1
             className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-3 leading-tight"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
@@ -202,11 +202,14 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({
                 "w-16 h-10 rounded-lg overflow-hidden border-2 transition-all",
                 index === currentIndex
                   ? "border-yellow-500 scale-110"
-                  : "border-transparent opacity-60 hover:opacity-100"
+                  : "border-transparent opacity-60 hover:opacity-100",
               )}
             >
               <img
-                src={film.posters.find((p) => p.type === "thumbnail")?.url || "/placeholder.svg"}
+                src={
+                  film.posters.find((p) => p.type === "thumbnail") ? normalizeUrl(film.posters.find((p) => p.type === "thumbnail")!.url) :
+                  "/placeholder.svg"
+                }
                 alt={film.title}
                 className="w-full h-full object-cover"
               />

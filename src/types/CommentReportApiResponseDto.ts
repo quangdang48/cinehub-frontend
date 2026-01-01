@@ -2,23 +2,22 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { CommentReportDto } from './CommentReportDto';
+import type { CommentReportDto } from "./CommentReportDto";
 export type CommentReportApiResponseDto = {
-    /**
-     * Indicates if the request was successful
-     */
-    success: boolean;
-    /**
-     * Timestamp of the response
-     */
-    timestamp: string;
-    /**
-     * Path of the request
-     */
-    path: string;
-    /**
-     * Response data
-     */
-    data: CommentReportDto;
+  /**
+   * Indicates if the request was successful
+   */
+  success: boolean;
+  /**
+   * Timestamp of the response
+   */
+  timestamp: string;
+  /**
+   * Path of the request
+   */
+  path: string;
+  /**
+   * Response data
+   */
+  data: CommentReportDto;
 };
-

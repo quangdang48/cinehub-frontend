@@ -3,7 +3,6 @@
 /* tslint:disable */
 /* eslint-disable */
 export type GoogleLoginDto = {
-    code: string;
-    codeVerifier: string;
+  code: string;
+  codeVerifier: string;
 };
-

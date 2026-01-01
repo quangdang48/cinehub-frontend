@@ -3,17 +3,22 @@
 /* tslint:disable */
 /* eslint-disable */
 export type CreateCommentReportDto = {
-    /**
-     * Lý do báo cáo
-     */
-    reason: 'spam' | 'harassment' | 'hate_speech' | 'misinformation' | 'inappropriate' | 'other';
-    /**
-     * Mô tả chi tiết (tùy chọn)
-     */
-    description?: string;
-    /**
-     * ID của comment
-     */
-    commentId: string;
+  /**
+   * Lý do báo cáo
+   */
+  reason:
+    | "spam"
+    | "harassment"
+    | "hate_speech"
+    | "misinformation"
+    | "inappropriate"
+    | "other";
+  /**
+   * Mô tả chi tiết (tùy chọn)
+   */
+  description?: string;
+  /**
+   * ID của comment
+   */
+  commentId: string;
 };
-

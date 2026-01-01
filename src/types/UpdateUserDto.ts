@@ -3,8 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export type UpdateUserDto = {
-    name: string;
-    email: string;
-    gender: 'male' | 'female';
+  name: string;
+  email: string;
+  gender: "male" | "female";
 };
-

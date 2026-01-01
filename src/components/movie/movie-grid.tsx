@@ -17,18 +17,26 @@ export const MovieGrid: React.FC<MovieGridProps> = ({
   className,
 }) => {
   const [modalData, setModalData] = useState<FilmDto | null>(null);
-  const [modalPosition, setModalPosition] = useState<ModalPosition | null>(null);
+  const [modalPosition, setModalPosition] = useState<ModalPosition | null>(
+    null,
+  );
   const timerRef = useRef<number | null>(null);
 
-  const handleDelayedModalEnter = (movie: FilmDto, targetElement: HTMLElement) => {
+  const handleDelayedModalEnter = (
+    movie: FilmDto,
+    targetElement: HTMLElement,
+  ) => {
     if (timerRef.current) clearTimeout(timerRef.current);
 
     const rect = targetElement.getBoundingClientRect();
     timerRef.current = setTimeout(() => {
       const width = 320;
-      const left = rect.left + (rect.width / 2) - (width / 2);
-      const safeLeft = Math.max(10, Math.min(window.innerWidth - width - 10, left));
-      
+      const left = rect.left + rect.width / 2 - width / 2;
+      const safeLeft = Math.max(
+        10,
+        Math.min(window.innerWidth - width - 10, left),
+      );
+
       setModalPosition({
         top: rect.top - 20,
         left: safeLeft,
@@ -38,8 +46,11 @@ export const MovieGrid: React.FC<MovieGridProps> = ({
     }, 800);
   };
 
-  const onSimpleEnter = (movie: FilmDto, event: React.MouseEvent<HTMLDivElement>) => {
-    handleDelayedModalEnter(movie, event.currentTarget); 
+  const onSimpleEnter = (
+    movie: FilmDto,
+    event: React.MouseEvent<HTMLDivElement>,
+  ) => {
+    handleDelayedModalEnter(movie, event.currentTarget);
   };
 
   const handleCardLeave = () => {
@@ -65,7 +76,7 @@ export const MovieGrid: React.FC<MovieGridProps> = ({
     <div
       className={classNames(
         "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-4 md:gap-6",
-        className
+        className,
       )}
     >
       {films.map((film, index) => (
@@ -77,14 +88,11 @@ export const MovieGrid: React.FC<MovieGridProps> = ({
           className="2xl:w-[200px] sm:w-[180px]"
         />
       ))}
-      
+
       {/* Loading skeleton cards */}
       {loading &&
         Array.from({ length: 7 }).map((_, index) => (
-          <div
-            key={`skeleton-${index}`}
-            className="animate-pulse"
-          >
+          <div key={`skeleton-${index}`} className="animate-pulse">
             <div className="aspect-2/3 w-full bg-neutral-800 rounded-lg" />
             <div className="mt-3 space-y-2">
               <div className="h-4 bg-neutral-800 rounded w-3/4" />
@@ -92,13 +100,13 @@ export const MovieGrid: React.FC<MovieGridProps> = ({
             </div>
           </div>
         ))}
-              {modalData && modalPosition && (
-                <MoviePreviewModal 
-                  movie={modalData}
-                  position={modalPosition}
-                  onLeave={handleModalLeave}
-                />
-              )}
+      {modalData && modalPosition && (
+        <MoviePreviewModal
+          movie={modalData}
+          position={modalPosition}
+          onLeave={handleModalLeave}
+        />
+      )}
     </div>
   );
 };

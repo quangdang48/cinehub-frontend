@@ -1,6 +1,13 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { User, Heart, List, PlayCircle, Bell, CreditCard, LogOut } from "lucide-react";
+import {
+  User,
+  Heart,
+  PlayCircle,
+  Bell,
+  CreditCard,
+  LogOut,
+} from "lucide-react";
 import type { UserDto } from "@/types/UserDto";
 
 interface UserMenuProps {
@@ -39,11 +46,6 @@ export default function UserMenu({ user, onLogout }: UserMenuProps) {
       icon: Heart,
       label: "Yêu thích",
       href: "/profile?tab=favorites",
-    },
-    {
-      icon: List,
-      label: "Danh sách",
-      href: "/profile?tab=lists",
     },
     {
       icon: PlayCircle,

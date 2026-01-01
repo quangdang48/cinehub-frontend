@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Star, Send } from 'lucide-react';
-import { Avatar } from './avatar';
+import React, { useState } from "react";
+import { Star, Send } from "lucide-react";
+import { Avatar } from "./avatar";
 
 interface ReviewInputProps {
   userAvatar?: string;
@@ -13,20 +13,20 @@ interface ReviewInputProps {
 
 export const ReviewInput: React.FC<ReviewInputProps> = ({
   userAvatar,
-  userName = 'Bạn',
-  placeholder = 'Viết đánh giá của bạn về phim...',
+  userName = "Bạn",
+  placeholder = "Viết đánh giá của bạn về phim...",
   onSubmit,
   isLoading = false,
   initialRating = 0,
 }) => {
-  const [content, setContent] = useState('');
+  const [content, setContent] = useState("");
   const [rating, setRating] = useState(initialRating);
   const [hoverRating, setHoverRating] = useState(0);
 
   const handleSubmit = () => {
     if (content.trim() && rating > 0 && !isLoading) {
       onSubmit(content.trim(), rating);
-      setContent('');
+      setContent("");
       setRating(0);
     }
   };
@@ -47,8 +47,8 @@ export const ReviewInput: React.FC<ReviewInputProps> = ({
               size={24}
               className={`transition-colors ${
                 star <= (hoverRating || rating)
-                  ? 'text-yellow-400 fill-yellow-400'
-                  : 'text-gray-600 hover:text-gray-500'
+                  ? "text-yellow-400 fill-yellow-400"
+                  : "text-gray-600 hover:text-gray-500"
               }`}
             />
           </button>
@@ -59,13 +59,13 @@ export const ReviewInput: React.FC<ReviewInputProps> = ({
 
   const getRatingText = () => {
     const r = hoverRating || rating;
-    if (r === 0) return 'Chọn điểm đánh giá';
-    if (r <= 2) return 'Rất tệ';
-    if (r <= 4) return 'Tệ';
-    if (r <= 5) return 'Tạm được';
-    if (r <= 7) return 'Hay';
-    if (r <= 9) return 'Rất hay';
-    return 'Tuyệt vời';
+    if (r === 0) return "Chọn điểm đánh giá";
+    if (r <= 2) return "Rất tệ";
+    if (r <= 4) return "Tệ";
+    if (r <= 5) return "Tạm được";
+    if (r <= 7) return "Hay";
+    if (r <= 9) return "Rất hay";
+    return "Tuyệt vời";
   };
 
   return (
@@ -78,8 +78,12 @@ export const ReviewInput: React.FC<ReviewInputProps> = ({
           <h4 className="text-white font-bold mb-3">Đánh giá của bạn</h4>
           <div className="flex items-center gap-4 mb-4">
             {renderStars()}
-            <span className={`text-sm font-medium ${(hoverRating || rating) > 0 ? 'text-yellow-400' : 'text-gray-500'}`}>
-              {(hoverRating || rating) > 0 && <span className="mr-2">{hoverRating || rating}/10</span>}
+            <span
+              className={`text-sm font-medium ${(hoverRating || rating) > 0 ? "text-yellow-400" : "text-gray-500"}`}
+            >
+              {(hoverRating || rating) > 0 && (
+                <span className="mr-2">{hoverRating || rating}/10</span>
+              )}
               {getRatingText()}
             </span>
           </div>
@@ -105,8 +109,8 @@ export const ReviewInput: React.FC<ReviewInputProps> = ({
           disabled={!content.trim() || rating === 0 || isLoading}
           className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${
             content.trim() && rating > 0 && !isLoading
-              ? 'bg-yellow-500 text-black hover:bg-yellow-400 shadow-lg shadow-yellow-500/20'
-              : 'bg-white/10 text-gray-500 cursor-not-allowed'
+              ? "bg-yellow-500 text-black hover:bg-yellow-400 shadow-lg shadow-yellow-500/20"
+              : "bg-white/10 text-gray-500 cursor-not-allowed"
           }`}
         >
           {isLoading ? (

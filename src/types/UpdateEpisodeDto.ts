@@ -3,9 +3,8 @@
 /* tslint:disable */
 /* eslint-disable */
 export type UpdateEpisodeDto = {
-    /**
-     * Ngày phát hành tập
-     */
-    releaseDate?: string | null;
+  /**
+   * Ngày phát hành tập
+   */
+  releaseDate?: string | null;
 };
-

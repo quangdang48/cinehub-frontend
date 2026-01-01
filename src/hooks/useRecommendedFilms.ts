@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { FilmService } from '@/services/FilmService';
-import type { FilmDto } from '@/types/FilmDto';
+import { useState, useEffect } from "react";
+import { FilmService } from "@/services/FilmService";
+import type { FilmDto } from "@/types/FilmDto";
 
 interface UseRecommendedFilmsReturn {
   recommendedFilms: FilmDto[];
@@ -10,7 +10,7 @@ interface UseRecommendedFilmsReturn {
 
 export const useRecommendedFilms = (
   currentFilmId?: string,
-  limit: number = 10
+  limit: number = 10,
 ): UseRecommendedFilmsReturn => {
   const [recommendedFilms, setRecommendedFilms] = useState<FilmDto[]>([]);
   const [loading, setLoading] = useState(false);
@@ -23,16 +23,16 @@ export const useRecommendedFilms = (
 
       try {
         const response = await FilmService.filmControllerGetAll(1, limit);
-        
+
         // Lọc bỏ phim hiện tại khỏi danh sách đề xuất
         const filteredFilms = currentFilmId
-          ? response.data.filter(film => film.id !== currentFilmId)
+          ? response.data.filter((film) => film.id !== currentFilmId)
           : response.data;
-        
+
         setRecommendedFilms(filteredFilms);
       } catch (err) {
-        console.error('Error fetching recommended films:', err);
-        setError('Không thể tải danh sách phim đề xuất.');
+        console.error("Error fetching recommended films:", err);
+        setError("Không thể tải danh sách phim đề xuất.");
         setRecommendedFilms([]);
       } finally {
         setLoading(false);

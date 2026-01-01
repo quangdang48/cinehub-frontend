@@ -5,7 +5,14 @@ import { setUser, useAppDispatch, useAppSelector } from "@/store";
 import { UserService } from "@/services/UserService";
 import type { UpdateUserDto } from "@/types/UpdateUserDto";
 import { useAuth } from "@/hooks";
-import { FavoritesTab, ProfileForm, ListsTab, ContinueWatchingTab, NotificationsTab, ProfileSidebar } from "@/components";
+import {
+  FavoritesTab,
+  ProfileForm,
+  ContinueWatchingTab,
+  NotificationsTab,
+  ProfileSidebar,
+  ChangePasswordForm,
+} from "@/components";
 
 export default function ProfilePage() {
   const dispatch = useAppDispatch();
@@ -29,7 +36,10 @@ export default function ProfilePage() {
   };
 
   const handleUpdateProfile = async (values: UpdateUserDto) => {
-    const response = await UserService.userControllerUpdateUserV1(user.id, values);
+    const response = await UserService.userControllerUpdateUserV1(
+      user.id,
+      values,
+    );
     response && dispatch(setUser(response.data));
   };
 
@@ -45,12 +55,12 @@ export default function ProfilePage() {
         return <ProfileForm user={user} onUpdate={handleUpdateProfile} />;
       case "favorites":
         return <FavoritesTab />;
-      case "lists":
-        return <ListsTab />;
       case "continue":
         return <ContinueWatchingTab />;
       case "notifications":
         return <NotificationsTab />;
+      case "change-password":
+        return <ChangePasswordForm />;
       default:
         return null;
     }
@@ -86,9 +96,10 @@ export default function ProfilePage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Sidebar */}
           <div
-            className={`lg:col-span-4 xl:col-span-3 ${
-              sidebarOpen ? "block fixed lg:static top-0 left-0 right-0 z-50 p-4 lg:p-0 bg-black lg:bg-transparent" : "hidden lg:block"
-            }`}
+            className={`lg:col-span-4 xl:col-span-3 ${sidebarOpen
+              ? "block fixed lg:static top-0 left-0 right-0 z-50 p-4 lg:p-0 bg-black lg:bg-transparent"
+              : "hidden lg:block"
+              }`}
           >
             <ProfileSidebar
               user={user}

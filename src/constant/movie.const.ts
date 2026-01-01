@@ -4,7 +4,12 @@ export interface MovieOptions {
   slug?: string;
 }
 
-// Danh sách thể loại
+export const PAGE_TITLES: Record<string, string> = {
+  "phim-le": "Phim lẻ",
+  "phim-bo": "Phim bộ",
+  "filter": "Duyệt phim",
+};
+
 export const GENRE_LIST: MovieOptions[] = [
   { value: "anime", label: "Anime", slug: "anime" },
   { value: "bi-an", label: "Bí Ẩn", slug: "bi-an" },
@@ -14,7 +19,11 @@ export const GENRE_LIST: MovieOptions[] = [
   { value: "chinh-kich", label: "Chính Kịch", slug: "chinh-kich" },
   { value: "chinh-luan", label: "Chính Luận", slug: "chinh-luan" },
   { value: "chinh-tri", label: "Chính Trị", slug: "chinh-tri" },
-  { value: "chuong-trinh-truyen-hinh", label: "Chương Trình Truy...", slug: "chuong-trinh-truyen-hinh" },
+  {
+    value: "chuong-trinh-truyen-hinh",
+    label: "Chương Trình Truy...",
+    slug: "chuong-trinh-truyen-hinh",
+  },
   { value: "concert-film", label: "Concert Film", slug: "concert-film" },
   { value: "cung-dau", label: "Cung Đấu", slug: "cung-dau" },
   { value: "cuoi-tuan", label: "Cuối Tuần", slug: "cuoi-tuan" },
@@ -54,7 +63,11 @@ export const GENRE_LIST: MovieOptions[] = [
   { value: "thieu-nhi", label: "Thiếu Nhi", slug: "thieu-nhi" },
   { value: "than-thoai", label: "Thần Thoại", slug: "than-thoai" },
   { value: "the-thao", label: "Thể Thao", slug: "the-thao" },
-  { value: "truyen-hinh-thuc-te", label: "Truyền Hình Thực...", slug: "truyen-hinh-thuc-te" },
+  {
+    value: "truyen-hinh-thuc-te",
+    label: "Truyền Hình Thực...",
+    slug: "truyen-hinh-thuc-te",
+  },
   { value: "tuoi-tre", label: "Tuổi Trẻ", slug: "tuoi-tre" },
   { value: "tai-lieu", label: "Tài Liệu", slug: "tai-lieu" },
   { value: "tam-ly", label: "Tâm Lý", slug: "tam-ly" },
@@ -68,7 +81,6 @@ export const GENRE_LIST: MovieOptions[] = [
   { value: "am-thuc", label: "Ẩm Thực", slug: "am-thuc" },
 ];
 
-// Danh sách quốc gia
 export const COUNTRY_LIST: MovieOptions[] = [
   { value: "vn", label: "Việt Nam", slug: "viet-nam" },
   { value: "us", label: "Mỹ", slug: "my" },
@@ -94,16 +106,14 @@ export const COUNTRY_LIST: MovieOptions[] = [
   { value: "other", label: "Khác", slug: "khac" },
 ];
 
-// Loại phim
 export const FILM_TYPES: MovieOptions[] = [
-  { value: "all", label: "Tất cả", slug: "all" },
+  { value: "", label: "Tất cả", slug: "" },
   { value: "movie", label: "Phim lẻ", slug: "movie" },
   { value: "series", label: "Phim bộ", slug: "series" },
 ];
 
-// Xếp hạng tuổi
 export const RATINGS: MovieOptions[] = [
-  { value: "", label: "Tất cả", slug: "all" },
+  { value: "", label: "Tất cả", slug: "" },
   { value: "P", label: "P (Mọi lứa tuổi)", slug: "P" },
   { value: "K", label: "K (Dưới 13 tuổi)", slug: "K" },
   { value: "T13", label: "T13 (13 tuổi trở lên)", slug: "T13" },
@@ -111,18 +121,8 @@ export const RATINGS: MovieOptions[] = [
   { value: "T18", label: "T18 (18 tuổi trở lên)", slug: "T18" },
 ];
 
-// Phiên bản
-export const VERSIONS: MovieOptions[] = [
-  { value: "", label: "Tất cả", slug: "all" },
-  { value: "sub", label: "Phụ đề", slug: "sub" },
-  { value: "dub", label: "Lồng tiếng", slug: "dub" },
-  { value: "dub-north", label: "Thuyết minh giọng Bắc", slug: "dub-north"   },
-  { value: "dub-south", label: "Thuyết minh giọng Nam", slug: "dub-south" },
-];
-
-// Năm sản xuất
 export const YEARS: MovieOptions[] = [
-  { value: "", label: "Tất cả", slug: "all" },
+  { value: "", label: "Tất cả", slug: "" },
   { value: "2025", label: "2025", slug: "2025" },
   { value: "2024", label: "2024", slug: "2024" },
   { value: "2023", label: "2023", slug: "2023" },
@@ -141,8 +141,8 @@ export const YEARS: MovieOptions[] = [
   { value: "2010", label: "2010", slug: "2010" },
 ];
 
-// Sắp xếp
 export const SORT_OPTIONS: MovieOptions[] = [
+  { value: "", label: "Không", slug: "" },
   { value: "newest", label: "Mới nhất", slug: "newest" },
   { value: "updated", label: "Mới cập nhật", slug: "updated" },
   { value: "imdb", label: "Điểm IMDb", slug: "imdb" },

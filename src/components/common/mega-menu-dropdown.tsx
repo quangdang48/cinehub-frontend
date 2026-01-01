@@ -5,7 +5,6 @@ import { ChevronDown } from "lucide-react";
 import classNames from "classnames";
 import type { MovieOptions } from "@/constant/movie.const";
 
-
 interface MegaMenuDropdownProps {
   label: string;
   items: MovieOptions[];
@@ -73,7 +72,7 @@ export const MegaMenuDropdown: React.FC<MegaMenuDropdownProps> = ({
         onClick={onToggle}
         className={classNames(
           "flex items-center gap-1 text-sm transition-colors",
-          isOpen ? "text-white" : "text-neutral-300 hover:text-white"
+          isOpen ? "text-white" : "text-neutral-300 hover:text-white",
         )}
       >
         {label}
@@ -81,7 +80,7 @@ export const MegaMenuDropdown: React.FC<MegaMenuDropdownProps> = ({
           size={16}
           className={classNames(
             "transition-transform duration-200",
-            isOpen && "rotate-180"
+            isOpen && "rotate-180",
           )}
         />
       </button>
@@ -94,11 +93,11 @@ export const MegaMenuDropdown: React.FC<MegaMenuDropdownProps> = ({
             className={classNames(
               "absolute top-full left-1/2 mt-4 z-50",
               "bg-neutral-900 border border-neutral-700 rounded-lg shadow-2xl",
-              "p-6 w-max"
+              "p-6 w-max",
             )}
             style={{
-              transform: 'translateX(-50%)',
-              animation: 'megaMenuFadeIn 0.2s ease-out'
+              transform: "translateX(-50%)",
+              animation: "megaMenuFadeIn 0.2s ease-out",
             }}
           >
             <div

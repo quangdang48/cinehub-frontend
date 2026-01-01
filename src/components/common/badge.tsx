@@ -32,7 +32,7 @@ export const Badge: React.FC<BadgeProps> = ({
         "inline-flex items-center rounded font-medium",
         variants[variant],
         sizes[size],
-        className
+        className,
       )}
     >
       {children}

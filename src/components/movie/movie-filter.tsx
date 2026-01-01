@@ -1,22 +1,29 @@
 import type React from "react";
+import { useState, useEffect } from "react";
 import { ChevronDown, ChevronUp, Filter } from "lucide-react";
 import classNames from "classnames";
-import { COUNTRY_LIST, FILM_TYPES, GENRE_LIST, RATINGS, SORT_OPTIONS, VERSIONS, YEARS, type MovieOptions } from "@/constant/movie.const";
+import {
+  COUNTRY_LIST,
+  FILM_TYPES,
+  GENRE_LIST,
+  RATINGS,
+  SORT_OPTIONS,
+  YEARS,
+  type MovieOptions,
+} from "@/constant/movie.const";
 
 export interface FilterOptions {
   country?: string;
   type?: "all" | "movie" | "series";
   rating?: string;
   genre?: string;
-  version?: string;
   year?: string;
   sortBy?: "newest" | "updated" | "imdb" | "views";
 }
 
 interface MovieFilterProps {
   filters: FilterOptions;
-  onFilterChange: (filters: FilterOptions) => void;
-  onApply: () => void;
+  onApply: (newFilters: FilterOptions) => void;
   onClose: () => void;
   className?: string;
 }
@@ -26,7 +33,6 @@ interface FilterRowProps {
   options: MovieOptions[];
   value: string | undefined;
   onChange: (value: string) => void;
-  multiSelect?: boolean;
 }
 
 const FilterRow: React.FC<FilterRowProps> = ({
@@ -62,16 +68,24 @@ const FilterRow: React.FC<FilterRowProps> = ({
 
 export const MovieFilter: React.FC<MovieFilterProps> = ({
   filters,
-  onFilterChange,
   onApply,
   onClose,
   className,
 }) => {
+  const [localFilters, setLocalFilters] = useState<FilterOptions>(filters);
+  useEffect(() => {
+    setLocalFilters(filters);
+  }, [filters]);
+
   const updateFilter = (key: keyof FilterOptions, value: string) => {
-    onFilterChange({
-      ...filters,
-      [key]: value,
-    });
+    setLocalFilters((prev) => ({
+      ...prev,
+      [key]: value === "" ? undefined : value,
+    }));
+  };
+
+  const handleApplyClick = () => {
+    onApply(localFilters);
   };
 
   return (
@@ -85,7 +99,7 @@ export const MovieFilter: React.FC<MovieFilterProps> = ({
       <FilterRow
         label="Quốc gia"
         options={[{ label: "Tất cả", value: "", slug: "" }, ...COUNTRY_LIST]}
-        value={filters.country}
+        value={localFilters.country || ""}
         onChange={(value) => updateFilter("country", value)}
       />
 
@@ -93,7 +107,7 @@ export const MovieFilter: React.FC<MovieFilterProps> = ({
       <FilterRow
         label="Loại phim"
         options={FILM_TYPES}
-        value={filters.type || "all"}
+        value={localFilters.type || ""}
         onChange={(value) => updateFilter("type", value)}
       />
 
@@ -101,7 +115,7 @@ export const MovieFilter: React.FC<MovieFilterProps> = ({
       <FilterRow
         label="Xếp hạng"
         options={RATINGS}
-        value={filters.rating}
+        value={localFilters.rating || ""}
         onChange={(value) => updateFilter("rating", value)}
       />
 
@@ -109,23 +123,15 @@ export const MovieFilter: React.FC<MovieFilterProps> = ({
       <FilterRow
         label="Thể loại"
         options={[{ label: "Tất cả", value: "", slug: "" }, ...GENRE_LIST]}
-        value={filters.genre}
+        value={localFilters.genre || ""}
         onChange={(value) => updateFilter("genre", value)}
-      />
-
-      {/* Phiên bản */}
-      <FilterRow
-        label="Phiên bản"
-        options={VERSIONS}
-        value={filters.version}
-        onChange={(value) => updateFilter("version", value)}
       />
 
       {/* Năm sản xuất */}
       <FilterRow
         label="Năm sản xuất"
         options={YEARS}
-        value={filters.year}
+        value={localFilters.year || ""}
         onChange={(value) => updateFilter("year", value)}
       />
 
@@ -133,14 +139,14 @@ export const MovieFilter: React.FC<MovieFilterProps> = ({
       <FilterRow
         label="Sắp xếp"
         options={SORT_OPTIONS}
-        value={filters.sortBy || "newest"}
+        value={localFilters.sortBy || ""}
         onChange={(value) => updateFilter("sortBy", value)}
       />
 
       {/* Action Buttons */}
       <div className="flex gap-3 mt-6">
         <button
-          onClick={onApply}
+          onClick={handleApplyClick}
           className="flex items-center gap-2 px-6 py-2.5 bg-yellow-500 text-black font-medium rounded-lg hover:bg-yellow-400 transition-colors"
         >
           Lọc kết quả
@@ -162,7 +168,10 @@ interface FilterToggleProps {
   onToggle: () => void;
 }
 
-export const FilterToggle: React.FC<FilterToggleProps> = ({ isOpen, onToggle }) => {
+export const FilterToggle: React.FC<FilterToggleProps> = ({
+  isOpen,
+  onToggle,
+}) => {
   return (
     <button
       onClick={onToggle}

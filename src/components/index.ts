@@ -5,12 +5,13 @@ export * from "./common";
 export { default as LoginForm } from "./login/login-form";
 export { default as RegisterForm } from "./register/register-form";
 export { default as ForgotPasswordForm } from "./forgot-password/forgot-password-form";
+export { default as VerifyEmailForm } from "./verify-email/verify-email-form";
 
 // Profile components
 export { default as ProfileForm } from "./profile/profile-form";
 export { default as ProfileSidebar } from "./profile/profile-sidebar";
+export { default as ChangePasswordForm } from "./profile/change-password-form";
 export { default as FavoritesTab } from "./profile/favorites-tab";
-export { default as ListsTab } from "./profile/lists-tab";
 export { default as ContinueWatchingTab } from "./profile/continue-watching-tab";
 export { default as NotificationsTab } from "./profile/notifications-tab";
 
