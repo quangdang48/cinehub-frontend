@@ -13,6 +13,7 @@ export default function Header() {
   const { signOut } = useAuth();
   const signedIn = useAppSelector((state) => state.auth.session.signedIn);
   const user = useAppSelector((state) => state.auth.user);
+  console.log("Header render", { signedIn, user });
 
   const handleLogout = () => {
     signOut();

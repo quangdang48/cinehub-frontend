@@ -15,7 +15,6 @@ const profileSchema = Yup.object().shape({
     .min(2, "Tên phải có ít nhất 2 ký tự")
     .max(50, "Tên không được quá 50 ký tự")
     .required("Tên là bắt buộc"),
-  email: Yup.string().email("Email không hợp lệ").required("Email là bắt buộc"),
   gender: Yup.string().oneOf(["male", "female", "other"]),
 });
 
@@ -28,7 +27,6 @@ export default function ProfileForm({ user, onUpdate }: ProfileFormProps) {
   const formik = useFormik<UpdateUserDto>({
     initialValues: {
       name: user.name || "",
-      email: user.email || "",
       gender: user.gender || "male",
     },
     validationSchema: profileSchema,
@@ -115,14 +113,8 @@ export default function ProfileForm({ user, onUpdate }: ProfileFormProps) {
           name="email"
           label="Email"
           placeholder="23110119@student.hcmute.edu.vn"
-          value={formik.values.email}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          error={
-            formik.touched.email && formik.errors.email
-              ? formik.errors.email
-              : undefined
-          }
+          value={user.email}
+          readOnly={true}
           autoComplete="email"
         />
 
