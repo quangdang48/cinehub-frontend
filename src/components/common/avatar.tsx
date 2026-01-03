@@ -1,3 +1,4 @@
+import { normalizeUrl } from "@/utils/videoUtils";
 import type React from "react";
 
 interface AvatarProps {
@@ -28,21 +29,10 @@ export const Avatar: React.FC<AvatarProps> = ({
         className={`${sizes[size]} rounded-full overflow-hidden border-4 border-gray-700`}
       >
         {src ? (
-          <img src={src} alt={alt} className="w-full h-full object-cover" />
+          <img src={normalizeUrl(src)} alt={alt} className="w-full h-full object-cover" />
         ) : (
-          <div className="w-full h-full bg-gray-700 flex items-center justify-center text-gray-400">
-            <svg
-              className="w-1/2 h-1/2"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fillRule="evenodd"
-                d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                clipRule="evenodd"
-              />
-            </svg>
+          <div className="w-full h-full rounded-full bg-linear-to-br from-yellow-400 to-red-600 flex items-center justify-center text-white font-bold text-lg">
+            {alt?.charAt(0).toUpperCase() || "U"}
           </div>
         )}
       </div>

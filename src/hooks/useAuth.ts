@@ -27,6 +27,7 @@ export function useAuth() {
     name: "",
     email: "",
     gender: "male" as const,
+    avatarUrl: undefined,
     createdAt: "",
     updatedAt: "",
   };

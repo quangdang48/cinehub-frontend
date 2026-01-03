@@ -8,6 +8,7 @@ const initialState: UserState = {
   name: "",
   email: "",
   gender: "male",
+  avatarUrl: undefined,
   createdAt: "",
   updatedAt: "",
 };
