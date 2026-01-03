@@ -128,7 +128,7 @@ export default function ProfileSidebar({
       {/* User Info */}
       <div className="pt-6 border-t border-gray-800">
         <div className="flex items-center gap-3 mb-4">
-          <Avatar src="" alt={user.name} size="md" />
+          <Avatar src={user.avatarUrl} alt={user.name} size="md" />
           <div className="flex-1 min-w-0">
             <h3 className="text-white font-semibold truncate">{user.name}</h3>
             <p className="text-gray-400 text-sm truncate">{user.email}</p>

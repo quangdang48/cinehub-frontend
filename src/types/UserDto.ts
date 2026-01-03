@@ -22,4 +22,5 @@ export type UserDto = {
   name: string;
   email: string;
   gender: "male" | "female";
+  avatarUrl?: string;
 };

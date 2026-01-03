@@ -4,6 +4,5 @@
 /* eslint-disable */
 export type UpdateUserDto = {
   name: string;
-  email: string;
   gender: "male" | "female";
 };

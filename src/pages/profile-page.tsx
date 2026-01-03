@@ -35,7 +35,7 @@ export default function ProfilePage() {
     signOut();
   };
 
-  const handleUpdateProfile = async (values: UpdateUserDto) => {
+  const handleUpdateProfile = async (values: UpdateUserDto | FormData) => {
     const response = await UserService.userControllerUpdateUserV1(
       user.id,
       values,

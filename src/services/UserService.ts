@@ -43,9 +43,14 @@ export class UserService {
    */
   public static userControllerUpdateUserV1(
     id: string,
-    requestBody: UpdateUserDto,
+    requestBody: UpdateUserDto | FormData,
   ): Promise<UserApiResponseDto> {
-    return ApiService.put(`users/${id}`, requestBody);
+    return ApiService.put(`users/${id}`, requestBody, {
+      headers:
+        requestBody instanceof FormData
+          ? { "Content-Type": "multipart/form-data" }
+          : undefined,
+    });
   }
   /**
    * Xóa người dùng

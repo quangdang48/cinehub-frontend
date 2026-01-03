@@ -5,12 +5,12 @@ import classNames from "classnames";
 import {
   COUNTRY_LIST,
   FILM_TYPES,
-  GENRE_LIST,
   RATINGS,
   SORT_OPTIONS,
   YEARS,
   type MovieOptions,
 } from "@/constant/movie.const";
+import type { GenreDto } from "@/types/GenreDto";
 
 export interface FilterOptions {
   country?: string;
@@ -22,6 +22,7 @@ export interface FilterOptions {
 }
 
 interface MovieFilterProps {
+  genres: GenreDto[];
   filters: FilterOptions;
   onApply: (newFilters: FilterOptions) => void;
   onClose: () => void;
@@ -67,6 +68,7 @@ const FilterRow: React.FC<FilterRowProps> = ({
 };
 
 export const MovieFilter: React.FC<MovieFilterProps> = ({
+  genres,
   filters,
   onApply,
   onClose,
@@ -122,7 +124,7 @@ export const MovieFilter: React.FC<MovieFilterProps> = ({
       {/* Thể loại */}
       <FilterRow
         label="Thể loại"
-        options={[{ label: "Tất cả", value: "", slug: "" }, ...GENRE_LIST]}
+        options={[{ label: "Tất cả", value: "", slug: "" }, ...genres.map(g => ({ label: g.name, value: g.name, slug: g.slug }))]}
         value={localFilters.genre || ""}
         onChange={(value) => updateFilter("genre", value)}
       />
