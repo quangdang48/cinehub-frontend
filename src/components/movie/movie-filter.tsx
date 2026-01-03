@@ -13,6 +13,7 @@ import {
 import type { GenreDto } from "@/types/GenreDto";
 
 export interface FilterOptions {
+  search?: string;
   country?: string;
   type?: "all" | "movie" | "series";
   rating?: string;

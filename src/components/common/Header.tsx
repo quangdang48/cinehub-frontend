@@ -1,9 +1,9 @@
-import { Bell, Search } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Bell, Search, X } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { useAppSelector } from "@/store";
 import { useAuth } from "@/hooks";
 import UserMenu from "./user-menu";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { MegaMenuDropdown } from "./mega-menu-dropdown";
 import { COUNTRY_LIST } from "@/constant/movie.const";
 import type { GenreDto } from "@/types/GenreDto";
@@ -13,10 +13,31 @@ type OpenDropdown = "genre" | "country" | null;
 
 export default function Header() {
   const { signOut } = useAuth();
+  const navigate = useNavigate();
   const signedIn = useAppSelector((state) => state.auth.session.signedIn);
   const user = useAppSelector((state) => state.auth.user);
   const [genres, setGenres] = useState<GenreDto[]>([]);
   const [loading, setLoading] = useState(false);
+  
+  // Search state
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isSearchOpen && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [isSearchOpen]);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchValue.trim()) {
+      navigate(`/filter?search=${encodeURIComponent(searchValue.trim())}`);
+      setIsSearchOpen(false);
+      setSearchValue("");
+    }
+  };
   useEffect(() => {
       const fetchGenres = async () => {
         try {
@@ -128,10 +149,51 @@ export default function Header() {
 
           {/* Right: Actions */}
           <div className="flex items-center gap-4">
-            {/* Search Icon */}
-            <button className="p-2 text-neutral-300 hover:text-white transition">
-              <Search size={20} />
-            </button>
+            {/* Search Bar */}
+            <div className="relative flex items-center">
+              <div
+                className={`flex items-center overflow-hidden transition-all duration-300 ease-in-out ${
+                  isSearchOpen ? "w-40 md:w-64 opacity-100 mr-2" : "w-0 opacity-0"
+                }`}
+              >
+                <form onSubmit={handleSearch} className="w-full relative">
+                  <input
+                    ref={searchInputRef}
+                    type="text"
+                    value={searchValue}
+                    onChange={(e) => setSearchValue(e.target.value)}
+                    placeholder="Tìm kiếm..."
+                    className="w-full bg-black/50 border border-neutral-700 rounded-full pl-4 pr-8 py-1.5 text-sm text-white focus:outline-none focus:border-red-600 placeholder-neutral-500"
+                    onBlur={() => {
+                      if (!searchValue) setIsSearchOpen(false);
+                    }}
+                  />
+                  {searchValue && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchValue("")}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white"
+                    >
+                      <X size={14} />
+                    </button>
+                  )}
+                </form>
+              </div>
+              <button
+                onClick={() => {
+                  if (isSearchOpen && searchValue) {
+                    handleSearch({ preventDefault: () => {} } as any);
+                  } else {
+                    setIsSearchOpen(!isSearchOpen);
+                  }
+                }}
+                className={`p-2 transition-colors ${
+                  isSearchOpen ? "text-red-600" : "text-neutral-300 hover:text-white"
+                }`}
+              >
+                <Search size={20} />
+              </button>
+            </div>
 
             {signedIn ? (
               <>

@@ -37,6 +37,7 @@ export default function MovieListPage() {
 
   const filters = useMemo((): FilterOptions => {
     const initialFilters: FilterOptions = {
+      search: searchParams.get("search") || undefined,
       country: searchParams.get("country") || undefined,
       type: (searchParams.get("type") as FilterOptions["type"]) || undefined,
       rating: searchParams.get("rating") || undefined,
@@ -80,7 +81,7 @@ export default function MovieListPage() {
             pageNumber,
             PAGE_SIZE,
             sort,
-            undefined,
+            filters.search,
             filters.country ? COUNTRY_LIST.find(c => c.slug === filters.country)?.value.toUpperCase() : undefined,
             filters.year ? parseInt(filters.year) : undefined,
             filters.genre,
@@ -166,6 +167,7 @@ export default function MovieListPage() {
 
   const handleApplyFilters = (newFilters: FilterOptions) => {
     const params = new URLSearchParams();
+    if (filters.search) params.set("search", filters.search);
     if (newFilters.country) params.set("country", newFilters.country);
     if (newFilters.type) params.set("type", newFilters.type);
     if (newFilters.rating) params.set("rating", newFilters.rating);
