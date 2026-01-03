@@ -8,8 +8,10 @@ import {
   type FilterOptions,
 } from "@/components";
 import { FilmService } from "@/services/FilmService";
-import { COUNTRY_LIST, GENRE_LIST, PAGE_TITLES } from "@/constant/movie.const";
+import { COUNTRY_LIST, PAGE_TITLES } from "@/constant/movie.const";
 import type { FilmDto } from "@/types/FilmDto";
+import type { GenreDto } from "@/types/GenreDto";
+import { GenresService } from "@/services/GenresService";
 
 const SORT_MAP: Record<string, string> = {
   newest: '{"releaseDate":"DESC"}',
@@ -24,6 +26,7 @@ export default function MovieListPage() {
   const location = useLocation();
 
   const [films, setFilms] = useState<FilmDto[]>([]);
+  const [genres, setGenres] = useState<GenreDto[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
@@ -52,10 +55,10 @@ export default function MovieListPage() {
   const getPageTitle = (): string => {
     const path = location.pathname.split("/").pop() || "";
     if (path === "genre") {
-      const genre = GENRE_LIST.find(
+      const genre = genres.find(
         (g) => g.slug === searchParams.get("genre"),
       );
-      return genre ? `Phim ${genre.label}` : "Thể loại";
+      return genre ? `Phim ${genre.name}` : "Thể loại";
     }
     if (path === "country") {
       const country = COUNTRY_LIST.find(
@@ -106,6 +109,25 @@ export default function MovieListPage() {
     },
     [filters, loading],
   );
+
+  useEffect(() => {
+    const fetchGenres = async () => {
+      setLoading(true);
+      try {
+        const response = await GenresService.genreControllerGetAllV1({
+          page: 1,
+          limit: 1000,
+        });
+        setGenres(response.data);
+      } catch (error) {
+        console.error("Error fetching genres:", error);
+      }
+      finally {
+        setLoading(false);
+      }
+    };
+    fetchGenres();
+  }, []);
 
   useEffect(() => {
     loadFilms(1, true);
@@ -180,6 +202,7 @@ export default function MovieListPage() {
         {isFilterOpen && (
           <div className="mb-8 animate-slideDown">
             <MovieFilter
+              genres={genres}
               filters={filters}
               onApply={handleApplyFilters}
               onClose={handleCloseFilter}

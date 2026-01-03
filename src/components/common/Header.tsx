@@ -5,7 +5,9 @@ import { useAuth } from "@/hooks";
 import UserMenu from "./user-menu";
 import { useEffect, useState, useCallback } from "react";
 import { MegaMenuDropdown } from "./mega-menu-dropdown";
-import { COUNTRY_LIST, GENRE_LIST } from "@/constant/movie.const";
+import { COUNTRY_LIST } from "@/constant/movie.const";
+import type { GenreDto } from "@/types/GenreDto";
+import { GenresService } from "@/services/GenresService";
 
 type OpenDropdown = "genre" | "country" | null;
 
@@ -13,7 +15,26 @@ export default function Header() {
   const { signOut } = useAuth();
   const signedIn = useAppSelector((state) => state.auth.session.signedIn);
   const user = useAppSelector((state) => state.auth.user);
-  console.log("Header render", { signedIn, user });
+  const [genres, setGenres] = useState<GenreDto[]>([]);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+      const fetchGenres = async () => {
+        try {
+          setLoading(true);
+          const response = await GenresService.genreControllerGetAllV1({
+            page: 1,
+            limit: 1000,
+          });
+          setGenres(response.data);
+        } catch (error) {
+          console.error("Error fetching genres:", error);
+        }
+        finally {
+          setLoading(false);
+        }
+      };
+      fetchGenres();
+    }, []);
 
   const handleLogout = () => {
     signOut();
@@ -74,15 +95,23 @@ export default function Header() {
               </Link>
 
               {/* Thể loại Dropdown */}
-              <MegaMenuDropdown
-                label="Thể loại"
-                items={GENRE_LIST}
-                isOpen={openDropdown === "genre"}
-                onToggle={() => handleToggleDropdown("genre")}
-                onClose={handleCloseDropdown}
-                basePath="/genre"
-                columns={5}
-              />
+              { loading ? (
+                <div className="text-neutral-500">Đang tải...</div>
+              ) : (
+                <MegaMenuDropdown
+                  label="Thể loại"
+                  items={genres.map((genre) => ({
+                    label: genre.name,
+                    value: genre.name,
+                    slug: genre.slug,
+                  }))}
+                  isOpen={openDropdown === "genre"}
+                  onToggle={() => handleToggleDropdown("genre")}
+                  onClose={handleCloseDropdown}
+                  basePath="/genre"
+                  columns={5}
+                />
+              )}
 
               {/* Quốc gia Dropdown */}
               <MegaMenuDropdown
