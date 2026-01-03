@@ -77,7 +77,7 @@ export const SimpleCard: React.FC<SimpleCardProps> = ({
             key="idx"
             className={`bg-stale-600 text-[9px] md:text-[10px] font-bold text-white px-1.5 py-0.5 rounded shadow-sm bg-opacity-90`}
           >
-            T
+            {movie.type === "MOVIE" ? "Phim lẻ" : "Phim bộ"}
           </span>
         </div>
       </div>
@@ -87,7 +87,7 @@ export const SimpleCard: React.FC<SimpleCardProps> = ({
         <h3 className="text-white text-sm font-semibold truncate group-hover:text-yellow-400 transition-colors">
           {movie.title}
         </h3>
-        <p className="text-gray-500 text-xs truncate">{movie.title}</p>
+        <p className="text-gray-500 text-xs truncate">{movie.originalTitle}</p>
       </div>
     </div>
   );

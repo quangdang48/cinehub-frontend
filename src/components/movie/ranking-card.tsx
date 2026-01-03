@@ -67,7 +67,7 @@ export const RankingCard: React.FC<RankingCardProps> = ({
               key="idx"
               className={`bg-slate-600 text-[10px] font-bold text-white px-1.5 py-0.5 rounded shadow-sm`}
             >
-              T
+              {movie.type === "MOVIE" ? "Phim lẻ" : "Phim bộ"}
             </span>
           </div>
         </div>
