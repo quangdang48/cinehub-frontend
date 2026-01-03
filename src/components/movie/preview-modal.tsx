@@ -1,6 +1,6 @@
 import type { FilmDto } from "@/types/FilmDto";
 import { normalizeUrl } from "@/utils/videoUtils";
-import { Play, Plus } from "lucide-react";
+import { Play } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export interface ModalPosition {

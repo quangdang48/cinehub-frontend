@@ -80,7 +80,7 @@ export const WideCard: React.FC<WideCardProps> = ({
               key="idx"
               className={`bg-slate-500 text-[9.2px] font-bold text-white px-1 py-0.5 rounded shadow-sm opacity-90 block mb-1 text-center`}
             >
-              T
+              {movie.type === "MOVIE" ? "Phim lẻ" : "Phim bộ"}
             </span>
           </div>
         </div>
@@ -100,7 +100,7 @@ export const WideCard: React.FC<WideCardProps> = ({
             {movie.genres[2]?.name && (
               <>
                 <span className="w-1 h-1 rounded-full bg-gray-500"></span>
-                <span>{movie.genres[0]?.name}</span>
+                <span>{movie.genres[2]?.name}</span>
               </>
             )}
           </div>

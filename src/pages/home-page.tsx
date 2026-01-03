@@ -113,7 +113,7 @@ export default function Home() {
       <HeroSlider films={heroFilms.items} loading={heroFilms.loading} />
       <div className="max-w-[1800px] mx-auto pt-10 px-10">
         <CarouselSection
-          title="Most Viewed"
+          title="Được xem nhiều nhất"
           onLoadMore={mostViewMovies.loadMore}
           loading={mostViewMovies.loading}
           hasMore={mostViewMovies.hasMore}
@@ -131,7 +131,7 @@ export default function Home() {
           ))}
         </CarouselSection>
         <CarouselSection
-          title="Latest Releases"
+          title="Phát hành gần đây"
           onLoadMore={latestReleaseMovies.loadMore}
           loading={latestReleaseMovies.loading}
           hasMore={latestReleaseMovies.hasMore}
@@ -147,7 +147,7 @@ export default function Home() {
           ))}
         </CarouselSection>
         <CarouselSection
-          title="New Trending"
+          title="Sắp ra mắt"
           onLoadMore={newTrendingMovies.loadMore}
           loading={newTrendingMovies.loading}
           hasMore={newTrendingMovies.hasMore}

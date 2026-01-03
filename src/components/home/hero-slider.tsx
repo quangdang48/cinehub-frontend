@@ -120,7 +120,7 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({
 
           {/* Original title */}
           <p className="text-lg text-neutral-300 mb-4 italic">
-            {currentFilm?.description?.substring(0, 30)}...
+            {currentFilm?.originalTitle}
           </p>
 
           {/* Meta info */}

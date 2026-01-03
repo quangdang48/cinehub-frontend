@@ -3,6 +3,7 @@ import appConfig from "@/config/app.config";
 import deepParseJson from "@/utils/deepParseJson";
 import store, { signOutSuccess, updateTokens } from "@/store";
 import { toast } from "sonner";
+import type { LoginResponseApiResponseDto } from "@/types/LoginResponseApiResponseDto";
 
 const unauthorizedCode = [401];
 
@@ -100,9 +101,8 @@ ApiService.interceptors.response.use(
             "Content-Type": "application/json",
           },
         });
-        const response = await refreshApi.post("/auth/refresh-token", { token: refreshToken });
-        
-        const { accessToken, refreshToken: newRefreshToken } = response.data;
+        const response = await refreshApi.post<LoginResponseApiResponseDto>("/auth/refresh-token", { token: refreshToken });
+        const { accessToken, refreshToken: newRefreshToken } = response.data.data;
         
         store.dispatch(updateTokens({ 
           accessToken, 

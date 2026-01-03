@@ -5,6 +5,7 @@ import {
   MovieHero,
   EpisodeSection,
   ActorSection,
+  DirectorSection,
   TrailerSection,
   TrendingSection,
   CommentSection,
@@ -17,6 +18,7 @@ import {
   MessageCircle,
   MoreHorizontal,
   Users,
+  Video,
 } from "lucide-react";
 import type { EpisodeDto } from "@/types/EpisodeDto";
 import { EpisodesService } from "@/services/EpisodesService";
@@ -102,9 +104,9 @@ export default function MovieDetailPage() {
     if (!film) return [];
     const baseTabs = [
       { id: "cast", label: "Diễn viên", icon: Users },
-      { id: "trailer", label: "Trailer", icon: Film },
+      { id: "directors", label: "Đạo diễn", icon: Video },
+      // { id: "trailer", label: "Trailer", icon: Film },
       { id: "comments", label: "Bình luận", icon: MessageCircle },
-      { id: "related", label: "Đề xuất", icon: LayoutGrid },
     ];
 
     if (film.type === "SERIES") {
@@ -136,8 +138,10 @@ export default function MovieDetailPage() {
         );
       case "cast":
         return <ActorSection casts={film.casts} />;
-      case "trailer":
-        return <TrailerSection film={film} />;
+      case "directors":
+        return <DirectorSection directors={film.directors} />;
+      // case "trailer":
+      //   return <TrailerSection film={film} />;
       case "comments":
         return (
           <CommentSection
