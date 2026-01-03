@@ -98,7 +98,6 @@ export default function ProfileForm({ user, onUpdate }: ProfileFormProps) {
     if (file) {
       formik.setFieldValue("avatarFile", file);
       const objectUrl = URL.createObjectURL(file);
-      console.log("Object URL:", objectUrl);
       setPreviewUrl(objectUrl);
       event.target.value = ""; 
     }
