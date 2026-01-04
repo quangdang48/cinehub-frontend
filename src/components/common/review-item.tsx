@@ -34,6 +34,7 @@ interface ReviewItemProps {
   onEdit?: (id: string, content: string, rating: number) => void;
   onDelete?: (id: string) => void;
   onReport?: (id: string) => void;
+  onReportComment?: (id: string) => void;
   showActions?: boolean;
 }
 
@@ -51,6 +52,7 @@ export const ReviewItem: React.FC<ReviewItemProps> = ({
   onEdit,
   onDelete,
   onReport,
+  onReportComment,
   showActions = true,
 }) => {
   const [showMenu, setShowMenu] = useState(false);
@@ -344,6 +346,7 @@ export const ReviewItem: React.FC<ReviewItemProps> = ({
                     currentUserName={currentUserName}
                     onReply={onReplyToComment}
                     onLoadReplies={onLoadReplies}
+                    onReport={onReportComment}
                     showActions={true}
                     depth={1}
                     maxDepth={3} // Allow nested replies within review comments

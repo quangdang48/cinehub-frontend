@@ -24,6 +24,7 @@ import { ReviewsService } from "@/services/ReviewsService";
 import { useAppSelector } from "@/store";
 import { normalizeUrl } from "@/utils/videoUtils";
 import { ConfirmationModal } from "../common/ConfirmationModal";
+import { ReportModal } from "../common/ReportModal";
 import { toast } from "sonner";
 
 type TabType = "comments" | "reviews";
@@ -66,6 +67,26 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
     itemId: null,
   });
   const [isDeleting, setIsDeleting] = useState(false);
+  
+  // Report states for comments
+  const [commentReportModal, setCommentReportModal] = useState<{
+    isOpen: boolean;
+    commentId: string | null;
+  }>({
+    isOpen: false,
+    commentId: null,
+  });
+  const [isReportingComment, setIsReportingComment] = useState(false);
+  
+  // Report states for reviews
+  const [reviewReportModal, setReviewReportModal] = useState<{
+    isOpen: boolean;
+    reviewId: string | null;
+  }>({
+    isOpen: false,
+    reviewId: null,
+  });
+  const [isReportingReview, setIsReportingReview] = useState(false);
 
   const signedIn = useAppSelector((state) => state.auth.session.signedIn);
   const currentUser = useAppSelector((state) => state.auth.user);
@@ -337,24 +358,15 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
   }, []);
 
   const handleReportComment = useCallback(
-    async (id: string, reason?: string, description?: string) => {
+    (id: string) => {
       if (!signedIn) {
         setError("Vui lòng đăng nhập để báo cáo bình luận");
         return;
       }
-      try {
-        await CommentsService.reportCommentV1({
-          requestBody: {
-            commentId: id,
-            reason: reason || ("other" as any),
-            description,
-          },
-        });
-        toast.info("Cảm ơn bạn đã báo cáo. Chúng tôi sẽ xem xét bình luận này.");
-      } catch (err: any) {
-        console.error("Error reporting comment:", err);
-        setError(err?.response?.data?.message || "Không thể báo cáo bình luận.");
-      }
+      setCommentReportModal({
+        isOpen: true,
+        commentId: id,
+      });
     },
     [signedIn],
   );
@@ -580,28 +592,15 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
   );
 
   const handleReportReview = useCallback(
-    async (id: string, reason?: string, description?: string) => {
+    (id: string) => {
       if (!signedIn) {
         setError("Vui lòng đăng nhập để báo cáo đánh giá");
         return;
       }
-      try {
-        await ReviewsService.reportReviewV1({
-          requestBody: {
-            reviewId: id,
-            reason: reason || ("other" as any),
-            description,
-          },
-        });
-        alert("Cảm ơn bạn đã báo cáo. Chúng tôi sẽ xem xét đánh giá này.");
-      } catch (err: any) {
-        console.error("Error reporting review:", err);
-        if (err?.response?.status === 400) {
-          setError("Bạn đã báo cáo đánh giá này rồi.");
-        } else {
-          setError("Không thể báo cáo đánh giá.");
-        }
-      }
+      setReviewReportModal({
+        isOpen: true,
+        reviewId: id,
+      });
     },
     [signedIn],
   );
@@ -646,6 +645,51 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
     },
     [filmId, signedIn],
   );
+  // Handle comment report submission
+  const handleSubmitCommentReport = async (reason: string, description: string) => {
+    if (!commentReportModal.commentId) return;
+
+    setIsReportingComment(true);
+    try {
+      await CommentsService.reportCommentV1({
+        requestBody: {
+          commentId: commentReportModal.commentId,
+          reason: reason as any,
+          description,
+        },
+      });
+      toast.success("Cảm ơn bạn đã báo cáo. Chúng tôi sẽ xem xét bình luận này.");
+      setCommentReportModal({ isOpen: false, commentId: null });
+    } catch (err: any) {
+      console.error("Error reporting comment:", err);
+      toast.error(err?.response?.data?.message || "Không thể báo cáo bình luận. Vui lòng thử lại.");
+    } finally {
+      setIsReportingComment(false);
+    }
+  };
+
+  // Handle review report submission
+  const handleSubmitReviewReport = async (reason: string, description: string) => {
+    if (!reviewReportModal.reviewId) return;
+
+    setIsReportingReview(true);
+    try {
+      await ReviewsService.reportReviewV1({
+        requestBody: {
+          reviewId: reviewReportModal.reviewId,
+          reason: reason as any,
+          description,
+        },
+      });
+      toast.success("Cảm ơn bạn đã báo cáo. Chúng tôi sẽ xem xét đánh giá này.");
+      setReviewReportModal({ isOpen: false, reviewId: null });
+    } catch (err: any) {
+      console.error("Error reporting review:", err);
+      toast.error(err?.response?.data?.message || "Không thể báo cáo đánh giá. Vui lòng thử lại.");
+    } finally {
+      setIsReportingReview(false);
+    }
+  };
 
   // Reply to a comment within a review
   const handleReplyToReviewComment = useCallback(
@@ -863,6 +907,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
             onEdit={handleEditReview}
             onDelete={onDeleteReview}
             onReport={handleReportReview}
+            onReportComment={handleReportComment}
             onLoadComments={handleLoadReviewComments}
             onSubmitComment={handleSubmitReviewComment}
             onReplyToComment={handleReplyToReviewComment}
@@ -941,6 +986,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
                 onEdit={handleEditReview}
                 onDelete={onDeleteReview}
                 onReport={handleReportReview}
+                onReportComment={handleReportComment}
                 onLoadComments={handleLoadReviewComments}
                 onSubmitComment={handleSubmitReviewComment}
                 onReplyToComment={handleReplyToReviewComment}
@@ -995,6 +1041,21 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
         confirmText="Xóa ngay"
         cancelText="Hủy bỏ"
         type="danger"
+      />
+      <ReportModal
+        isOpen={commentReportModal.isOpen}
+        onClose={() => setCommentReportModal({ isOpen: false, commentId: null })}
+        onSubmit={handleSubmitCommentReport}
+        isSubmitting={isReportingComment}
+        title="Báo cáo bình luận"
+      />
+      
+      <ReportModal
+        isOpen={reviewReportModal.isOpen}
+        onClose={() => setReviewReportModal({ isOpen: false, reviewId: null })}
+        onSubmit={handleSubmitReviewReport}
+        isSubmitting={isReportingReview}
+        title="Báo cáo đánh giá"
       />
     </div>
   );
