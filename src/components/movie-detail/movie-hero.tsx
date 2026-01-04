@@ -19,9 +19,10 @@ import { useAuth } from "@/hooks";
 
 interface MovieHeroProps {
   film: FilmDto;
+  trendingNumber?: number;
 }
 
-export const MovieHero: React.FC<MovieHeroProps> = ({ film }) => {
+export const MovieHero: React.FC<MovieHeroProps> = ({ film, trendingNumber }) => {
   const navigate = useNavigate();
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -43,7 +44,7 @@ export const MovieHero: React.FC<MovieHeroProps> = ({ film }) => {
 
   const streamUrl = useMemo(() => {
     if (!film) return null;
-    if (!authenticated || isSeries(film)) return "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4";
+    if (!authenticated || isSeries(film)) return "";
 
     return getFilmHlsUrl(
       film.id,
@@ -146,9 +147,11 @@ export const MovieHero: React.FC<MovieHeroProps> = ({ film }) => {
               alt={film.title}
               className="w-full h-auto object-cover transform transition-transform duration-700 group-hover/poster:scale-105"
             />
-            <div className="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded shadow-lg uppercase tracking-wider">
-              Trending #1
-            </div>
+            {trendingNumber !== undefined && (
+              <div className="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded shadow-lg uppercase tracking-wider">
+                Trending #{trendingNumber}
+              </div>
+            )}
           </div>
         </div>
         <div className="flex-1 text-white pb-2">

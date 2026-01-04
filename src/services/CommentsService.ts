@@ -54,9 +54,8 @@ export class CommentsService {
      */
     limit?: number;
   }): Promise<PaginatedCommentApiResponseDto> {
-    return ApiService.get("comments", {
+    return ApiService.get(`comments/${filmId}`, {
       params: {
-        filmId,
         episode,
         season,
         reviewId,

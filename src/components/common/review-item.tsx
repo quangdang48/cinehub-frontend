@@ -15,6 +15,7 @@ import type { CommentDto } from "@/types/CommentDto";
 import { timeAgo } from "@/utils/time";
 import { CommentItem } from "./comment-item";
 import { CommentInput } from "./comment-input";
+import { normalizeUrl } from "@/utils/videoUtils";
 
 interface ReviewItemProps {
   review: ReviewDto;
@@ -161,11 +162,7 @@ export const ReviewItem: React.FC<ReviewItemProps> = ({
       <div className="flex gap-4">
         <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-transparent group-hover:border-yellow-500 transition-colors shrink-0 shadow-lg">
           <img
-            src={
-              review.author.gender === "male"
-                ? `https://randomuser.me/api/portraits/men/${Math.abs(review.author.id.charCodeAt(0) % 99)}.jpg`
-                : `https://randomuser.me/api/portraits/women/${Math.abs(review.author.id.charCodeAt(0) % 99)}.jpg`
-            }
+            src={review.author.avatarUrl ? normalizeUrl(review.author.avatarUrl) : "/default-avatar.png"}
             alt={review.author.name}
             className="w-full h-full object-cover"
           />

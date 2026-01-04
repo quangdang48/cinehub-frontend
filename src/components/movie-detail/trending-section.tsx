@@ -1,6 +1,7 @@
 import type { FilmDto } from "@/types/FilmDto";
 import { normalizeUrl } from "@/utils/videoUtils";
 import { Star } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface TrendingSectionProps {
   topFilms: FilmDto[];
@@ -9,6 +10,13 @@ interface TrendingSectionProps {
 export const TrendingSection: React.FC<TrendingSectionProps> = ({
   topFilms,
 }) => {
+  const navigate  = useNavigate();
+
+  const getPosterUrl = (film: FilmDto): string => {
+    const defaultPoster = film.posters.find((p) => p.type === "default");
+    return defaultPoster ? normalizeUrl(defaultPoster.url) : "/placeholder.jpg";
+  }
+
   return (
     <div className="w-full lg:w-96 shrink-0">
       <div className="flex items-center gap-3 mb-6">
@@ -22,6 +30,7 @@ export const TrendingSection: React.FC<TrendingSectionProps> = ({
         {topFilms.map((film, idx) => (
           <div
             key={film.id}
+            onClick={() => navigate(`/movie/${film.id}`)}
             className="group flex items-center gap-4 bg-[#0f172a]/40 p-3 rounded-2xl hover:bg-white/5 transition-all cursor-pointer border border-transparent hover:border-white/10 hover:shadow-lg relative overflow-hidden"
           >
             <div
@@ -41,7 +50,7 @@ export const TrendingSection: React.FC<TrendingSectionProps> = ({
 
             <div className="w-16 h-24 rounded-lg overflow-hidden shrink-0 shadow-lg relative z-10 group-hover:scale-105 transition-transform duration-300">
               <img
-                src={film.posters.find((p) => p.type === "default") ? normalizeUrl(film.posters.find((p) => p.type === "default")!.url) : "/placeholder.jpg"}
+                src={getPosterUrl(film)}
                 alt={film.title}
                 className="w-full h-full object-cover"
               />
@@ -52,11 +61,11 @@ export const TrendingSection: React.FC<TrendingSectionProps> = ({
                 {film.title}
               </h4>
               <p className="text-gray-400 text-xs mt-1 font-medium">
-                {film.views}
+                {`${film.views} lượt xem`}
               </p>
               <div className="mt-2 flex items-center gap-1">
                 <Star size={10} className="text-yellow-500 fill-current" />
-                <span className="text-xs text-gray-500">9.5/10</span>
+                <span className="text-xs text-gray-500">{`IMDb ${film.imdbRating.toFixed(1)}`}</span>
               </div>
             </div>
 

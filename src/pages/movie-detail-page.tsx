@@ -121,6 +121,12 @@ export default function MovieDetailPage() {
     return baseTabs;
   }, [film]);
 
+  const trendingNumber = useMemo(() => {
+    if (!film || topFilms.length === 0) return undefined;
+    const index = topFilms.findIndex((f) => f.id === film.id);
+    return index !== -1 ? index + 1 : undefined;
+  }, [film, topFilms]);
+
   const renderContent = () => {
     if (!film) return null;
 
@@ -198,7 +204,7 @@ export default function MovieDetailPage() {
   return (
     <div className="bg-[#020617] min-h-screen font-sans selection:bg-yellow-500/30 selection:text-yellow-200 pb-20 text-gray-100">
       <main>
-        <MovieHero film={film} />
+        <MovieHero film={film} trendingNumber={trendingNumber} />
         <div className="container mx-auto px-4 lg:px-8 -mt-8 relative z-20">
           {/* Dynamic Tab Navigation */}
           <div className="inline-flex bg-white/5 p-1 rounded-xl backdrop-blur-md border border-white/10 mb-10 overflow-x-auto max-w-full scrollbar-hide">
