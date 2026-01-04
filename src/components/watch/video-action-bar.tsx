@@ -3,7 +3,6 @@ import {
   Heart,
   Film,
   Share2,
-  Flag,
   HeartOff,
   X,
 } from "lucide-react";
@@ -16,7 +15,6 @@ interface VideoActionBarProps {
   onSkipIntro?: () => void;
   onTheaterMode?: () => void;
   onShare?: () => void;
-  onReport?: () => void;
   showSkipIntro?: boolean;
   theaterModeActive?: boolean;
 }
@@ -28,7 +26,6 @@ export const VideoActionBar: React.FC<VideoActionBarProps> = ({
   onSkipIntro,
   onTheaterMode,
   onShare,
-  onReport,
   showSkipIntro = false,
   theaterModeActive = false,
 }) => {
@@ -115,14 +112,6 @@ export const VideoActionBar: React.FC<VideoActionBarProps> = ({
           );
         })}
       </div>
-
-      <button
-        onClick={onReport}
-        className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-all"
-      >
-        <Flag className="w-4 h-4" />
-        <span className="text-sm font-medium">Báo lỗi</span>
-      </button>
     </div>
   );
 };
