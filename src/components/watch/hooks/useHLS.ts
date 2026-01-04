@@ -85,7 +85,7 @@ export const useHLS = ({ videoRef, src, onError }: UseHLSProps) => {
         hlsRef.current = null;
       }
     };
-  }, [src, videoRef, onError]);
+  }, [src, videoRef, token, onError]);
 
   return hlsRef;
 };

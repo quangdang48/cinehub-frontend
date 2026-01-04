@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import {
   MessageSquare,
   Star,
@@ -22,6 +22,9 @@ import {
 import { CommentsService } from "@/services/CommentsService";
 import { ReviewsService } from "@/services/ReviewsService";
 import { useAppSelector } from "@/store";
+import { normalizeUrl } from "@/utils/videoUtils";
+import { ConfirmationModal } from "../common/ConfirmationModal";
+import { toast } from "sonner";
 
 type TabType = "comments" | "reviews";
 
@@ -43,6 +46,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
 
   // Reviews state
   const [reviews, setReviews] = useState<ReviewDto[]>([]);
+  const [averageReviewRating, setAverageReviewRating] = useState(averageRating);
   const [totalReviews, setTotalReviews] = useState(0);
   const [reviewsPage, setReviewsPage] = useState(1);
   const [sortBy, setSortBy] = useState<"newest" | "helpful">("newest");
@@ -52,16 +56,22 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [deleteModalState, setDeleteModalState] = useState<{
+    isOpen: boolean;
+    type: "comment" | "review" | null;
+    itemId: string | null;
+  }>({
+    isOpen: false,
+    type: null,
+    itemId: null,
+  });
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const signedIn = useAppSelector((state) => state.auth.session.signedIn);
   const currentUser = useAppSelector((state) => state.auth.user);
-
-  // Get current user avatar
-  const currentUserAvatar = currentUser
-    ? currentUser.gender === "male"
-      ? `https://randomuser.me/api/portraits/men/${Math.abs(currentUser.id.charCodeAt(0) % 99)}.jpg`
-      : `https://randomuser.me/api/portraits/women/${Math.abs(currentUser.id.charCodeAt(0) % 99)}.jpg`
-    : undefined;
+  const currentUserAvatar = useMemo(() => (
+    currentUser.avatarUrl ? normalizeUrl(currentUser.avatarUrl) : undefined
+  ), [currentUser.avatarUrl]);
 
   // Fetch comments
   useEffect(() => {
@@ -312,16 +322,18 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
   }, []);
 
   const handleDeleteComment = useCallback(async (id: string) => {
-    if (!confirm("Bạn có chắc chắn muốn xóa bình luận này?")) return;
-
     try {
+      setIsDeleting(true);
       await CommentsService.commentControllerDeleteV1({ id });
       setComments((prev) => prev.filter((c) => c.id !== id));
       setTotalComments((prev) => prev - 1);
+      toast.success("Bình luận đã được xóa thành công.");
     } catch (err) {
       console.error("Error deleting comment:", err);
       setError("Không thể xóa bình luận.");
     }
+    setIsDeleting(false);
+    setDeleteModalState({ isOpen: false, type: null, itemId: null })
   }, []);
 
   const handleReportComment = useCallback(
@@ -338,14 +350,10 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
             description,
           },
         });
-        alert("Cảm ơn bạn đã báo cáo. Chúng tôi sẽ xem xét bình luận này.");
+        toast.info("Cảm ơn bạn đã báo cáo. Chúng tôi sẽ xem xét bình luận này.");
       } catch (err: any) {
         console.error("Error reporting comment:", err);
-        if (err?.response?.status === 400) {
-          setError("Bạn đã báo cáo bình luận này rồi.");
-        } else {
-          setError("Không thể báo cáo bình luận.");
-        }
+        setError(err?.response?.data?.message || "Không thể báo cáo bình luận.");
       }
     },
     [signedIn],
@@ -370,6 +378,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
         if (response.data) {
           setReviews((prev) => [response.data, ...prev]);
           setTotalReviews((prev) => prev + 1);
+          setAverageReviewRating((prevTotal) => prevTotal + rating / (totalReviews + 1));
           setUserReview(response.data);
         }
       } catch (err) {
@@ -513,6 +522,14 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
           ),
         );
 
+        setAverageReviewRating((prevTotal) => {
+          if (!userReview) return prevTotal;
+          return (
+            prevTotal +
+            (rating - userReview.rating) / totalReviews
+          );
+        });
+
         if (userReview?.id === id) {
           setUserReview((prev) =>
             prev
@@ -535,20 +552,29 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
 
   const handleDeleteReview = useCallback(
     async (id: string) => {
-      if (!confirm("Bạn có chắc chắn muốn xóa đánh giá này?")) return;
-
       try {
+        setIsDeleting(true);
         await ReviewsService.reviewControllerDeleteV1({ id });
         setReviews((prev) => prev.filter((r) => r.id !== id));
+        setAverageReviewRating((prevTotal) => {
+          if (!userReview) return prevTotal;
+          if (totalReviews - 1 === 0) return 0;
+          return (
+            prevTotal -
+            userReview.rating / (totalReviews - 1)
+          );
+        });
         setTotalReviews((prev) => prev - 1);
-
         if (userReview?.id === id) {
           setUserReview(null);
         }
+        toast.success("Đánh giá đã được xóa thành công.");
       } catch (err) {
         console.error("Error deleting review:", err);
         setError("Không thể xóa đánh giá.");
       }
+      setIsDeleting(false);
+      setDeleteModalState({ isOpen: false, type: null, itemId: null })
     },
     [userReview],
   );
@@ -644,6 +670,22 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
     [filmId, signedIn],
   );
 
+  const onDeleteComment = useCallback((id: string) => {
+    setDeleteModalState({
+      isOpen: true,
+      type: "comment",
+      itemId: id,
+    });
+  }, []);
+
+  const onDeleteReview = useCallback((id: string) => {
+    setDeleteModalState({
+      isOpen: true,
+      type: "review",
+      itemId: id,
+    });
+  }, []);
+
   // Calculate rating distribution
   const ratingDistribution = reviews.reduce(
     (acc, review) => {
@@ -726,7 +768,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
             <div className="flex items-center gap-2 mb-2">
               <Star className="text-yellow-400 fill-yellow-400" size={28} />
               <span className="text-3xl font-bold text-white">
-                {averageRating.toFixed(1)}
+                {averageReviewRating.toFixed(1)}
               </span>
               <span className="text-gray-500 text-lg">/10</span>
             </div>
@@ -819,7 +861,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
             onLike={handleLikeReview}
             onDislike={handleDislikeReview}
             onEdit={handleEditReview}
-            onDelete={handleDeleteReview}
+            onDelete={onDeleteReview}
             onReport={handleReportReview}
             onLoadComments={handleLoadReviewComments}
             onSubmitComment={handleSubmitReviewComment}
@@ -869,7 +911,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
                 onDislike={handleDislikeComment}
                 onReply={handleReplyComment}
                 onEdit={handleEditComment}
-                onDelete={handleDeleteComment}
+                onDelete={onDeleteComment}
                 onReport={handleReportComment}
                 onLoadReplies={handleLoadReplies}
                 depth={0}
@@ -897,7 +939,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
                 onLike={handleLikeReview}
                 onDislike={handleDislikeReview}
                 onEdit={handleEditReview}
-                onDelete={handleDeleteReview}
+                onDelete={onDeleteReview}
                 onReport={handleReportReview}
                 onLoadComments={handleLoadReviewComments}
                 onSubmitComment={handleSubmitReviewComment}
@@ -939,6 +981,21 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
           </button>
         </div>
       )}
+      <ConfirmationModal
+        isOpen={deleteModalState.isOpen}
+        onClose={() => setDeleteModalState({ isOpen: false, type: null, itemId: null })}
+        onConfirm={() => { deleteModalState.type === "comment" ? handleDeleteComment(deleteModalState.itemId!) : handleDeleteReview(deleteModalState.itemId!); }}
+        isLoading={isDeleting}
+        title={deleteModalState.type === "comment" ? "Xóa bình luận?" : "Xóa đánh giá?"}
+        message={
+          deleteModalState.type === "comment"
+            ? "Bạn có chắc chắn muốn xóa bình luận này không? Hành động này không thể hoàn tác."
+            : "Bạn có chắc chắn muốn xóa bài đánh giá này không? Hành động này không thể hoàn tác."
+        }
+        confirmText="Xóa ngay"
+        cancelText="Hủy bỏ"
+        type="danger"
+      />
     </div>
   );
 };

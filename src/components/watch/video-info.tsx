@@ -7,7 +7,6 @@ import { normalizeUrl } from "@/utils/videoUtils";
 interface VideoInfoProps {
   film: FilmDto;
   currentEpisode?: EpisodeDto | null;
-  totalRatings?: number;
   onNavigateToDetail?: () => void;
   onRate?: () => void;
   onComment?: () => void;
@@ -16,7 +15,6 @@ interface VideoInfoProps {
 export const VideoInfo: React.FC<VideoInfoProps> = ({
   film,
   currentEpisode,
-  totalRatings = 0,
   onNavigateToDetail,
   onRate,
   onComment,
@@ -65,7 +63,7 @@ export const VideoInfo: React.FC<VideoInfoProps> = ({
             <div className="flex flex-wrap items-center gap-2 mb-4">
               <span className="flex items-center gap-1 bg-yellow-500/10 text-yellow-400 text-xs font-bold px-2.5 py-1 rounded-lg border border-yellow-500/20">
                 <Star className="w-3 h-3" fill="currentColor" />
-                IMDb {film.imdbRating?.toFixed(1) || "N/A"}
+                IMDb {film.imdbRating.toFixed(1)}
               </span>
               <span className="bg-white/10 text-white text-xs font-bold px-2.5 py-1 rounded-lg border border-white/10">
                 {film.ageLimit}
@@ -118,7 +116,7 @@ export const VideoInfo: React.FC<VideoInfoProps> = ({
               <div className="flex items-center gap-1.5">
                 <div className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse" />
                 <span className="text-xl font-bold text-green-400">
-                  {totalRatings}
+                  {film.userRating.toFixed(1)}
                 </span>
               </div>
               <span className="text-xs text-green-500/70 font-medium">

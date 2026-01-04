@@ -41,9 +41,8 @@ export class ReviewsService {
      */
     search?: string;
   }): Promise<PaginatedReviewApiResponseDto> {
-    return ApiService.get("reviews", {
+    return ApiService.get(`reviews/${filmId}`, {
       params: {
-        filmId,
         page,
         limit,
         sort,

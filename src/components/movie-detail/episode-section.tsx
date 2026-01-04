@@ -67,9 +67,6 @@ export const EpisodeSection: React.FC<EpisodeSectionProps> = ({
           <button className="text-xs font-bold text-black bg-yellow-500 px-3 py-1.5 rounded-lg shadow-lg shadow-yellow-500/20">
             Server VIP
           </button>
-          <button className="text-xs font-bold text-gray-400 bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg hover:bg-white/10 hover:text-white transition-colors">
-            Server #2
-          </button>
         </div>
       </div>
 

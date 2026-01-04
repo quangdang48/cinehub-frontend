@@ -77,7 +77,6 @@ export default function WatchMoviePage() {
     theaterMode,
     toggleTheaterMode,
     handleShare,
-    handleReport,
   } = useUserActions();
 
   const {
@@ -245,7 +244,6 @@ export default function WatchMoviePage() {
             onToggleFavorite={toggleWishlist}
             onTheaterMode={toggleTheaterMode}
             onShare={handleShare}
-            onReport={handleReport}
           />
 
           {/* Main Layout */}
@@ -256,7 +254,6 @@ export default function WatchMoviePage() {
               <VideoInfo
                 film={film}
                 currentEpisode={currentEpisode}
-                totalRatings={10}
                 onNavigateToDetail={() => navigate(`/movie/${film.id}`)}
               />
 

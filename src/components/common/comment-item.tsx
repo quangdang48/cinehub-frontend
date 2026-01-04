@@ -13,6 +13,7 @@ import {
 import type { CommentDto } from "@/types/CommentDto";
 import { timeAgo } from "@/utils/time";
 import { CommentInput } from "./comment-input";
+import { normalizeUrl } from "@/utils/videoUtils";
 
 interface CommentItemProps {
   comment: CommentDto;
@@ -148,11 +149,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({
         className={`${depth > 0 ? "w-8 h-8" : "w-10 h-10"} rounded-full overflow-hidden border-2 border-transparent group-hover:border-yellow-500 transition-colors shrink-0 shadow-lg`}
       >
         <img
-          src={
-            comment.author.gender === "male"
-              ? `https://randomuser.me/api/portraits/men/${Math.abs(comment.author.id.charCodeAt(0) % 99)}.jpg`
-              : `https://randomuser.me/api/portraits/women/${Math.abs(comment.author.id.charCodeAt(0) % 99)}.jpg`
-          }
+          src={ comment.author.avatarUrl ? normalizeUrl(comment.author.avatarUrl) : "/default-avatar.png" }
           alt={comment.author.name}
           className="w-full h-full object-cover"
         />
