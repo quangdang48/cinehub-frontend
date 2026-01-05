@@ -1,21 +1,21 @@
 export enum BillingCycle {
-  MONTHLY = "MONTHLY",
-  YEARLY = "YEARLY",
-  LIFETIME = "LIFETIME",
+  MONTHLY = 'MONTHLY',
+  YEARLY = 'YEARLY',
+  LIFETIME = 'LIFETIME',
 }
 
 export enum PlanType {
-  FREE = "FREE",
-  BASIC = "BASIC",
-  PREMIUM = "PREMIUM",
-  ENTERPRISE = "ENTERPRISE",
+  FREE = 'FREE',
+  BASIC = 'BASIC',
+  PREMIUM = 'PREMIUM',
+  ENTERPRISE = 'ENTERPRISE',
 }
 
 export enum SubscriptionStatus {
-  PENDING = "PENDING",
-  ACTIVE = "ACTIVE",
-  CANCELLED = "CANCELLED",
-  EXPIRED = "EXPIRED",
+  PENDING = 'PENDING',
+  ACTIVE = 'ACTIVE',
+  CANCELLED = 'CANCELLED',
+  EXPIRED = 'EXPIRED',
 }
 
 export interface PlanDto {
@@ -44,6 +44,8 @@ export interface SubscriptionDto {
   stripeSubscriptionId?: string;
   stripeCustomerId?: string;
   cancelledAt?: string;
+  scheduledPlanId?: string;
+  scheduledChangeAt?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -54,7 +56,7 @@ export interface SubscriptionPlanDto {
   name: string;
   price: number;
   currency: string;
-  billingPeriod: "monthly" | "yearly";
+  billingPeriod: 'monthly' | 'yearly';
   description: string;
   features: string[];
   isPopular?: boolean;
@@ -66,7 +68,7 @@ export interface SubscriptionResponseDto {
   userId: string;
   planId: string;
   plan: SubscriptionPlanDto;
-  status: "active" | "inactive" | "expired" | "canceled";
+  status: 'active' | 'inactive' | 'expired' | 'canceled';
   startDate: string;
   endDate: string;
   autoRenew: boolean;
