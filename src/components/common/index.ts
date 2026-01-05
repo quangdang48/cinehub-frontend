@@ -21,3 +21,4 @@ export { CommentInput } from './comment-input';
 export { ReviewItem } from './review-item';
 export { ReviewInput } from './review-input';
 export { ConfirmDialog, useConfirmDialog } from './ConfirmDialog';
+export { ReportModal } from './ReportModal';
