@@ -210,24 +210,3 @@
     @apply bg-background text-foreground;
   }
 }
-
-/* Theater mode styles */
-.theater-video {
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  width: 100vw !important;
-  height: 100vh !important;
-  z-index: 50 !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  background: black !important;
-}
-
-.theater-video > div {
-  width: 100% !important;
-  height: 100% !important;
-  padding: 0 !important;
-}

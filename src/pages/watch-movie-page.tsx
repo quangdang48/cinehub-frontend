@@ -1,6 +1,6 @@
 import { useEffect, useCallback, useMemo, useState } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { ChevronLeft, Loader2, AlertCircle } from "lucide-react";
+import { ChevronLeft, Loader2, AlertCircle, RefreshCw } from "lucide-react";
 import {
   VideoPlayer,
   VideoActionBar,
@@ -25,6 +25,7 @@ import {
   isSeries,
 } from "../utils/watchPageUtils";
 import { toast } from "sonner";
+import { StreamingService } from "@/services/StreamingService";
 
 export default function WatchMoviePage() {
   const { id: filmId } = useParams<{ id: string }>();
@@ -62,6 +63,10 @@ export default function WatchMoviePage() {
 
   const { recommendedFilms } = useRecommendedFilms(filmId, 10);
   
+  const [videoStatus, setVideoStatus] = useState<string | null>(null);
+  const [checkingStatus, setCheckingStatus] = useState(true);
+  const [statusError, setStatusError] = useState<string | null>(null);
+  
   const streamUrl = useMemo(() => {
     if (!film) return null;
     if (isSeries(film) && !currentEpisode) return null;
@@ -95,6 +100,45 @@ export default function WatchMoviePage() {
       setCurrentSeason(parseInt(seasonNumberFromUrl));
     }
   }, [seasonNumberFromUrl]);
+
+  // Check video status before loading
+  const checkVideoStatus = useCallback(async () => {
+    if (!film) return;
+    if (isSeries(film) && (!currentSeason || !currentEpisode?.number)) return;
+    
+    setCheckingStatus(true);
+    setStatusError(null);
+    
+    try {
+      const response = await StreamingService.checkVideoAvailability({
+        filmId: film.id,
+        season: isSeries(film) ? currentSeason : undefined,
+        episode: isSeries(film) && currentEpisode ? currentEpisode.number : undefined,
+      });
+      
+      setVideoStatus(response.data.status);
+      
+      if (response.data.status !== "READY") {
+        setStatusError(`Video đang được xử lý. Vui lòng thử lại sau.`);
+      }
+    } catch (error: any) {
+      console.error("Error checking video status:", error);
+      if (error.response?.status === 404) {
+        setStatusError("Video chưa có sẵn. Vui lòng quay lại sau.");
+      } else {
+        setStatusError("Không thể kiểm tra trạng thái video. Vui lòng thử lại.");
+      }
+      setVideoStatus(null);
+    } finally {
+      setCheckingStatus(false);
+    }
+  }, [film, currentSeason, currentEpisode]);
+
+  useEffect(() => {
+    if (film) {
+      checkVideoStatus();
+    }
+  }, [film, currentSeason, currentEpisode]);
 
   const handleSelectSeason = useCallback(
     (seasonNumber: number) => {
@@ -143,7 +187,7 @@ export default function WatchMoviePage() {
   const error = filmError;
 
   // Loading state
-  if (isLoading || !streamUrl) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
         <div className="text-center">
@@ -175,6 +219,85 @@ export default function WatchMoviePage() {
           >
             Quay lại
           </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Video status checking
+  if (checkingStatus) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
+        <div className="text-center">
+          <div className="relative">
+            <Loader2 className="w-16 h-16 text-yellow-500 animate-spin mx-auto" />
+            <div className="absolute inset-0 blur-2xl bg-yellow-500/30 animate-pulse" />
+          </div>
+          <p className="text-gray-400 mt-4 animate-pulse">Đang kiểm tra video...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Video not ready or error
+  if (statusError || videoStatus !== "READY" || !streamUrl) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center p-4">
+        <div className="text-center max-w-md">
+          {videoStatus === "PROCESSING" ? (
+            <>
+              <div className="relative mb-6">
+                <Loader2 className="w-16 h-16 text-blue-400 animate-spin mx-auto" />
+                <div className="absolute inset-0 blur-2xl bg-blue-400/30 animate-pulse" />
+              </div>
+              <p className="text-blue-400 text-lg mb-2 font-semibold">
+                Video đang được xử lý
+              </p>
+              <p className="text-gray-400 text-sm mb-6">
+                Quá trình này có thể mất vài phút. Vui lòng quay lại sau.
+              </p>
+              <div className="flex gap-3 justify-center">
+                <button
+                  onClick={() => checkVideoStatus()}
+                  className="px-6 py-3 bg-blue-500 text-white font-bold rounded-xl hover:bg-blue-400 transition-colors flex items-center gap-2"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  Làm mới
+                </button>
+                <button
+                  onClick={() => navigate(`/movie/${film.id}`)}
+                  className="px-6 py-3 bg-gray-700 text-white font-bold rounded-xl hover:bg-gray-600 transition-colors"
+                >
+                  Quay lại chi tiết
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <AlertCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
+              <p className="text-red-400 text-lg mb-2">
+                {statusError || "Video chưa có sẵn"}
+              </p>
+              <p className="text-gray-500 text-sm mb-6">
+                Vui lòng quay lại sau hoặc thử tải lại trang
+              </p>
+              <div className="flex gap-3 justify-center">
+                <button
+                  onClick={() => checkVideoStatus()}
+                  className="px-6 py-3 bg-yellow-500 text-black font-bold rounded-xl hover:bg-yellow-400 transition-colors flex items-center gap-2"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  Thử lại
+                </button>
+                <button
+                  onClick={() => navigate(`/movie/${film.id}`)}
+                  className="px-6 py-3 bg-gray-700 text-white font-bold rounded-xl hover:bg-gray-600 transition-colors"
+                >
+                  Quay lại chi tiết
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
     );
