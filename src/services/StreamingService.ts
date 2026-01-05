@@ -4,6 +4,23 @@ import type { ApiResponse } from "@/types/ApiResponse";
 
 export class StreamingService {
   /**
+   * Kiểm tra video có sẵn để streaming
+   * @returns VideoStatusDto Trạng thái video
+   * @throws ApiError
+   */
+  public static checkVideoAvailability({
+    filmId,
+    season,
+    episode,
+  }: {
+    filmId: string;
+    season?: number;
+    episode?: number;
+  }): Promise<ApiResponse<{ status: string }>> {
+    return ApiService.post(`streaming?filmId=${filmId}${season ? `&season=${season}` : ""}${episode ? `&episode=${episode}` : ""}`);
+  }
+
+  /**
    * Lấy URL streaming của phim
    * @returns StreamingApiResponseDto Lấy URL streaming của phim
    * @throws ApiError
