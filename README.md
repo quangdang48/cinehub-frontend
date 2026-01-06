@@ -14,7 +14,7 @@ Trước khi bắt đầu, đảm bảo máy của bạn đã cài đặt:
 1.  **Clone dự án:**
 
     ```bash
-    git clone <repository-url>
+    git clone https://github.com/quangdang48/cinehub-frontend
     cd cinehub-frontend
     ```
 
