@@ -389,8 +389,11 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
 
         if (response.data) {
           setReviews((prev) => [response.data, ...prev]);
+          setAverageReviewRating((prevAvg) => {
+            const currentSum = prevAvg * totalReviews;
+            return (currentSum + rating) / (totalReviews + 1);
+          });
           setTotalReviews((prev) => prev + 1);
-          setAverageReviewRating((prevTotal) => prevTotal + rating / (totalReviews + 1));
           setUserReview(response.data);
         }
       } catch (err) {
@@ -402,7 +405,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
         setIsSubmitting(false);
       }
     },
-    [filmId, signedIn],
+    [filmId, signedIn, totalReviews],
   );
 
   const handleLoadMoreReviews = useCallback(async () => {
@@ -534,12 +537,10 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
           ),
         );
 
-        setAverageReviewRating((prevTotal) => {
-          if (!userReview) return prevTotal;
-          return (
-            prevTotal +
-            (rating - userReview.rating) / totalReviews
-          );
+        setAverageReviewRating((prevAvg) => {
+          if (!userReview) return prevAvg;
+          const currentSum = prevAvg * totalReviews;
+          return (currentSum - userReview.rating + rating) / totalReviews;
         });
 
         if (userReview?.id === id) {
@@ -559,7 +560,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
         setError("Không thể cập nhật đánh giá.");
       }
     },
-    [userReview],
+    [userReview, totalReviews],
   );
 
   const handleDeleteReview = useCallback(
@@ -567,15 +568,18 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
       try {
         setIsDeleting(true);
         await ReviewsService.reviewControllerDeleteV1({ id });
+        
         setReviews((prev) => prev.filter((r) => r.id !== id));
-        setAverageReviewRating((prevTotal) => {
-          if (!userReview) return prevTotal;
-          if (totalReviews - 1 === 0) return 0;
-          return (
-            prevTotal -
-            userReview.rating / (totalReviews - 1)
-          );
+
+        setAverageReviewRating((prevAvg) => {
+          if (!userReview) return prevAvg;
+          if (totalReviews <= 1) return 0;
+
+          const currentSum = prevAvg * totalReviews;
+          
+          return (currentSum - userReview.rating) / (totalReviews - 1);
         });
+
         setTotalReviews((prev) => prev - 1);
         if (userReview?.id === id) {
           setUserReview(null);
@@ -586,9 +590,9 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
         setError("Không thể xóa đánh giá.");
       }
       setIsDeleting(false);
-      setDeleteModalState({ isOpen: false, type: null, itemId: null })
+      setDeleteModalState({ isOpen: false, type: null, itemId: null });
     },
-    [userReview],
+    [userReview, totalReviews]
   );
 
   const handleReportReview = useCallback(
