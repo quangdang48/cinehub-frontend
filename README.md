@@ -1,73 +1,69 @@
-# React + TypeScript + Vite
+# Cinehub Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Dự án Frontend cho website xem phim Cinehub, được xây dựng bằng ReactJS, TypeScript và Vite.
 
-Currently, two official plugins are available:
+## Yêu cầu hệ thống
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Trước khi bắt đầu, đảm bảo máy của bạn đã cài đặt:
 
-## React Compiler
+- [Node.js](https://nodejs.org/) (phiên bản 18 trở lên được khuyến nghị)
+- Trình quản lý gói: `npm`, `yarn` hoặc `pnpm` (khuyến khích dùng `pnpm` hoặc `yarn`).
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Cài đặt
 
-## Expanding the ESLint configuration
+1.  **Clone dự án:**
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+    ```bash
+    git clone https://github.com/quangdang48/cinehub-frontend
+    cd cinehub-frontend
+    ```
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+2.  **Cài đặt các thư viện phụ thuộc:**
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+    ```bash
+    # Sử dụng npm
+    npm install
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+    # Hoặc sử dụng yarn
+    yarn install
+
+    # Hoặc sử dụng pnpm
+    pnpm install
+    ```
+
+## Cấu hình môi trường
+
+Dự án cần một số biến môi trường để hoạt động.
+
+1.  Sao chép file mẫu `.env.example` thành `.env`:
+
+    ```bash
+    cp .env.example .env
+    ```
+
+2.  Cập nhật giá trị cho các biến trong file `.env` vừa tạo. Dưới đây là ý nghĩa các biến:
+
+    - `VITE_API_URL`: Đường dẫn API của Backend chính (mặc định: `http://localhost:8080/api/v1`).
+    - `BACKEND_ADMIN_API`: Đường dẫn API cho Admin/Service khác (nếu có) (mặc định: `http://localhost:3322/api/v1`).
+    - `VITE_GOOGLE_CLIENT_ID`: Client ID từ Google Cloud Console để dùng tính năng đăng nhập Google (để trống nếu chưa cần).
+    - `VITE_GOOGLE_REDIRECT_URI`: Đường dẫn redirect sau khi đăng nhập Google (mặc định cho local: `http://localhost:5173/auth/google/callback`).
+
+## Chạy dự án (Local Development)
+
+Sau khi cài đặt và cấu hình xong, chạy lệnh sau để khởi động server development:
+
+```bash
+npm run dev
+# hoặc yarn dev / pnpm dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Truy cập trình duyệt tại địa chỉ: `http://localhost:5173`.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Các Scripts khác
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Các lệnh có sẵn trong `package.json`:
+
+- `npm run build`: Build dự án cho môi trường production.
+- `npm run lint`: Kiểm tra lỗi cú pháp và style code với ESLint.
+- `npm run preview`: Chạy thử bản build production trên local.
+- `npm run sync:openapi`: Đồng bộ và tạo code API client từ Swagger/OpenAPI của Backend.
