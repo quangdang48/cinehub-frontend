@@ -1,6 +1,5 @@
-import { useNotificationSocket } from '@/hooks';
-import type { NotificationData } from '@/hooks/useNotificationSocket';
-import { toast } from 'sonner';
+import { useNotifications } from '@/providers/NotificationProvider';
+import type { NotificationData } from '@/providers/NotificationProvider';
 import { RefreshCw, Trash2 } from 'lucide-react';
 
 export default function NotificationsTab() {
@@ -13,34 +12,7 @@ export default function NotificationsTab() {
     markAllAsRead,
     clearNotifications,
     refreshNotifications,
-  } = useNotificationSocket({
-    autoConnect: true,
-    autoFetchHistory: true,
-    onNotification: (notification) => {
-      // Show toast for new notifications
-      const toastOptions = {
-        description: notification.content,
-        duration: 5000,
-      };
-
-      switch (notification.type) {
-        case 'success':
-        case 'SUCCESS':
-          toast.success(notification.title || 'Thông báo', toastOptions);
-          break;
-        case 'warning':
-        case 'WARNING':
-          toast.warning(notification.title || 'Cảnh báo', toastOptions);
-          break;
-        case 'error':
-        case 'ERROR':
-          toast.error(notification.title || 'Lỗi', toastOptions);
-          break;
-        default:
-          toast.info(notification.title || 'Thông báo', toastOptions);
-      }
-    },
-  });
+  } = useNotifications();
 
   const formatTime = (timestamp: string) => {
     return new Date(timestamp).toLocaleString('vi-VN', {

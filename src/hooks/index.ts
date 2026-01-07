@@ -12,3 +12,4 @@ export {
   useNotificationSocket,
   type NotificationData,
 } from './useNotificationSocket';
+export { useNotifications } from './useNotifications';
